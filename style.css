@@ -1,0 +1,10 @@
+body {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100vh; font-family: sans-serif;
+}
+#game-square {
+    width: 100px; height: 100px; background: red; color: white;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 10px; transition: 0.1s;
+}
+#game-square:active { transform: scale(0.9); }
