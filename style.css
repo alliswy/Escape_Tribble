@@ -1,10 +1,85 @@
-body {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; height: 100vh; font-family: sans-serif;
+html, body{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
-#game-square {
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: sans-serif;
+}
+
+/*function to hide certain screens until you click to the next*/
+.hidden {
+    display: none !important;
+}
+
+.fit {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/*function to set the shape of each image*/
+.fit img{
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain; /* Or cover, whichever you prefer */
+    display: block;
+    background-color: black;
+}
+
+/*centers the items inside the menu*/
+/*fixme*/
+#menu-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/*Start Game Button design */
+/*FIXME*/
+#start-button {
     width: 100px; height: 100px; background: red; color: white;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; border-radius: 10px; transition: 0.1s;
+    margin: 20px; /*adds space above and below button*/
 }
-#game-square:active { transform: scale(0.9); }
+#start-button:active { transform: scale(0.9); }
+
+/*Button to exit to main menu*/
+/*fixme*/
+#quit-btn {
+
+}
+
+
+#tutorial, #first-door {
+    width: 100%;
+    height: 100vh; /* 100% of the Viewport Height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: black; /*optional*/
+    position: absolute; /* Make it overlay the menu perfectly*/
+    top: 0;
+    left: 0;
+}
+
+#bookDropDoorZoomIn {
+
+}

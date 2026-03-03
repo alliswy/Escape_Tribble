@@ -1,20 +1,30 @@
 let score = 0;
-const scoreDisplay = document.getElementById('score');
-const square = document.getElementById('game-square');
 
-function updateScore() {
-    score++;
-    scoreDisplay.innerText = score;
-    // Change color randomly to show it's working
-    square.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+//Objects for the Front Page Menu
+const menu = document.getElementById('menu-screen');
+const startButton = document.getElementById('start-button');
+
+//Objects for the tutorial
+const tutorial = document.getElementById('tutorial');
+const firstDoor = document.getElementById('first-door');
+//const bookDropDoorZoomOut = document.getElementById('bookDropDoorZoomOut');
+
+//function to start the tutorial: runs when the player clicks the start game button
+function playTutorial() {
+    console.log("Start button was clicked!");
+
+    //FIXME add text boxes for tutorial
+
+    //hid menu, show tutorial first page
+    menu.classList.add('hidden');
+    showBookDropDoorZoomOut();
+}
+
+function showBookDropDoorZoomOut() {
+    tutorial.classList.remove('hidden');
+    firstDoor.classList.remove('hidden');
 }
 
 // Click accessibility
-square.addEventListener('click', updateScore);
+startButton.addEventListener('click', playTutorial);
 
-// Keyboard accessibility (Spacebar)
-window.addEventListener('keydown', (event) => {
-    if (event.code === 'Space') {
-        updateScore();
-    }
-});

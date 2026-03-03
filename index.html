@@ -2,14 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Accessible Game</title>
+    <title>Escape Tribble</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Score: <span id="score">0</span></h1>
-<div id="game-square">CLICK ME</div>
-<p>Or press the <strong>Spacebar</strong> to play!</p>
 
-<script src="script.js"></script>
+
+    <div id="menu-screen">
+        <h1>Escape Tribble</h1>
+        <div id="start-button">Play Game</div>
+    </div>
+
+
+    <div id="tutorial" class="hidden">
+        <div id="first-door" class="fit hidden">
+            <img id="bookDropDoorZoomOut" src="bookDropDoorZoomOut.jpeg" alt="Game Room">
+        </div>
+        <div id="first-door-zoom-in" class="fit hidden">
+            <img id="bookDropDoorZoomIn" src="bookDropDoorZoomIn.jpeg" alt="Game Room">
+        </div>
+        <button id="quit-btn">Exit to main menu</button>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
