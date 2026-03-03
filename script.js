@@ -6,8 +6,9 @@ const startButton = document.getElementById('start-button');
 
 //Objects for the tutorial
 const tutorial = document.getElementById('tutorial');
-const firstDoor = document.getElementById('first-door');
-//const bookDropDoorZoomOut = document.getElementById('bookDropDoorZoomOut');
+const bookDropDoorZoomOut = document.getElementById('bookDropDoorZoomOutPage');
+const bookDropDoorZoomIn = document.getElementById('bookDropDoorZoomInPage')
+const doorHitbox = document.getElementById('door-hitbox');
 
 //function to start the tutorial: runs when the player clicks the start game button
 function playTutorial() {
@@ -17,14 +18,26 @@ function playTutorial() {
 
     //hid menu, show tutorial first page
     menu.classList.add('hidden');
-    showBookDropDoorZoomOut();
-}
-
-function showBookDropDoorZoomOut() {
     tutorial.classList.remove('hidden');
-    firstDoor.classList.remove('hidden');
+    bookDropDoorZoomOut.classList.remove('hidden');
+
+
+
+
 }
 
-// Click accessibility
+function goToBookDropDoorZoomIn() {
+    console.log("Swapping to the close-up photo");
+
+    //hide book drop zoomed out image
+    bookDropDoorZoomOut.classList.add('hidden');
+
+    //show book drop zoomed in image
+    bookDropDoorZoomIn.classList.remove('hidden');
+}
+
+// Click functionality for menu
 startButton.addEventListener('click', playTutorial);
 
+//Clicking on objects
+doorHitbox.addEventListener('click', goToBookDropDoorZoomIn)

@@ -32,12 +32,13 @@ body {
 }
 
 /*function to set the shape of each image*/
-.fit img{
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain; /* Or cover, whichever you prefer */
+.fit img {
+    max-width: 100vw;
+    max-height: 100vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     display: block;
-    background-color: black;
 }
 
 /*centers the items inside the menu*/
@@ -66,20 +67,37 @@ body {
 
 }
 
-
-#tutorial, #first-door {
-    width: 100%;
-    height: 100vh; /* 100% of the Viewport Height */
+#tutorial {
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: black; /*optional*/
-    position: absolute; /* Make it overlay the menu perfectly*/
+    align-items: center;    /* Centers vertically */
+    justify-content: center; /* Centers horizontally */
+    position: absolute;
     top: 0;
     left: 0;
 }
 
-#bookDropDoorZoomIn {
+#bookDropDoorZoomOutPage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    height: fit-content;
+}
 
+/*Hitboxes for bookDropDoorZoomOut*/
+#door-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 37%;
+    width: 32%;
+    height: 93%;
+
+    background-color: transparent;
+    border: none;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
 }
