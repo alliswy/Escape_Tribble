@@ -19,16 +19,12 @@ body {
 }
 
 .fit {
-    width: 100vw;
-    height: 100vh;
+    position: relative;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: black;
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: fit-content;
+    height: fit-content;
 }
 
 /*function to set the shape of each image*/
@@ -89,7 +85,7 @@ body {
 }
 
 /*Hitboxes for bookDropDoorZoomOut*/
-#door-hitbox {
+#bookDropDoor-hitbox {
     position: absolute;
     top: 3%;
     left: 37%;
@@ -97,7 +93,35 @@ body {
     height: 93%;
 
     background-color: transparent;
-    border: none;
+    border: 2px solid yellow;
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
 }
+
+/*hitboxes for bookDropZoomIn */
+#bookDrop-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 37%;
+    width: 34%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bookDropDoorHandle-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 20%;
+    width: 7%;
+    height: 17%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+

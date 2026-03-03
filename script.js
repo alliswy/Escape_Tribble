@@ -8,7 +8,11 @@ const startButton = document.getElementById('start-button');
 const tutorial = document.getElementById('tutorial');
 const bookDropDoorZoomOut = document.getElementById('bookDropDoorZoomOutPage');
 const bookDropDoorZoomIn = document.getElementById('bookDropDoorZoomInPage')
-const doorHitbox = document.getElementById('door-hitbox');
+const bookDropDoorHitbox = document.getElementById('bookDropDoor-hitbox');
+const bookDrop = document.getElementById('bookDropClosedPage');
+const bookDropHitbox = document.getElementById('bookDrop-hitbox');
+const bookDropDoorHandleHitbox = document.getElementById("bookDropDoorHandle-hitbox");
+const bookDropDoorHandle = document.getElementById("bookDropDoorHandle");
 
 //function to start the tutorial: runs when the player clicks the start game button
 function playTutorial() {
@@ -21,23 +25,42 @@ function playTutorial() {
     tutorial.classList.remove('hidden');
     bookDropDoorZoomOut.classList.remove('hidden');
 
+    //if they click on the door, it zooms in on it
+    bookDropDoorHitbox.addEventListener('click', goToBookDropDoorZoomIn);
+
+    function goToBookDropDoorZoomIn() {
+        console.log("Swapping to the close-up photo");
+
+        //hide book drop zoomed out image
+        bookDropDoorZoomOut.classList.add('hidden');
+
+        //show book drop zoomed in image
+        bookDropDoorZoomIn.classList.remove('hidden');
+
+        bookDropHitbox.addEventListener('click', goToBookDrop);
+
+        function goToBookDrop() {
+            bookDropDoorZoomIn.classList.add('hidden');
+            bookDrop.classList.remove('hidden');
+        }
+
+        function goToBookDropDoorHandle() {
+            bookDropDoorZoomIn.classList.add('hidden');
+
+
+        }
+
+    }
+
+
 
 
 
 }
 
-function goToBookDropDoorZoomIn() {
-    console.log("Swapping to the close-up photo");
 
-    //hide book drop zoomed out image
-    bookDropDoorZoomOut.classList.add('hidden');
-
-    //show book drop zoomed in image
-    bookDropDoorZoomIn.classList.remove('hidden');
-}
 
 // Click functionality for menu
 startButton.addEventListener('click', playTutorial);
 
 //Clicking on objects
-doorHitbox.addEventListener('click', goToBookDropDoorZoomIn)
