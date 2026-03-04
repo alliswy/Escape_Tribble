@@ -143,3 +143,43 @@ body {
     z-index: 10;
 }
 
+/*fixme*/
+#bookDropClosed-hitbox {
+    position: absolute;
+    top: 34%;
+    left: 17%;
+    width: 64%;
+    height: 36%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bookDropKey-hitbox {
+    position: absolute;
+    top: 60%;
+    left: 45%;
+    width: 9%;
+    height: 9%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bookDropOpen-hitbox {
+    position: absolute;
+    top: 40%;
+    left: 9%;
+    width: 82%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
