@@ -107,7 +107,6 @@ function playTutorial() {
         const pages = document.querySelectorAll('.fit');
         pages.forEach(page => page.classList.add('hidden'));
     }
-    //fixme test to check if I can commit through my personal account
 
     function goBack() {
         if (!bookDropDoorZoomIn.classList.contains('hidden')) {
