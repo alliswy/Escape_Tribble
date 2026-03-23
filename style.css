@@ -93,7 +93,7 @@ body {
     left: 0;
 }
 
-#bookDropDoorZoomOutPage {
+#bd-main-page {
     position: relative;
     display: flex;
     align-items: center;
@@ -103,7 +103,7 @@ body {
 }
 
 /*Hitboxes for bookDropDoorZoomOut*/
-#bookDropDoor-hitbox {
+#bd-door-hitbox {
     position: absolute;
     top: 3%;
     left: 37%;
@@ -117,7 +117,7 @@ body {
 }
 
 /*hitboxes for bookDropZoomIn */
-#bookDrop-hitbox {
+#bd-slot-hitbox {
     position: absolute;
     top: 51%;
     left: 37%;
@@ -130,7 +130,7 @@ body {
     z-index: 10;
 }
 
-#bookDropDoorHandle-hitbox {
+#bd-handle-hitbox {
     position: absolute;
     top: 47%;
     left: 20%;
@@ -144,7 +144,7 @@ body {
 }
 
 /*fixme*/
-#bookDropClosed-hitbox {
+#bd-closed-hitbox {
     position: absolute;
     top: 34%;
     left: 17%;
@@ -157,7 +157,7 @@ body {
     z-index: 10;
 }
 
-#bookDropKey-hitbox {
+#bd-key-hitbox {
     position: absolute;
     top: 60%;
     left: 45%;
@@ -170,7 +170,7 @@ body {
     z-index: 10;
 }
 
-#bookDropOpen-hitbox {
+#bd-slot-open-hitbox {
     position: absolute;
     top: 40%;
     left: 9%;
@@ -183,7 +183,7 @@ body {
     z-index: 10;
 }
 
-#bookDropDoorHandleHandle-hitbox {
+#bd-door-handle-hitbox {
     position: absolute;
     top: 69%;
     left: 43%;
@@ -196,7 +196,7 @@ body {
     z-index: 10;
 }
 
-#bookDropDoorHandleKeyhole-hitbox {
+#bd-door-keyhole-hitbox {
     position: absolute;
     top: 35%;
     left: 42%;
@@ -209,7 +209,7 @@ body {
     z-index: 10;
 }
 
-#doorBehindBookDrop-hitbox {
+#bd-back-door-hitbox {
     position: absolute;
     top: 22%;
     left: 52%;
@@ -222,7 +222,7 @@ body {
     z-index: 10;
 }
 
-#bookDropBookCart-hitbox {
+#bd-cart-hitbox {
     position: absolute;
     top: 64%;
     left: 37%;

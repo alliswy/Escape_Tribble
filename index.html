@@ -18,49 +18,67 @@
         <!--back arrow is shown in each image and if clicked moves to the zoomed out image-->
         <div id="master-back-arrow" class="back-arrow hidden"></div>
 
+        <!--Naming Convention: zone and then optionally: state of area/item, type of object-->
     <!--Book Drop Pages-->
-        <div id="bookDropDoorZoomOutPage" class="fit hidden">
-            <img id="bookDropDoorZoomOut" src="bookDropDoorZoomOut.jpeg" alt="Game Room">
-            <div id="bookDropDoor-hitbox"></div>
+        <div id="bd-main-page" class="fit hidden">
+            <img id="bd-main" src="bookDropDoorZoomOut.jpeg" alt="Game Room">
+            <div id="bd-door-hitbox"></div>
         </div>
 
-        <div id="bookDropDoorZoomInPage" class="fit hidden">
-            <img id="bookDropDoorZoomIn" src="bookDropDoorZoomIn.jpeg" alt="Game Room">
-            <div id="bookDrop-hitbox"></div>
-            <div id="bookDropDoorHandle-hitbox"></div>
+        <div id="bd-door-page" class="fit hidden">
+            <img id="bd-door" src="bookDropDoorZoomIn.jpeg" alt="Game Room">
+            <div id="bd-slot-hitbox"></div>
+            <div id="bd-handle-hitbox"></div>
         </div>
 
-        <div id="bookDropClosedPage" class="fit hidden">
-            <img id="bookDrop" src="bookDrop.jpeg" alt="Game Room">
-            <div id="bookDropClosed-hitbox"></div>
+        <div id="bd-closed-page" class="fit hidden">
+            <img id="bd-slot-closed" src="bookDrop.jpeg" alt="Game Room">
+            <div id="bd-closed-hitbox"></div>
         </div>
 
-        <div id="bookDropOpenKeyPage" class="fit hidden">
-            <img id="bookDropOpenKey" src="bookDropOpenKey.jpeg" alt="Game Room">
-            <div id="bookDropKey-hitbox"></div>
+        <div id="bd-slot-open-key-page" class="fit hidden">
+            <img id="bd-slot-open-key" src="bookDropOpenKey.jpeg" alt="Game Room">
+            <div id="bd-key-hitbox"></div>
         </div>
 
-        <div id="bookDropOpenPage" class="fit hidden">
-            <img id="bookDropOpen" src="bookDropOpen.jpeg" alt="Game Room">
-            <div id="bookDropOpen-hitbox"></div>
+        <div id="bd-slot-open-page" class="fit hidden">
+            <img id="bd-slot-open" src="bookDropOpen.jpeg" alt="Game Room">
+            <div id="bd-slot-open-hitbox"></div>
         </div>
 
-        <div id="bookDropDoorHandlePage" class="fit hidden">
-            <img id="bookDropDoorHandle" src="bookDropDoorHandle.jpeg" alt="Game Room">
-            <div id="bookDropDoorHandleKeyhole-hitbox"></div>
-            <div id="bookDropDoorHandleHandle-hitbox"></div>
+        <div id="bd-door-handle-page" class="fit hidden">
+            <img id="bd-door-handle" src="bookDropDoorHandle.jpeg" alt="Game Room">
+            <div id="bd-door-keyhole-hitbox"></div>
+            <div id="bd-door-handle-hitbox"></div>
         </div>
 
-        <div id="bookDropDoorOpenPage" class="fit hidden">
-            <img id="bookDropDoorOpen" src="bookDropDoorOpen.jpeg" alt="Game Room">
-            <div id="doorBehindBookDrop-hitbox"></div>
-            <div id="bookDropBookCart-hitbox"></div>
+        <div id="bd-door-open-page" class="fit hidden">
+            <img id="bd-door-open" src="bookDropDoorOpen.jpeg" alt="Game Room">
+            <div id="bd-back-door-hitbox"></div>
+            <div id="bd-cart-hitbox"></div>
         </div>
 
-        <div id="bookDropBooksPage" class="fit hidden">
-            <img id="bookDropBooks" src="bookDropBooks.jpeg" alt="Game Room">
-            <div id="bookDropBookCartZoom-hitbox"></div>
+        <div id="bd-cart-page" class="fit hidden">
+            <img id="bd-cart" src="bookDropCart.jpeg" alt="Game Room">
+            <div id="bd-books-hitbox"></div>
         </div>
+
+        <!-- fb= fish book -->
+        <div id="bd-books-page" class="fit hidden">
+            <img id="bd-books" src="bookDropCartZoom.jpeg" alt="Game Room">
+            <div id="bd-fb-hitbox"></div>
+        </div>
+
+        <div id="bd-fb-open-key-page" class="fit hidden">
+            <img id="bd-fb-open-key" src="bookDropFishBookOpenKey.jpeg" alt="Game Room">
+            <div id="bd-fb-key-hitbox"></div>
+        </div>
+
+        <div id="bd-fb-open-Page" class="fit hidden">
+            <img id="bd-fb-open" src="bookDropFishBookOpen.jpeg" alt="Game Room">
+            <div id="bd-fb-open-hitbox"></div>
+        </div>
+
 
         <!--fixme change this to menu button and have the quit button in the menu and whatnot-->
         <button id="quit-btn">Exit to main menu</button>

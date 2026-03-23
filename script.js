@@ -1,170 +1,118 @@
 let score = 0;
-
-//Objects for the Front Page Menu
-const menu = document.getElementById('menu-screen');
-const startButton = document.getElementById('start-button');
-
-//Objects for the tutorial
-const tutorial = document.getElementById('tutorial');
-const backArrow = document.getElementById('master-back-arrow');
-
-const bookDropDoorZoomOut = document.getElementById('bookDropDoorZoomOutPage');
-const bookDropDoorZoomIn = document.getElementById('bookDropDoorZoomInPage')
-const bookDropDoorHandle = document.getElementById("bookDropDoorHandlePage");
-const bookDropClosed = document.getElementById('bookDropClosedPage');
-const bookDropOpenKey = document.getElementById("bookDropOpenKeyPage");
-const bookDropOpen = document.getElementById("bookDropOpenPage");
-
-const bookDropDoorOpen = document.getElementById('bookDropDoorOpenPage');
-const bookDropBooks = document.getElementById('bookDropBooksPage');
-
-//booleans to track whether user has keys
-let hasBookDropKey = false;
-let bookDropDoorIsUnlocked = false;
-
-//hitboxes
-const bookDropHitbox = document.getElementById('bookDrop-hitbox');
-const bookDropDoorHitbox = document.getElementById('bookDropDoor-hitbox');
-const bookDropDoorHandleHitbox = document.getElementById("bookDropDoorHandle-hitbox");
-const bookDropDoorHandleHandleHitbox = document.getElementById("bookDropDoorHandleHandle-hitbox");
-const bookDropDoorHandleKeyholeHitbox = document.getElementById("bookDropDoorHandleKeyhole-hitbox");
-const bookDropClosedHitbox = document.getElementById("bookDropClosed-hitbox");
-const bookDropOpenHitbox = document.getElementById('bookDropOpen-hitbox');
-const bookDropKeyHitbox = document.getElementById("bookDropKey-hitbox");
-
-const bookDropBookCartHitbox = document.getElementById('bookDropBookCart-hitbox');
-const doorBehindBookDropHitbox = document.getElementById('doorBehindBookDrop-hitbox');
-
-
-
-
-
-
-//function to start the tutorial: runs when the player clicks the start game button
-function playTutorial() {
-
-    //FIXME add text boxes for tutorial
-
-    //hid menu, show tutorial first page
-    tutorial.classList.remove('hidden');
-    goToBookDropDoorZoomOut();
-    backArrow.classList.remove('hidden');
-
-    //if they click on the door, it zooms in on it
-    bookDropDoorHitbox.addEventListener('click', goToBookDropDoorZoomIn);
-    //backArrow.addEventListener('click', goTo...);
-
-    function goToBookDropDoorZoomIn() {
-        //hide book drop zoomed out image
-        hideAllTutorialPages();
-
-        //show book drop zoomed in image
-        bookDropDoorZoomIn.classList.remove('hidden');
-        backArrow.addEventListener('click', goBack);
-
-        bookDropHitbox.addEventListener('click', goToBookDropClosed);
-        bookDropDoorHandleHitbox.addEventListener('click', goToBookDropDoorHandle);
-
-    }
-
-    function goToBookDropDoorZoomOut() {
-        hideAllTutorialPages();
-        bookDropDoorZoomOut.classList.remove('hidden');
-        bookDropDoorHitbox.addEventListener('click', goToBookDropDoorZoomIn);
-    }
-    function goToBookDropClosed() {
-        hideAllTutorialPages();
-        bookDropDoorZoomIn.classList.add('hidden');
-        bookDropClosed.classList.remove('hidden');
-
-        bookDropClosedHitbox.addEventListener('click', goToBookDropOpen);
-
-        backArrow.addEventListener('click', goBack);
-    }
-
-    function goToBookDropDoorHandle() {
-        hideAllTutorialPages();
-        bookDropDoorHandle.classList.remove('hidden');
-        backArrow.addEventListener('click', goBack);
-
-        bookDropDoorHandleKeyholeHitbox.addEventListener('click', unlockBookDropDoor);
-        bookDropDoorHandleHandleHitbox.addEventListener('click', openBookDropDoorMaybe)
-    }
-
-    function goToBookDropOpen() {
-        hideAllTutorialPages();
-        backArrow.addEventListener('click', goBack)
-        if (!hasBookDropKey) {
-            bookDropOpenKey.classList.remove('hidden');
-            bookDropKeyHitbox.addEventListener('click', collectBookDropKey)
-        }
-        else {
-            bookDropOpen.classList.remove('hidden');
-            bookDropOpenHitbox.addEventListener('click', goToBookDropClosed);
-        }
-    }
-
-    function openBookDropDoorMaybe() {
-        if(bookDropDoorIsUnlocked) {
-            openBookDropDoor();
-        }
-        else {
-            //fixme give feedback
-        }
-    }
-
-    //fixme add functionality for back arrow here
-    function openBookDropDoor() {
-        hideAllTutorialPages();
-
-        bookDropDoorOpen.classList.remove('hidden');
-        //fixme add hitboxes
-        //doorBehindBookDropHitbox.addEventListener('click', goToDoorBehindBookDropZoom);
-        //bookDropBookCartHitbox.addEventListener('click', goToBookDropBooks);
-    }
-
-    function unlockBookDropDoor() {
-        if (hasBookDropKey) {
-            bookDropDoorIsUnlocked = true;
-        }
-        else {
-            //fixme place to add feedback
-        }
-    }
-
-    function collectBookDropKey() {
-        hasBookDropKey = true;
-        goToBookDropOpen();
-    }
-
-    function hideAllTutorialPages() {
-        const pages = document.querySelectorAll('.fit');
-        pages.forEach(page => page.classList.add('hidden'));
-    }
-
-    function goBack() {
-        if (!bookDropDoorZoomIn.classList.contains('hidden')) {
-            goToBookDropDoorZoomOut();
-        }
-        else if (!bookDropClosed.classList.contains('hidden')) {
-            goToBookDropDoorZoomIn();
-        }
-        else if (!bookDropOpen.classList.contains('hidden') || !bookDropOpenKey.classList.contains('hidden')) {
-            goToBookDropClosed();
-        }
-        else if (!bookDropDoorHandle.classList.contains('hidden')) {
-            goToBookDropDoorZoomIn();
-        }
-
-    }
-
-
-
+// ------ 1. GAME STATE -----
+const state = {
+    hasBdKey: false,
+    bdUnlocked: false,
+    hasFbKey: false
 }
 
+// ----- 2. SELECTORS -----
+const menu = document.getElementById('menu-screen');
+const startButton = document.getElementById('start-button');
+const tutorial = document.getElementById('tutorial');
+const backArrow = document.getElementById('master-back-arrow');
+const allPages = document.querySelectorAll('.fit');
 
 
-// Click functionality for menu
-startButton.addEventListener('click', playTutorial);
+// ----- 3. CORE FUNCTIONS ----
 
-//Clicking on objects
+function showPage(pageId) {
+    allPages.forEach(p => p.classList.add('hidden'));
+    const target = document.getElementById(pageId);
+    if (target) {
+        target.classList.remove('hidden');
+    }
+
+    //fixme when add later rooms after tutorial
+    // Auto-hide back arrow on the very first screen
+    if (pageId === 'bd-main-page') {
+        backArrow.classList.add('hidden');
+    } else {
+        backArrow.classList.remove('hidden');
+    }
+}
+
+// ---- 4. NAVIGATION LOGIC -----
+function goBack() {
+    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+    if (!current) return;
+
+    switch (current.id) {
+        case 'bd-door-page':
+        case 'bd-door-open-page':   showPage('bd-main-page'); break;
+
+        case 'bd-closed-page':
+        case 'bd-door-handle-page': showPage('bd-door-page'); break;
+
+        case 'bd-slot-open-key-page':
+        case 'bd-slot-open-page':   showPage('bd-closed-page'); break;
+
+        case 'bd-cart-page':        showPage('bd-door-open-page'); break;
+        case 'bd-books-page':       showPage('bd-cart-page'); break;
+
+        case 'bd-fb-open-key-page':
+        case 'bd-fb-open-Page':     showPage('bd-books-page'); break;
+    }
+}
+
+// ----- 5. INITIALIZE EVENT LISTENERS -----
+
+function init() {
+    //fixme -- Stephen this is the menu portion for you to do
+    //Menu System
+    startButton.onclick = () => {
+        menu.classList.add('hidden');
+        tutorial.classList.remove('hidden');
+        showPage('bd-main-page');
+    };
+
+    backArrow.onclick = goBack;
+
+    // --- Book Drop (BD) Interactions ---
+
+    // Main -> Door
+    document.getElementById('bd-door-hitbox').onclick = () => showPage('bd-door-page');
+
+    // Door -> Slot or Handle
+    document.getElementById('bd-slot-hitbox').onclick = () => showPage('bd-closed-page');
+    document.getElementById('bd-handle-hitbox').onclick = () => showPage('bd-door-handle-page');
+
+    // Inside the Slot
+    document.getElementById('bd-closed-hitbox').onclick = () => {
+        state.hasBdKey ? showPage('bd-slot-open-page') : showPage('bd-slot-open-key-page');
+    };
+    document.getElementById('bd-key-hitbox').onclick = () => {
+        state.hasBdKey = true;
+        showPage('bd-slot-open-page');
+    };
+
+    // Door Handle & Locking
+    document.getElementById('bd-door-keyhole-hitbox').onclick = () => {
+        if (state.hasBdKey) {
+            state.bdUnlocked = true;
+            alert("Unlocked!"); // Simple feedback
+        }
+    };
+    document.getElementById('bd-door-handle-hitbox').onclick = () => {
+        if (state.bdUnlocked) {
+            showPage('bd-door-open-page');
+        } else {
+            alert("It's locked.");
+        }
+    };
+
+    // Moving further inside
+    document.getElementById('bd-cart-hitbox').onclick = () => showPage('bd-cart-page');
+    document.getElementById('bd-books-hitbox').onclick = () => showPage('bd-books-page');
+
+    // Fish Book (FB)
+    document.getElementById('bd-fb-hitbox').onclick = () => {
+        state.hasFbKey ? showPage('bd-fb-open-Page') : showPage('bd-fb-open-key-page');
+    };
+    document.getElementById('bd-fb-key-hitbox').onclick = () => {
+        state.hasFbKey = true;
+        showPage('bd-fb-open-Page');
+    };
+}
+
+init();
