@@ -7,10 +7,45 @@
 </head>
 <body>
 
+    <!-- Google Font for creepy title -->
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
 
     <div id="menu-screen">
-        <h1>Escape Tribble</h1>
-        <div id="start-button">Play Game</div>
+        <h1 id="menu-title">Escape Tribble</h1>
+        <div class="menu-buttons">
+            <div class="menu-btn" id="start-button">Play Game</div>
+            <div class="menu-btn" id="how-to-play-button">How to Play</div>
+            <div class="menu-btn" id="settings-button">Settings</div>
+            <div class="menu-btn" id="exit-button">Exit</div>
+        </div>
+    </div>
+
+    <!-- How to Play Screen -->
+    <div id="how-to-play-screen" class="hidden fade-screen">
+        <h2>How to Play</h2>
+        <ul>
+            <li>Click on highlighted objects to interact with them</li>
+            <li>Collect items and use them to unlock doors</li>
+            <li>Use the inventory drawer on the left to view collected items</li>
+            <li>Click the back arrow to return to the previous view</li>
+            <li>Click the phone in the starting room for hints if you get stuck</li>
+            <li>Find your way out of the Tribble basement to escape!</li>
+        </ul>
+        <div class="menu-btn" id="htp-back-button">Back</div>
+    </div>
+
+    <!-- Setting Screen -->
+    <div id="settings-screen" class="hidden fade-screen">
+        <h2>Settings</h2>
+        <div class="setting-row">
+            <label for="volume-toggle">Sound</label>
+            <input type="checkbox" id="volume-toggle" checked>
+        </div>
+        <div class="setting-row">
+            <label for="fullscreen-toggle"> Fullscreen</label>
+            <input type="checkbox" id="fullscreen-toggle">
+        </div>
+        <div class="menu-btn" id="settings-back-button">Back</div>
     </div>
 
     <!-- Inventory -->

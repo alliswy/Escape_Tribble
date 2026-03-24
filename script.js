@@ -83,6 +83,8 @@ function init() {
 
         document.getElementById('inventory-drawer').classList.remove('hidden');
     };
+    //How to Play button
+
 
     backArrow.onclick = goBack;
 

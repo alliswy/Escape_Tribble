@@ -4,5 +4,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="openjfx-26_windows-x64_bin-sdk" level="project" />
+    <orderEntry type="library" name="openjfx-26_windows-x64_bin-sdk1" level="project" />
   </component>
 </module>
