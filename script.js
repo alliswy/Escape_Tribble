@@ -13,6 +13,8 @@ const startButton = document.getElementById('start-button');
 const tutorial = document.getElementById('tutorial');
 const backArrow = document.getElementById('master-back-arrow');
 const allPages = document.querySelectorAll('.fit');
+const inventoryTab = document.getElementById('inventory-tab');
+    const inventoryMenu = document.getElementById('inventory-drawer');
 
 
 // ----- 3. CORE FUNCTIONS ----
@@ -56,6 +58,17 @@ function goBack() {
     }
 }
 
+// ----- INVENTORY MENU ----- //
+inventoryTab.onclick = () => {
+    // This slides the drawer in/out
+    inventoryMenu.classList.toggle('drawer-closed');
+
+    // This flips the arrow icon
+    inventoryMenu.classList.toggle('drawer-open');
+};
+
+
+
 // ----- 5. INITIALIZE EVENT LISTENERS -----
 
 function init() {
@@ -65,6 +78,8 @@ function init() {
         menu.classList.add('hidden');
         tutorial.classList.remove('hidden');
         showPage('bd-main-page');
+
+        document.getElementById('inventory-drawer').classList.remove('hidden');
     };
 
     backArrow.onclick = goBack;
@@ -84,6 +99,10 @@ function init() {
     };
     document.getElementById('bd-key-hitbox').onclick = () => {
         state.hasBdKey = true;
+        const keySlot = document.getElementById('inv-bd-key');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
         showPage('bd-slot-open-page');
     };
 
@@ -91,6 +110,10 @@ function init() {
     document.getElementById('bd-door-keyhole-hitbox').onclick = () => {
         if (state.hasBdKey) {
             state.bdUnlocked = true;
+            const keySlot = document.getElementById('inv-bd-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
             alert("Unlocked!"); // fixme feedback
         }
     };
@@ -113,6 +136,10 @@ function init() {
     };
     document.getElementById('bd-fb-key-hitbox').onclick = () => {
         state.hasFbKey = true;
+        const keySlot = document.getElementById('inv-fb-key');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
         showPage('bd-fb-open-Page');
     };
 
@@ -122,6 +149,10 @@ function init() {
     document.getElementById('bd-back-handle-keyhole-hitbox').onclick = () => {
         if (state.hasFbKey) {
             state.bdBackDoorUnlocked = true;
+            const keySlot = document.getElementById('inv-fb-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
             alert("Unlocked!"); // fixme feedback
         }
     };

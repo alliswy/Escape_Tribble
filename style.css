@@ -55,6 +55,117 @@ body {
     border-top-color: rgba(255, 255, 255, 0.8);
 }
 
+/* INVENTORY DRAWER */
+/* --- 1. THE MAIN DRAWER CONTAINER --- */
+#inventory-drawer {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    width: 120px;
+    height: 70vh;
+    /* Changed to White with slight transparency */
+    background: rgba(255, 255, 255, 0.95);
+    /* Darker border to define the shape against the game images */
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 15px 15px 0;
+    z-index: 200;
+
+    transition: transform 0.4s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    /* Added a shadow so the white drawer "pops" off the game screen */
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+}
+
+/* --- 2. THE HIDE STATE --- */
+.drawer-closed {
+    transform: translateX(-120px);
+}
+
+.emoji-icon {
+    font-size: 32px;
+    color: black !important;
+    position: relative;
+    z-index: 10;      /* Forces it on top of the shadow */
+    display: block;
+}
+
+/* --- 3. THE CLICKABLE TAB (The Handle) --- */
+#inventory-tab {
+    position: absolute;
+    right: -35px;
+    top: 20px;
+    width: 35px;
+    height: 45px;
+    background: #fff;       /* Matching white */
+    color: #333;           /* Dark arrow so it's visible on white */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+}
+
+/* --- 4. THE ARROW ROTATION --- */
+#inventory-drawer:not(.drawer-closed) #tab-arrow {
+    display: inline-block;
+    transform: rotate(180deg);
+    transition: transform 0.4s;
+}
+
+/* --- 5. THE ITEM SLOTS --- */
+#inventory-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#inventory-content h3 {
+    color: #666;           /* Grey text for the title */
+    font-size: 16px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.inv-item {
+    width: 55px;
+    height: 55px;
+    background-color: #f0f0f0;
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    margin-bottom: 15px;
+
+    /* Centering logic */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* THE SHADOW FIX: Changed 1 to 0.2 so it's transparent */
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+
+    position: relative; /* This allows the span inside to use z-index */
+    transition: all 0.2s ease;
+}
+
+/* Hover effect: turns slightly darker when you hover over a found item */
+.inv-item:not(.hidden):hover {
+    background: #ffffff;      /* Turns bright white */
+    border-color: #007bff;    /* Adds a blue "active" border */
+    transform: scale(1.05);   /* Makes the box slightly bigger */
+    cursor: pointer;
+}
+
+.inv-item.empty {
+    opacity: 0.3;
+    border-style: dashed;   /* Dashed lines make "empty" slots look like placeholders */
+}
+
 /*centers the items inside the menu*/
 /*fixme*/
 #menu-screen {
@@ -312,3 +423,4 @@ body {
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
 }
+
