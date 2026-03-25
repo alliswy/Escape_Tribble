@@ -2,8 +2,9 @@ let score = 0;
 // ------ 1. GAME STATE -----
 const state = {
     hasBdKey: false,
-    bdUnlocked: false,
     hasFbKey: false,
+    hasPwBook: false,
+    bdUnlocked: false,
     bdBackDoorUnlocked: false
 }
 
@@ -266,6 +267,35 @@ function init() {
             alert("It's locked."); //fixme feedback
         }
     };
+
+    //entering room behind book drop
+    document.getElementById('bd-back-door-open-hitbox').onclick = () => showPage('bd-door-open-page')
+    document.getElementById('bd-back-door-enter-hitbox').onclick = () => showPage('pr-steps-page');
+    document.getElementById('pr-steps-enter-hitbox').onclick = () => showPage('pr-main-page');
+
+    //projector wall image depends on whether the user has the pw book or not
+    document.getElementById('pr-pw-hitbox').onclick = () => {
+        if (state.hasPwBook) {
+            showPage ('pr-pw-main-noBook-page');
+        } else {
+            showPage('pr-pw-main-book-page');
+        }
+    }
+
+    document.getElementById('pr-pw-hb-hitbox').onclick = () => showPage('pr-pw-hole-book-page');
+    document.getElementById('pr-pw-he-hitbox').onclick = () => showPage('pr-pw-hole-noBook-page');
+
+    //collect pw book
+    document.getElementById('pr-pw-hole-book-hitbox').onclick = () => {
+        state.hasPwBook = true;
+        const keySlot = document.getElementById('inv-pw-book')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        // fixme
+        showPage('pr-pw-hole-noBook-page');
+    }
+
 }
 
 init();
