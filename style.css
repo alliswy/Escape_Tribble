@@ -529,3 +529,107 @@ body {
     z-index: 10;
 }
 
+#bd-back-door-open-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bd-back-door-enter-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-steps-enter-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hb-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-he-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hole-book-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hole-noBook-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 42%;
+    width: 14%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
