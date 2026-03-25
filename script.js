@@ -15,8 +15,6 @@ const tutorial = document.getElementById('tutorial');
 const backArrow = document.getElementById('master-back-arrow');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
-    const inventoryMenu = document.getElementById('inventory-drawer');
-
 
 // ----- 3. CORE FUNCTIONS ----
 
@@ -63,11 +61,8 @@ function goBack() {
 
 // ----- INVENTORY MENU ----- //
 inventoryTab.onclick = () => {
-    // This slides the drawer in/out
-    inventoryMenu.classList.toggle('drawer-closed');
-
-    // This flips the arrow icon
-    inventoryMenu.classList.toggle('drawer-open');
+    const panel = document.getElementById('inventory-panel');
+    panel.classList.toggle('inventory-open');
 };
 
 // ---- TYPEWRITER EFFECT ----
