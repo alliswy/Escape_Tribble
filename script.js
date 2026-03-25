@@ -69,12 +69,45 @@ inventoryTab.onclick = () => {
     inventoryMenu.classList.toggle('drawer-open');
 };
 
+// ---- TYPEWRITER EFFECT ----
+function typeWriter(element, text, speed, callback) {
+    let i = 0;
+    element.textContent = '';
+    function type() {
+        if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, speed);
+        } else if (callback) {
+            callback();
+        }
+    }
+    type();
+}
+
+function runMenuTypewriter() {
+    const title = document.getElementById('menu-title');
+    const buttons = document.querySelectorAll('.menu-btn');
+
+    //Type the title first
+    typeWriter(title, 'Escape Tribble', 80, () => {
+        //Then reveal each button one by one with a short delay between
+        let delay = 200;
+        buttons.forEach((btn) => {
+            setTimeout(() => {
+                btn.classList.add('visible');
+            }, delay);
+            delay += 300;
+        });
+    });
+}
 
 
 // ----- 5. INITIALIZE EVENT LISTENERS -----
 
 function init() {
     //Menu System
+    runMenuTypewriter();
     startButton.onclick = () => {
         menu.classList.add('hidden');
         tutorial.classList.remove('hidden');
