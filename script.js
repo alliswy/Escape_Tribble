@@ -112,8 +112,8 @@ function init() {
         menu.classList.add('hidden');
         tutorial.classList.remove('hidden');
         showPage('bd-main-page');
-
         document.getElementById('inventory-drawer').classList.remove('hidden');
+        document.getElementById('hamburger-menu').classList.remove('hidden');
     };
 
     //How to Play button
@@ -159,6 +159,30 @@ function init() {
     //Exit button
     document.getElementById('exit-button').onclick = () => {
         window.close();
+    };
+
+    // ---- IN-GAME HAMBURGER MENU ----
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const hamburgerDropdown = document.getElementById('hamburger-dropdown');
+
+    hamburgerIcon.onclick = () => {
+        hamburgerDropdown.classList.toggle('dropdown-open');
+    };
+
+    //Restart button
+    document.getElementById('restart-btn').onclick = () => {
+        hamburgerDropdown.classList.remove('dropdown-open');
+        location.reload();
+    };
+
+    //Quit to main menu button
+    document.getElementById('quit-btn').onclick = () => {
+        hamburgerDropdown.classList.remove('dropdown-open');
+        tutorial.classList.add('hidden');
+        document.getElementById('inventory-drawer').classList.add('hidden');
+        document.getElementById('hamburger-menu').classList.add('hidden');
+        menu.classList.remove('hidden');
+        runMenuTypewriter();
     };
 
 
