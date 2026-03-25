@@ -113,8 +113,9 @@ function init() {
         menu.classList.add('hidden');
         tutorial.classList.remove('hidden');
         showPage('bd-main-page');
-
         document.getElementById('inventory-drawer').classList.remove('hidden');
+        document.getElementById('hamburger-menu').classList.remove('hidden');
+        document.getElementById('hint-btn').classList.remove('hidden');
     };
 
     //How to Play button
@@ -162,6 +163,38 @@ function init() {
         window.close();
     };
 
+    // ---- IN-GAME HAMBURGER MENU ----
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+    const hamburgerDropdown = document.getElementById('hamburger-dropdown');
+
+    hamburgerIcon.onclick = () => {
+        hamburgerDropdown.classList.toggle('dropdown-open');
+    };
+
+    //Restart button
+    document.getElementById('restart-btn').onclick = () => {
+        hamburgerDropdown.classList.remove('dropdown-open');
+        location.reload();
+    };
+
+    //Quit to main menu button
+    document.getElementById('quit-btn').onclick = () => {
+        hamburgerDropdown.classList.remove('dropdown-open');
+        tutorial.classList.add('hidden');
+        document.getElementById('inventory-drawer').classList.add('hidden');
+        document.getElementById('hamburger-menu').classList.add('hidden');
+        document.getElementById('hint-btn').classList.add('hidden');
+        menu.classList.remove('hidden');
+        runMenuTypewriter();
+    };
+
+    // ---- HINT BUTTON ----
+    const hintBtn = document.getElementById('hint-btn');
+    const hintBox = document.getElementById('hint-box');
+
+    hintBtn.onclick = () => {
+        hintBox.classList.toggle('hint-open');
+    };
 
     backArrow.onclick = goBack;
 
