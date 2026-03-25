@@ -115,18 +115,7 @@ function init() {
         document.getElementById('inventory-drawer').classList.remove('hidden');
         document.getElementById('hamburger-menu').classList.remove('hidden');
         document.getElementById('hint-btn').classList.remove('hidden');
-    };
-
-    //How to Play button
-    document.getElementById('how-to-play-button').onclick = () => {
-        menu.classList.add('hidden');
-        document.getElementById('how-to-play-screen').classList.remove('hidden');
-    };
-
-    //Back button from How to Play
-    document.getElementById('htp-back-button').onclick = () => {
-        document.getElementById('how-to-play-screen').classList.add('hidden');
-        menu.classList.remove('hidden');
+        document.getElementById('hint-box').classList.remove('hidden');
     };
 
     //Settings button
@@ -183,6 +172,7 @@ function init() {
         document.getElementById('inventory-drawer').classList.add('hidden');
         document.getElementById('hamburger-menu').classList.add('hidden');
         document.getElementById('hint-btn').classList.add('hidden');
+        document.getElementById('hint-box').classList.add('hidden');
         menu.classList.remove('hidden');
         runMenuTypewriter();
     };

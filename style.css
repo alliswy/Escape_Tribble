@@ -631,7 +631,7 @@ body {
     width: 260px;
     background: rgba(100, 20, 30, 0.92);
     color: #c9a84c;
-    border: 1px solid rgba(180, 140, 40, 0.5);
+    border: 0px solid rgba(180, 140, 40, 0.5);
     border-radius: 4px;
     font-family: 'Special Elite', cursive;
     font-size: 15px;
@@ -649,4 +649,5 @@ body {
 #hint-box.hint-open {
     max-height: 300px;
     padding: 14px 16px;
+    border-width: 1px;
 }
