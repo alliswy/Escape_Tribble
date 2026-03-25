@@ -56,6 +56,17 @@ function goBack() {
 
         case 'bd-fb-open-key-page':
         case 'bd-fb-open-page':     showPage('bd-books-page'); break;
+
+        case 'pr-steps-page': showPage('bd-back-door-open-page'); break;
+
+        case'pr-main-page': showPage('pr-steps-page'); break;
+
+        case 'pr-pw-main-book-page':
+        case 'pr-pw-main-noBook-page': showPage('pr-main-page'); break;
+
+        case 'pr-pw-hole-book-page': showPage('pr-pw-main-book-page'); break;
+
+        case 'pr-pw-hole-noBook-page': showPage('pr-pw-main-noBook-page'); break;
     }
 }
 
