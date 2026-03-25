@@ -74,7 +74,6 @@ inventoryTab.onclick = () => {
 // ----- 5. INITIALIZE EVENT LISTENERS -----
 
 function init() {
-    //fixme -- Stephen this is the menu portion for you to do
     //Menu System
     startButton.onclick = () => {
         menu.classList.add('hidden');
@@ -83,7 +82,51 @@ function init() {
 
         document.getElementById('inventory-drawer').classList.remove('hidden');
     };
+
     //How to Play button
+    document.getElementById('how-to-play-button').onclick = () => {
+        menu.classList.add('hidden');
+        document.getElementById('how-to-play-screen').classList.remove('hidden');
+    };
+
+    //Back button from How to Play
+    document.getElementById('htp-back-button').onclick = () => {
+        document.getElementById('how-to-play-screen').classList.add('hidden');
+        menu.classList.remove('hidden');
+    };
+
+    //Settings button
+    document.getElementById('settings-button').onclick = () => {
+        menu.classList.add('hidden');
+        document.getElementById('settings-screen').classList.remove('hidden');
+    };
+
+    //Back button from Settings
+    document.getElementById('settings-back-button').onclick = () => {
+        document.getElementById('settings-screen').classList.add('hidden');
+        menu.classList.remove('hidden');
+    };
+
+    //Volume toggle
+    document.getElementById('volume-toggle').onchange = (e) => {
+        //FIXME
+        //placeholder - will connect to audio when sound is added
+        console.log('Sound:', e.target.checked ? 'on' : 'off');
+    };
+
+    //Fullscreen toggle
+    document.getElementById('fullscreen-toggle').onchange = (e) => {
+        if(e.target.checked) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    //Exit button
+    document.getElementById('exit-button').onclick = () => {
+        window.close();
+    };
 
 
     backArrow.onclick = goBack;

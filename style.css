@@ -167,7 +167,6 @@ body {
 }
 
 /*centers the items inside the menu*/
-/*fixme*/
 #menu-screen {
     display: flex;
     flex-direction: column;
