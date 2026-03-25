@@ -602,6 +602,111 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#bd-back-door-open-hitbox {
+    position: absolute;
+    top: 6%;
+    left: 66%;
+    width: 14%;
+    height: 92%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bd-back-door-enter-hitbox {
+    position: absolute;
+    top: 6%;
+    left: 42%;
+    width: 23%;
+    height: 92%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-steps-enter-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hitbox {
+    position: absolute;
+    top: 5%;
+    left: 0%;
+    width: 53%;
+    height: 66%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hb-hitbox {
+    position: absolute;
+    top: 37%;
+    left: 40%;
+    width: 6%;
+    height: 9%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-he-hitbox {
+    position: absolute;
+    top: 42%;
+    left: 31%;
+    width: 7%;
+    height: 11%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hole-book-hitbox {
+    position: absolute;
+    top: 55%;
+    left: 27%;
+    width: 27%;
+    height: 22%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-hole-noBook-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 34%;
+    width: 36%;
+    height: 40%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+
 /* ---- HINT BUTTON ---- */
 #hint-btn {
     position: absolute;
