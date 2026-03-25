@@ -137,12 +137,20 @@ function init() {
         menu.classList.remove('hidden');
     };
 
-    //Volume toggle
-    document.getElementById('volume-toggle').onchange = (e) => {
-        //FIXME
-        //placeholder - will connect to audio when sound is added
-        console.log('Sound:', e.target.checked ? 'on' : 'off');
+    //Music volume slider
+    document.getElementById('music-slider').oninput = (e) => {
+        document.getElementById('music-value').textContent = e.target.value;
+        //FIXME - connect to music audio when added
+        console.log('Music volume:', e.target.value);
     };
+
+    //SFX volume slider
+    document.getElementById('sfx-slider').oninput = (e) => {
+        document.getElementById('sfx-value').textContent = e.target.value;
+        //FIXME - connect to SFX audio when added
+        console.log('SFX volume:', e.target.value);
+    };
+
 
     //Fullscreen toggle
     document.getElementById('fullscreen-toggle').onchange = (e) => {
