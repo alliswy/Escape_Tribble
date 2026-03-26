@@ -1024,10 +1024,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #ki-door-handle-hitbox {
     position: absolute;
-    top: 42%;
-    left: 31%;
+    top: 55%;
+    left: 35%;
     width: 7%;
-    height: 11%;
+    height: 8%;
 
     background-color: transparent;
     border: 2px solid yellow;
@@ -1061,10 +1061,23 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
-#li-door-handle-hitbox {
+#ki-door-open-hitbox {
     position: absolute;
     top: 42%;
     left: 31%;
+    width: 7%;
+    height: 11%;
+
+    background-color: transparent;
+    border: 2px solid yellow;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-door-handle-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 33%;
     width: 7%;
     height: 11%;
 

@@ -2,11 +2,16 @@ let score = 0;
 // ------ 1. GAME STATE -----
 const state = {
     hasBdKey: false,
-    hasFbKey: false,
-    hasPrKey: false,
+    hasPrKey: false, //fixme temp name
+    hasKiKey: false, //fixme temp name
+    hasLiKey: false,
     hasPwBook: false,
+
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
+    kiUnlocked: false,
+    liUnlocked: false,
+
     discoveredBd: false,
     discoveredPr: false
 }
@@ -64,9 +69,11 @@ function goBack() {
         case 'bd-fb-open-key-page':
         case 'bd-fb-open-page':     showPage('bd-books-page'); break;
 
+        case 'bd-back-door-open-page': showPage('bd-door-open-page'); break;
+
         case 'pr-steps-page': showPage('bd-back-door-open-page'); break;
 
-        case'pr-main-page': showPage('pr-steps-page'); break;
+        case 'pr-main-page': showPage('pr-steps-page'); break;
 
         case 'pr-wr-main-page':
         case 'pr-pw-main-book-page':
@@ -356,11 +363,11 @@ function init() {
 
     // Fish Book (FB)
     document.getElementById('bd-fb-hitbox').onclick = () => {
-        state.hasFbKey ? showPage('bd-fb-open-page') : showPage('bd-fb-open-key-page');
+        state.hasPrKey ? showPage('bd-fb-open-page') : showPage('bd-fb-open-key-page');
     };
     document.getElementById('bd-fb-key-hitbox').onclick = () => {
-        state.hasFbKey = true;
-        const keySlot = document.getElementById('inv-fb-key');
+        state.hasPrKey = true;
+        const keySlot = document.getElementById('inv-pr-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
@@ -371,9 +378,9 @@ function init() {
     document.getElementById('bd-back-door-hitbox').onclick = () => showPage('bd-back-door-handle-page');
 
     document.getElementById('bd-back-handle-keyhole-hitbox').onclick = () => {
-        if (state.hasFbKey) {
+        if (state.hasPrKey) {
             state.bdBackDoorUnlocked = true;
-            const keySlot = document.getElementById('inv-fb-key');
+            const keySlot = document.getElementById('inv-pr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
@@ -435,6 +442,41 @@ function init() {
     document.getElementById('wire-popup-close').onclick = () => {
         document.getElementById('wire-solved-popup').classList.add('hidden');
     };
+
+
+    //------ KITCHEN SECTION ------
+
+    //handle and locking
+    document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('ki-door-handle-page');
+
+    //fixme - made pr book key for kitchen (potentially change)
+    document.getElementById('ki-handle-keyhole-hitbox').onclick = () => {
+        if (state.hasKiKey) {
+            state.kiUnlocked = true;
+            const keySlot = document.getElementById('inv-ki-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            alert("Unlocked!"); // fixme feedback
+        }
+    };
+    document.getElementById('ki-door-handle-handle-hitbox').onclick = () => {
+        if (state.kiUnlocked) {
+            showPage('ki-door-open-page');
+        } else {
+            alert("It's locked."); //fixme feedback
+        }
+    };
+
+    //document.getElementById('ki-door-open-hitbox').onclick = () => showPage('') fixme
+
+
+
+    // ------ LIBRARY SECTION ------
+
+    //door, handle, and locking
+    document.getElementById('li-door-handle-hitbox').onclick = () => showPage('li-door-handle-page');
+
 }
 
 // ---- MAP SYSTEM ----
