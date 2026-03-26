@@ -16,6 +16,9 @@ const menu = document.getElementById('menu-screen');
 const startButton = document.getElementById('start-button');
 const tutorial = document.getElementById('tutorial');
 const backArrow = document.getElementById('master-back-arrow');
+const forwardArrow = document.getElementById('master-forward-arrow');
+const rightArrow = document.getElementById('master-right-arrow');
+const leftArrow = document.getElementById('master-left-arrow');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
 
@@ -28,12 +31,12 @@ function showPage(pageId) {
         target.classList.remove('hidden');
     }
 
-    //fixme when add later rooms after tutorial
-    // Auto-hide back arrow on the very first screen
+    //fixme add switch for which pages will have which arrows
     if (pageId === 'bd-main-page') {
-        backArrow.classList.add('hidden');
-    } else {
         backArrow.classList.remove('hidden');
+        forwardArrow.classList.remove('hidden');
+        rightArrow.classList.remove('hidden');
+        leftArrow.classList.remove('hidden');
     }
     updateMap(pageId);
 }
@@ -74,6 +77,64 @@ function goBack() {
 
         case 'pr-wr-wires-page': showPage('pr-wr-main-page'); break;
         case 'pr-wr-box-page': showPage('pr-wr-wires-page'); break;
+
+        //main hall right backward progression
+        case 'mh-cend-right-endc-kc-page': showPage('mh-li-right-endc-page'); break;
+        case 'mh-li-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
+        case 'mh-bd-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
+        case 'mh-trash-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
+        case 'mh-bh-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
+        case 'mh-hall-right-endc-page':   showPage('mh-sl-right-endc-page'); break;
+
+        //main hall left backward progression
+        case 'mh-sl-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
+        case 'mh-hall-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
+        case 'mh-bh-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
+        case 'mh-bd-left-endc-page':   showPage('mh-li-left-endc-page'); break;
+        case 'mh-li-left-endc-page':   showPage('mh-cend-left-endc-page'); break;
+    }
+}
+
+//fixme finish logic
+function goForward() {
+    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+    if (!current) return;
+
+    switch (current.id) {
+        //main hall right progression
+        case 'mh-sl-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
+        case 'mh-hall-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
+        case 'mh-bh-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
+        case 'mh-trash-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
+        case 'mh-bd-right-endc-page':   showPage('mh-li-right-endc-page'); break;
+        case 'mh-li-right-endc-page':   showPage('mh-cend-right-endc-kc-page'); break;
+
+        //main hall left progression
+        case 'mh-cend-left-endc-page':   showPage('mh-li-left-endc-page'); break;
+        case 'mh-li-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
+        case 'mh-bd-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
+        case 'mh-bh-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
+        case 'mh-hall-left-endc-page':   showPage('mh-sl-left-endc-page'); break;
+    }
+}
+
+//fixme finish logic
+function goRight() {
+    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+    if (!current) return;
+
+    switch (current.id) {
+        case 'bd-main-page': showPage('mh-bd-right-endc-page'); break;
+    }
+}
+
+//fixme finish logic
+function goLeft() {
+    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+    if (!current) return;
+
+    switch (current.id) {
+        case 'bd-main-page': showPage('mh-bd-left-endc-page'); break;
     }
 }
 
@@ -220,6 +281,9 @@ function init() {
     };
 
     backArrow.onclick = goBack;
+    forwardArrow.onclick = goForward;
+    rightArrow.onclick = goRight;
+    leftArrow.onclick= goLeft;
 
     // --- Book Drop (BD) Interactions ---
 

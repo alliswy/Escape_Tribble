@@ -55,6 +55,60 @@ body {
     border-top-color: rgba(255, 255, 255, 0.8);
 }
 
+.forward-arrow {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 40px solid rgba(255, 255, 255, 0.4); /* Points it UP */
+    cursor: pointer;
+    z-index: 100; /* High number to stay on top */
+}
+
+.forward-arrow:hover {
+    border-bottom-color: rgba(255, 255, 255, 0.8);
+}
+
+.right-arrow {
+    position: absolute;
+    bottom: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-bottom: 30px solid transparent;
+    border-left: 40px solid rgba(255, 255, 255, 0.4); /* points RIGHT */
+    cursor: pointer;
+    z-index: 100; /* High number to stay on top */
+}
+
+.right-arrow:hover {
+    border-left-color: rgba(255, 255, 255, 0.8);
+}
+
+.left-arrow {
+    position: absolute;
+    bottom: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-bottom: 30px solid transparent;
+    border-right: 40px solid rgba(255, 255, 255, 0.4); /* Points LEFT */
+    cursor: pointer;
+    z-index: 100; /* High number to stay on top */
+}
+
+.left-arrow:hover {
+    border-right-color: rgba(255, 255, 255, 0.8);
+}
+
 /* INVENTORY DRAWER */
 #inventory-drawer {
     position: absolute;
