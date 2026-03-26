@@ -449,7 +449,7 @@ function init() {
     document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('ki-door-handle-page');
 
     //fixme - made pr book key for kitchen (potentially change)
-    document.getElementById('ki-handle-keyhole-hitbox').onclick = () => {
+    document.getElementById('ki-door-handle-keyhole-hitbox').onclick = () => {
         if (state.hasKiKey) {
             state.kiUnlocked = true;
             const keySlot = document.getElementById('inv-ki-key');
@@ -475,6 +475,29 @@ function init() {
 
     //door, handle, and locking
     document.getElementById('li-door-handle-hitbox').onclick = () => showPage('li-door-handle-page');
+
+
+
+    // ------ INVENTORY INSPECTION -----
+
+    const bookItem = document.getElementById("inv-pw-book");
+    const bookOverlay = document.getElementById("pw-book-overlay");
+    const closeBtn = document.getElementById("book-close-btn");
+
+    console.log({
+        bookItem,
+        bookOverlay,
+        closeBtn
+    });
+// Open overlay when clicking inventory item
+    bookItem.addEventListener("click", () => {
+        bookOverlay.classList.remove("hidden");
+    });
+
+// Close overlay when clicking X
+    closeBtn.addEventListener("click", () => {
+        bookOverlay.classList.add("hidden");
+    });
 
 }
 

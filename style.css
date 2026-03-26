@@ -188,7 +188,8 @@ body {
 
 .emoji-icon {
     font-size: 22px;
-    display: block;
+    display: inline-block;
+    pointer-events: none !important;
 }
 
 .inv-label {
@@ -1111,4 +1112,56 @@ input[type="range"]::-webkit-slider-thumb {
     border: 2px solid yellow;
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
+}
+
+
+/* ----- INVENTORY INSPECTION ---- */
+/* Container holds the book and hitbox together */
+
+/* Overlay wrapper */
+#pw-book-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Blurred background layer */
+.overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 1;
+}
+
+/* Book image container */
+.book-container {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Book image */
+#inv-pw-book-img {
+    max-width: 70vw;
+    max-height: 80vh;
+    border-radius: 10px;
+}
+
+/* Close button */
+#book-close-btn {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px 10px;
 }
