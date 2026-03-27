@@ -30,141 +30,282 @@ const inventoryTab = document.getElementById('inventory-tab');
 // ----- 3. CORE FUNCTIONS ----
 
 function showPage(pageId) {
+    // Switch the page visibility
     allPages.forEach(p => p.classList.add('hidden'));
     const target = document.getElementById(pageId);
     if (target) {
         target.classList.remove('hidden');
     }
 
-    //fixme add switch for which pages will have which arrows
-    if (pageId === 'bd-main-page') {
-        backArrow.classList.remove('hidden');
-        forwardArrow.classList.remove('hidden');
-        rightArrow.classList.remove('hidden');
-        leftArrow.classList.remove('hidden');
-    }
+    // Toggle Arrow Visibility based on whether a destination exists
+    backArrow.classList.toggle('hidden', !getDestination('back', pageId));
+    forwardArrow.classList.toggle('hidden', !getDestination('forward', pageId));
+    leftArrow.classList.toggle('hidden', !getDestination('left', pageId));
+    rightArrow.classList.toggle('hidden', !getDestination('right', pageId));
+
     updateMap(pageId);
 }
 
+// Helper to dry up the code
+function toggleArrow(arrowElement, shouldShow) {
+    if (!arrowElement) return;
+    arrowElement.classList.toggle('hidden', !shouldShow);
+}
+
+
+
 // ---- 4. NAVIGATION LOGIC -----
-function goBack() {
-    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-    if (!current) return;
+function getDestination(direction, pageId) {
+    if (!pageId) return null;
 
-    switch (current.id) {
-        //book drop
-        case 'bd-door-page':
-        case 'bd-door-open-page':   showPage('bd-main-page'); break;
-        case 'bd-slot-closed-page':
-        case 'bd-door-handle-page': showPage('bd-door-page'); break;
-        case 'bd-slot-open-key-page':
-        case 'bd-slot-open-page':   showPage('bd-slot-closed-page'); break;
-        case 'bd-cart-page':
-        case 'bd-back-door-handle-page':    showPage('bd-door-open-page'); break;
-        case 'bd-books-page':       showPage('bd-cart-page'); break;
-        case 'bd-fb-open-key-page':
-        case 'bd-fb-open-page':     showPage('bd-books-page'); break;
-        case 'bd-back-door-open-page': showPage('bd-door-open-page'); break;
+    switch (direction) {
+        case 'back':
+            switch (pageId) {
+                // Book Drop
+                case 'bd-door-page':
+                case 'bd-door-open-page':   return 'bd-main-page';
+                case 'bd-slot-closed-page':
+                case 'bd-door-handle-page': return 'bd-door-page';
+                case 'bd-slot-open-key-page':
+                case 'bd-slot-open-page':   return 'bd-slot-closed-page';
+                case 'bd-cart-page':
+                case 'bd-back-door-handle-page': return 'bd-door-open-page';
+                case 'bd-books-page':       return 'bd-cart-page';
+                case 'bd-fb-open-key-page':
+                case 'bd-fb-open-page':     return 'bd-books-page';
+                case 'bd-back-door-open-page': return 'bd-door-open-page';
 
-        //Projector room
-        case 'pr-steps-page': showPage('bd-back-door-open-page'); break;
-        case 'pr-main-page': showPage('pr-steps-page'); break;
-        case 'pr-wr-main-page':
-        case 'pr-pw-main-book-page':
-        case 'pr-pw-main-noBook-page': showPage('pr-main-page'); break;
-        case 'pr-pw-hole-book-page': showPage('pr-pw-main-book-page'); break;
-        case 'pr-pw-hole-noBook-page': showPage('pr-pw-main-noBook-page'); break;
-        case 'pr-wr-wires-page': showPage('pr-wr-main-page'); break;
-        case 'pr-wr-box-page': showPage('pr-wr-wires-page'); break;
+                // Projector Room
+                case 'pr-steps-page':       return 'bd-back-door-open-page';
+                case 'pr-main-page':        return 'pr-steps-page';
+                case 'pr-wr-main-page':
+                case 'pr-pw-main-book-page':
+                case 'pr-pw-main-noBook-page': return 'pr-main-page';
+                case 'pr-pw-hole-book-page':   return 'pr-pw-main-book-page';
+                case 'pr-pw-hole-noBook-page': return 'pr-pw-main-noBook-page';
+                case 'pr-wr-wires-page':       return 'pr-wr-main-page';
+                case 'pr-wr-box-page':         return 'pr-wr-wires-page';
 
-        //main hall right backward progression
-        case 'mh-cend-right-endc-kc-page': showPage('mh-li-right-endc-page'); break;
-        case 'mh-li-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
-        case 'mh-bd-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
-        case 'mh-trash-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
-        case 'mh-bh-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
-        case 'mh-hall-right-endc-page':   showPage('mh-sl-right-endc-page'); break;
+                // Main Hall Right Backward
+                case 'mh-cend-right-endc-kc-page': return 'mh-li-right-endc-page';
+                case 'mh-li-right-endc-page':      return 'mh-bd-right-endc-page';
+                case 'mh-bd-right-endc-page':      return 'mh-trash-right-endc-page';
+                case 'mh-trash-right-endc-page':   return 'mh-bh-right-endc-page';
+                case 'mh-bh-right-endc-page':      return 'mh-hall-right-endc-page';
+                case 'mh-hall-right-endc-page':    return 'mh-sl-right-endc-page';
 
-        //main hall left backward progression
-        case 'mh-sl-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
-        case 'mh-hall-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
-        case 'mh-bh-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
-        case 'mh-bd-left-endc-page':   showPage('mh-li-left-endc-page'); break;
-        case 'mh-li-left-endc-page':   showPage('mh-cend-left-endc-page'); break;
+                // Main Hall Left Backward
+                case 'mh-sl-left-endc-page':     return 'mh-hall-left-endc-page';
+                case 'mh-hall-left-endc-page':   return 'mh-bh-left-endc-page';
+                case 'mh-bh-left-endc-page':     return 'mh-bd-left-endc-page';
+                case 'mh-bd-left-endc-page':     return 'mh-li-left-endc-page';
+                case 'mh-li-left-endc-page':     return 'mh-cend-left-endc-page';
 
-        //kitchen
-        case 'ki-door-handle-page': showPage('ki-door-closed-page'); break;
+                // Back Hall
+                case 'bh-2-page': return 'bh-entrance-page';
+                case 'bh-3-page': return 'bh-2-page';
+
+                // Kitchen
+                case 'ki-door-handle-page': return 'ki-door-closed-page';
+                default: return null;
+            }
+
+        case 'forward':
+            switch (pageId) {
+                // Main Hall Right
+                case 'mh-sl-right-endc-page':    return 'mh-hall-right-endc-page';
+                case 'mh-hall-right-endc-page':  return 'mh-bh-right-endc-page';
+                case 'mh-bh-right-endc-page':    return 'mh-trash-right-endc-page';
+                case 'mh-trash-right-endc-page': return 'mh-bd-right-endc-page';
+                case 'mh-bd-right-endc-page':    return 'mh-li-right-endc-page';
+                case 'mh-li-right-endc-page':    return 'mh-cend-right-endc-kc-page';
+
+                // Main Hall Left
+                case 'mh-cend-left-endc-page':   return 'mh-li-left-endc-page';
+                case 'mh-li-left-endc-page':     return 'mh-bd-left-endc-page';
+                case 'mh-bd-left-endc-page':     return 'mh-bh-left-endc-page';
+                case 'mh-bh-left-endc-page':     return 'mh-hall-left-endc-page';
+                case 'mh-hall-left-endc-page':   return 'mh-sl-left-endc-page';
+
+                // Back Hall
+                case 'bh-entrance-page': return 'bh-2-page';
+                case 'bh-2-page':        return 'bh-3-page';
+                default: return null;
+            }
+
+        case 'right':
+            switch (pageId) {
+                case 'bd-main-page':               return 'mh-bd-right-endc-page';
+                case 'mh-bd-left-endc-page':       return 'bd-main-page';
+                case 'mh-sl-left-endc-page':       return 'mh-sld-page';
+                case 'mh-sld-page':                return 'mh-sl-right-endc-page';
+                case 'mh-cend-right-endc-kc-page': return 'ki-door-closed-page';
+                case 'ki-door-closed-page':        return 'mh-cend-left-endc-page';
+                case 'mh-bh-right-endc-page':      return 'bh-entrance-page';
+                case 'bh-entrance-page':           return 'mh-bh-left-endc-page';
+                case 'mh-li-left-endc-page':       return 'li-door-closed-page';
+                case 'li-door-closed-page':        return 'mh-li-right-endc-page';
+                default: return null;
+            }
+
+        case 'left':
+            switch (pageId) {
+                case 'bd-main-page':               return 'mh-bd-left-endc-page';
+                case 'mh-bd-right-endc-page':      return 'bd-main-page';
+                case 'mh-sl-right-endc-page':      return 'mh-sld-page';
+                case 'mh-sld-page':                return 'mh-sl-left-endc-page';
+                case 'mh-cend-left-endc-page':     return 'ki-door-closed-page';
+                case 'ki-door-closed-page':        return 'mh-cend-right-endc-kc-page';
+                case 'mh-bh-left-endc-page':       return 'bh-entrance-page';
+                case 'bh-entrance-page':           return 'mh-bh-right-endc-page';
+                case 'mh-li-right-endc-page':      return 'li-door-closed-page';
+                case 'li-door-closed-page':        return 'mh-li-left-endc-page';
+                default: return null;
+            }
+
+        default:
+            return null;
     }
 }
 
-//fixme finish logic
-function goForward() {
+function goBack()    { move('back'); }
+function goForward() { move('forward'); }
+function goLeft()    { move('left'); }
+function goRight()   { move('right'); }
+
+function move(dir) {
     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-    if (!current) return;
-
-    switch (current.id) {
-        //main hall right progression
-        case 'mh-sl-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
-        case 'mh-hall-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
-        case 'mh-bh-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
-        case 'mh-trash-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
-        case 'mh-bd-right-endc-page':   showPage('mh-li-right-endc-page'); break;
-        case 'mh-li-right-endc-page':   showPage('mh-cend-right-endc-kc-page'); break;
-
-        //main hall left progression
-        case 'mh-cend-left-endc-page':   showPage('mh-li-left-endc-page'); break;
-        case 'mh-li-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
-        case 'mh-bd-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
-        case 'mh-bh-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
-        case 'mh-hall-left-endc-page':   showPage('mh-sl-left-endc-page'); break;
-
-        //back hall pages
-        case 'bh-entrance-page': showPage('bh-2-page'); break;
-        case 'bh-2-page': showPage('bh-3-page'); break;
-    }
+    const dest = getDestination(dir, current?.id);
+    if (dest) showPage(dest);
 }
 
-//fixme finish logic
-function goRight() {
-    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-    if (!current) return;
-
-    switch (current.id) {
-        case 'bd-main-page': showPage('mh-bd-right-endc-page'); break;
-
-        //main hall pages
-        case 'mh-bd-left-endc-page': showPage('bd-main-page'); break;
-        case 'mh-sl-left-endc-page': showPage('mh-sld-page'); break;
-        case 'mh-sld-page': showPage('mh-sl-right-endc-page'); break;
-        case 'mh-cend-right-endc-kc-page': showPage('ki-door-closed-page'); break;
-        case 'ki-door-closed-page': showPage('mh-cend-left-endc-page'); break;
-        case 'mh-bh-right-endc-page': showPage('bh-entrance-page'); break;
-        case 'bh-entrance-page': showPage('mh-bh-left-endc-page'); break;
-        case 'mh-li-left-endc-page': showPage('li-door-closed-page'); break;
-        case 'li-door-closed-page': showPage('mh-li-right-endc-page'); break;
-    }
+function canGo(direction, pageId) {
+    return getDestination(direction, pageId) !== null;
 }
 
-//fixme finish logic
-function goLeft() {
-    const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-    if (!current) return;
 
-    switch (current.id) {
-        case 'bd-main-page': showPage('mh-bd-left-endc-page'); break;
-
-        //main hall pages
-        case 'mh-bd-right-endc-page': showPage('bd-main-page'); break;
-        case 'mh-sl-right-endc-page': showPage('mh-sld-page'); break;
-        case 'mh-sld-page': showPage('mh-sl-left-endc-page'); break;
-        case 'mh-cend-left-endc-page': showPage('ki-door-closed-page'); break;
-        case 'ki-door-closed-page': showPage('mh-cend-right-endc-kc-page'); break;
-        case 'mh-bh-left-endc-page': showPage('bh-entrance-page'); break;
-        case 'bh-entrance-page': showPage('mh-bh-right-endc-page'); break;
-        case 'mh-li-right-endc-page': showPage('li-door-closed-page'); break;
-        case 'li-door-closed-page': showPage('mh-li-left-endc-page'); break;
-    }
-}
+// function goBack() {
+//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+//     if (!current) return;
+//
+//     switch (current.id) {
+//         //book drop
+//         case 'bd-door-page':
+//         case 'bd-door-open-page':   showPage('bd-main-page'); break;
+//         case 'bd-slot-closed-page':
+//         case 'bd-door-handle-page': showPage('bd-door-page'); break;
+//         case 'bd-slot-open-key-page':
+//         case 'bd-slot-open-page':   showPage('bd-slot-closed-page'); break;
+//         case 'bd-cart-page':
+//         case 'bd-back-door-handle-page':    showPage('bd-door-open-page'); break;
+//         case 'bd-books-page':       showPage('bd-cart-page'); break;
+//         case 'bd-fb-open-key-page':
+//         case 'bd-fb-open-page':     showPage('bd-books-page'); break;
+//         case 'bd-back-door-open-page': showPage('bd-door-open-page'); break;
+//
+//         //Projector room
+//         case 'pr-steps-page': showPage('bd-back-door-open-page'); break;
+//         case 'pr-main-page': showPage('pr-steps-page'); break;
+//         case 'pr-wr-main-page':
+//         case 'pr-pw-main-book-page':
+//         case 'pr-pw-main-noBook-page': showPage('pr-main-page'); break;
+//         case 'pr-pw-hole-book-page': showPage('pr-pw-main-book-page'); break;
+//         case 'pr-pw-hole-noBook-page': showPage('pr-pw-main-noBook-page'); break;
+//         case 'pr-wr-wires-page': showPage('pr-wr-main-page'); break;
+//         case 'pr-wr-box-page': showPage('pr-wr-wires-page'); break;
+//
+//         //main hall right backward progression
+//         case 'mh-cend-right-endc-kc-page': showPage('mh-li-right-endc-page'); break;
+//         case 'mh-li-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
+//         case 'mh-bd-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
+//         case 'mh-trash-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
+//         case 'mh-bh-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
+//         case 'mh-hall-right-endc-page':   showPage('mh-sl-right-endc-page'); break;
+//
+//         //main hall left backward progression
+//         case 'mh-sl-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
+//         case 'mh-hall-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
+//         case 'mh-bh-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
+//         case 'mh-bd-left-endc-page':   showPage('mh-li-left-endc-page'); break;
+//         case 'mh-li-left-endc-page':   showPage('mh-cend-left-endc-page'); break;
+//
+//         //back hall
+//         case 'bh-2-page': showPage('bh-entrance-page'); break;
+//         case 'bh-3-page': showPage('bh-2-page'); break;
+//
+//         //kitchen
+//         case 'ki-door-handle-page': showPage('ki-door-closed-page'); break;
+//     }
+// }
+//
+// //fixme finish logic
+// function goForward() {
+//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+//     if (!current) return;
+//
+//     switch (current.id) {
+//         //main hall right progression
+//         case 'mh-sl-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
+//         case 'mh-hall-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
+//         case 'mh-bh-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
+//         case 'mh-trash-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
+//         case 'mh-bd-right-endc-page':   showPage('mh-li-right-endc-page'); break;
+//         case 'mh-li-right-endc-page':   showPage('mh-cend-right-endc-kc-page'); break;
+//
+//         //main hall left progression
+//         case 'mh-cend-left-endc-page':   showPage('mh-li-left-endc-page'); break;
+//         case 'mh-li-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
+//         case 'mh-bd-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
+//         case 'mh-bh-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
+//         case 'mh-hall-left-endc-page':   showPage('mh-sl-left-endc-page'); break;
+//
+//         //back hall pages
+//         case 'bh-entrance-page': showPage('bh-2-page'); break;
+//         case 'bh-2-page': showPage('bh-3-page'); break;
+//     }
+// }
+//
+// //fixme finish logic
+// function goRight() {
+//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+//     if (!current) return;
+//
+//     switch (current.id) {
+//         case 'bd-main-page': showPage('mh-bd-right-endc-page'); break;
+//
+//         //main hall pages
+//         case 'mh-bd-left-endc-page': showPage('bd-main-page'); break;
+//         case 'mh-sl-left-endc-page': showPage('mh-sld-page'); break;
+//         case 'mh-sld-page': showPage('mh-sl-right-endc-page'); break;
+//         case 'mh-cend-right-endc-kc-page': showPage('ki-door-closed-page'); break;
+//         case 'ki-door-closed-page': showPage('mh-cend-left-endc-page'); break;
+//         case 'mh-bh-right-endc-page': showPage('bh-entrance-page'); break;
+//         case 'bh-entrance-page': showPage('mh-bh-left-endc-page'); break;
+//         case 'mh-li-left-endc-page': showPage('li-door-closed-page'); break;
+//         case 'li-door-closed-page': showPage('mh-li-right-endc-page'); break;
+//     }
+// }
+//
+// //fixme finish logic
+// function goLeft() {
+//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
+//     if (!current) return;
+//
+//     switch (current.id) {
+//         case 'bd-main-page': showPage('mh-bd-left-endc-page'); break;
+//
+//         //main hall pages
+//         case 'mh-bd-right-endc-page': showPage('bd-main-page'); break;
+//         case 'mh-sl-right-endc-page': showPage('mh-sld-page'); break;
+//         case 'mh-sld-page': showPage('mh-sl-left-endc-page'); break;
+//         case 'mh-cend-left-endc-page': showPage('ki-door-closed-page'); break;
+//         case 'ki-door-closed-page': showPage('mh-cend-right-endc-kc-page'); break;
+//         case 'mh-bh-left-endc-page': showPage('bh-entrance-page'); break;
+//         case 'bh-entrance-page': showPage('mh-bh-right-endc-page'); break;
+//         case 'mh-li-right-endc-page': showPage('li-door-closed-page'); break;
+//         case 'li-door-closed-page': showPage('mh-li-left-endc-page'); break;
+//     }
+// }
 
 // ----- INVENTORY MENU ----- //
 inventoryTab.onclick = () => {
