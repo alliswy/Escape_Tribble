@@ -1205,9 +1205,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-door-handle-keyhole-hitbox {
     position: absolute;
-    top: 42%;
-    left: 31%;
-    width: 7%;
+    top: 24%;
+    left: 40%;
+    width: 8%;
     height: 11%;
 
     background-color: transparent;
@@ -1218,9 +1218,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-door-handle-handle-hitbox {
     position: absolute;
-    top: 42%;
-    left: 31%;
-    width: 7%;
+    top: 50%;
+    left: 39%;
+    width: 26%;
     height: 11%;
 
     background-color: transparent;
