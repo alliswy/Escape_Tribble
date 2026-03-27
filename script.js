@@ -70,7 +70,7 @@ const roomLeads = {
     'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'ki-door-closed-page' },
     'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'li-door-closed-page' },
     'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'bd-main-page' },
-    'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page' },
+    'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page'},
     'mh-hall-left-endc-page':   { back: 'mh-bh-left-endc-page', forward: 'mh-sl-left-endc-page' },
     'mh-sl-left-endc-page':     { back: 'mh-hall-left-endc-page', right: 'mh-sld-page' },
 
@@ -78,7 +78,7 @@ const roomLeads = {
     'bh-entrance-page':       { back: 'mh-bh-right-endc-page', forward: 'bh-2-page', left: 'mh-bh-right-endc-page', right: 'mh-bh-left-endc-page' },
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page' },
-    'ki-door-closed-page':    { left: 'mh-cend-left-endc-page', right: 'mh-cend-right-endc-kc-page' },
+    'ki-door-closed-page':    { left: 'mh-cend-left-endc-page', right: 'mh-cend-left-endc-page' },
     'ki-door-handle-page':    { back: 'ki-door-closed-page' },
     'li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'li-door-handle-page':    { back: 'li-door-closed-page' },
@@ -329,8 +329,6 @@ function init() {
 
     // ---- How to Play -----
     //how to play button
-    let tutorialAborted = false;
-
     document.getElementById('how-to-play-button').onclick = async (e) => {
         e.stopPropagation();
         let tutorialAborted = false; // Track if we hit exit
@@ -363,8 +361,8 @@ function init() {
         document.getElementById('inv-pw-book').classList.remove('hidden');
 
         await spawnThemedBox("<- click on objects in the inventory to inspect them", "notification-invInspection");
-        document.getElementById('inventory-drawer').classList.add('hidden');
         panel.classList.toggle('inventory-open')
+        document.getElementById('inv-pw-book').classList.add('hidden');
 
         await spawnThemedBox("Good luck escaping!", "notification-bottom");
         if (tutorialAborted) return; // Stop if they hit exit during box 3
