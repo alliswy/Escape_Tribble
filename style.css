@@ -142,7 +142,7 @@ body {
     /* Force ignore vertical centering */
     top: auto !important;
 
-    width: 60%;
+    /*width: 60%;*/
     min-width: 320px;
     max-width: 800px;
 
@@ -154,14 +154,51 @@ body {
 .notification-arrow {
     position: fixed !important;
     bottom: 40% !important;    /* Distance from the floor */
-    left: 20% !important;      /* Horizontal center */
+    left: 17% !important;      /* Horizontal center */
     transform: translateX(-50%) !important;
 
     /* Force ignore vertical centering */
     top: auto !important;
 
-    width: 60%;
-    min-width: 40px;
+    /*width: 30%;*/
+    min-width: 320px;
+    max-width: 800px;
+
+    /* Make sure text looks good */
+    text-align: center;
+    pointer-events: auto; /* Allow clicking if you want to manually close later */
+}
+
+/* FIXME there is a bug that if you minimize the screen the notification locations don't adjust correctly*/
+.notification-inventory {
+    position: fixed !important;
+    bottom: 90% !important;    /* Distance from the floor */
+    left: 23% !important;      /* Horizontal center */
+    transform: translateX(-50%) !important;
+
+    /* Force ignore vertical centering */
+    top: auto !important;
+
+    /*width: 22%;*/
+    min-width: 320px;
+    max-width: 800px;
+
+    /* Make sure text looks good */
+    text-align: center;
+    pointer-events: auto; /* Allow clicking if you want to manually close later */
+}
+
+.notification-invInspection {
+    position: fixed !important;
+    bottom: 85% !important;    /* Distance from the floor */
+    left: 25% !important;      /* Horizontal center */
+    transform: translateX(-50%) !important;
+
+    /* Force ignore vertical centering */
+    top: auto !important;
+
+    /*width: 25%;*/
+    min-width: 320px;
     max-width: 800px;
 
     /* Make sure text looks good */
