@@ -119,6 +119,99 @@ body {
     border-right-color: rgba(255, 255, 255, 0.8);
 }
 
+/* --- POPUP MESSAGES --- */
+/* Bottom Popup */
+.notification-bottom {
+    position: fixed !important;
+    bottom: 30px !important;    /* Distance from the floor */
+    left: 50% !important;      /* Horizontal center */
+    transform: translateX(-50%) !important;
+
+    /* Force ignore vertical centering */
+    top: auto !important;
+
+    width: 60%;
+    min-width: 320px;
+    max-width: 800px;
+
+    /* Make sure text looks good */
+    text-align: center;
+    pointer-events: auto; /* Allow clicking if you want to manually close later */
+}
+
+/* Ensure the text inside the themed box looks right */
+.box-text-content {
+    margin: 0;
+    padding: 5px 0;
+    font-size: 22px;
+    text-align: center;
+    color: #c9a84c;
+    font-family: serif;
+}
+
+/* The Core Theme: Burgundy background, Gold border */
+.theme-burgundy-gold {
+    background: rgba(100, 20, 30, 0.95);
+    border: 2px solid #c9a84c;
+    color: #c9a84c;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Optional: A hover effect class for interactive boxes */
+.theme-clickable:hover {
+    background: rgba(130, 30, 40, 0.95) !important;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+/* A helper for the "Close" button within any themed box */
+.theme-close-btn {
+    color: #c9a84c;
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.click-popup {
+    position: absolute;
+    z-index: 2000;
+    width: max-content;
+    max-width: 80vw;
+    padding: 15px 25px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    background: rgba(100, 20, 30, 0.95);
+    border: 2px solid #c9a84c;
+    color: #c9a84c;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+
+    /* Center it horizontally on the mouse click */
+    transform: translateX(-50%);
+    pointer-events: auto;
+    user-select: none;
+    transition: opacity 0.3s ease;
+    animation: popup-fade 0.2s ease-out forwards;
+}
+
+@keyframes popup-fade {
+    /* We MUST keep translateX(-50%) in both steps or it breaks centering */
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 /* INVENTORY DRAWER */
 #inventory-drawer {
     position: absolute;

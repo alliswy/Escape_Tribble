@@ -43,6 +43,8 @@ function showPage(pageId) {
     leftArrow.classList.toggle('hidden', !getDestination('left', pageId));
     rightArrow.classList.toggle('hidden', !getDestination('right', pageId));
 
+    if (pageId === 'bd-main-page') {spawnThemedBox("TEST test test test test testtttttttttttttttttttttttttttttttttttttttttttttttt", "notification-bottom")} //FIXME -- TESTING
+
     updateMap(pageId);
 }
 
@@ -183,129 +185,88 @@ function canGo(direction, pageId) {
     return getDestination(direction, pageId) !== null;
 }
 
+// ----- TEXTBOX NOTIFICATIONS ----
+let activePopup = null;
 
-// function goBack() {
-//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-//     if (!current) return;
-//
-//     switch (current.id) {
-//         //book drop
-//         case 'bd-door-page':
-//         case 'bd-door-open-page':   showPage('bd-main-page'); break;
-//         case 'bd-slot-closed-page':
-//         case 'bd-door-handle-page': showPage('bd-door-page'); break;
-//         case 'bd-slot-open-key-page':
-//         case 'bd-slot-open-page':   showPage('bd-slot-closed-page'); break;
-//         case 'bd-cart-page':
-//         case 'bd-back-door-handle-page':    showPage('bd-door-open-page'); break;
-//         case 'bd-books-page':       showPage('bd-cart-page'); break;
-//         case 'bd-fb-open-key-page':
-//         case 'bd-fb-open-page':     showPage('bd-books-page'); break;
-//         case 'bd-back-door-open-page': showPage('bd-door-open-page'); break;
-//
-//         //Projector room
-//         case 'pr-steps-page': showPage('bd-back-door-open-page'); break;
-//         case 'pr-main-page': showPage('pr-steps-page'); break;
-//         case 'pr-wr-main-page':
-//         case 'pr-pw-main-book-page':
-//         case 'pr-pw-main-noBook-page': showPage('pr-main-page'); break;
-//         case 'pr-pw-hole-book-page': showPage('pr-pw-main-book-page'); break;
-//         case 'pr-pw-hole-noBook-page': showPage('pr-pw-main-noBook-page'); break;
-//         case 'pr-wr-wires-page': showPage('pr-wr-main-page'); break;
-//         case 'pr-wr-box-page': showPage('pr-wr-wires-page'); break;
-//
-//         //main hall right backward progression
-//         case 'mh-cend-right-endc-kc-page': showPage('mh-li-right-endc-page'); break;
-//         case 'mh-li-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
-//         case 'mh-bd-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
-//         case 'mh-trash-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
-//         case 'mh-bh-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
-//         case 'mh-hall-right-endc-page':   showPage('mh-sl-right-endc-page'); break;
-//
-//         //main hall left backward progression
-//         case 'mh-sl-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
-//         case 'mh-hall-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
-//         case 'mh-bh-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
-//         case 'mh-bd-left-endc-page':   showPage('mh-li-left-endc-page'); break;
-//         case 'mh-li-left-endc-page':   showPage('mh-cend-left-endc-page'); break;
-//
-//         //back hall
-//         case 'bh-2-page': showPage('bh-entrance-page'); break;
-//         case 'bh-3-page': showPage('bh-2-page'); break;
-//
-//         //kitchen
-//         case 'ki-door-handle-page': showPage('ki-door-closed-page'); break;
-//     }
-// }
-//
-// //fixme finish logic
-// function goForward() {
-//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-//     if (!current) return;
-//
-//     switch (current.id) {
-//         //main hall right progression
-//         case 'mh-sl-right-endc-page':   showPage('mh-hall-right-endc-page'); break;
-//         case 'mh-hall-right-endc-page':   showPage('mh-bh-right-endc-page'); break;
-//         case 'mh-bh-right-endc-page':   showPage('mh-trash-right-endc-page'); break;
-//         case 'mh-trash-right-endc-page':   showPage('mh-bd-right-endc-page'); break;
-//         case 'mh-bd-right-endc-page':   showPage('mh-li-right-endc-page'); break;
-//         case 'mh-li-right-endc-page':   showPage('mh-cend-right-endc-kc-page'); break;
-//
-//         //main hall left progression
-//         case 'mh-cend-left-endc-page':   showPage('mh-li-left-endc-page'); break;
-//         case 'mh-li-left-endc-page':   showPage('mh-bd-left-endc-page'); break;
-//         case 'mh-bd-left-endc-page':   showPage('mh-bh-left-endc-page'); break;
-//         case 'mh-bh-left-endc-page':   showPage('mh-hall-left-endc-page'); break;
-//         case 'mh-hall-left-endc-page':   showPage('mh-sl-left-endc-page'); break;
-//
-//         //back hall pages
-//         case 'bh-entrance-page': showPage('bh-2-page'); break;
-//         case 'bh-2-page': showPage('bh-3-page'); break;
-//     }
-// }
-//
-// //fixme finish logic
-// function goRight() {
-//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-//     if (!current) return;
-//
-//     switch (current.id) {
-//         case 'bd-main-page': showPage('mh-bd-right-endc-page'); break;
-//
-//         //main hall pages
-//         case 'mh-bd-left-endc-page': showPage('bd-main-page'); break;
-//         case 'mh-sl-left-endc-page': showPage('mh-sld-page'); break;
-//         case 'mh-sld-page': showPage('mh-sl-right-endc-page'); break;
-//         case 'mh-cend-right-endc-kc-page': showPage('ki-door-closed-page'); break;
-//         case 'ki-door-closed-page': showPage('mh-cend-left-endc-page'); break;
-//         case 'mh-bh-right-endc-page': showPage('bh-entrance-page'); break;
-//         case 'bh-entrance-page': showPage('mh-bh-left-endc-page'); break;
-//         case 'mh-li-left-endc-page': showPage('li-door-closed-page'); break;
-//         case 'li-door-closed-page': showPage('mh-li-right-endc-page'); break;
-//     }
-// }
-//
-// //fixme finish logic
-// function goLeft() {
-//     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-//     if (!current) return;
-//
-//     switch (current.id) {
-//         case 'bd-main-page': showPage('mh-bd-left-endc-page'); break;
-//
-//         //main hall pages
-//         case 'mh-bd-right-endc-page': showPage('bd-main-page'); break;
-//         case 'mh-sl-right-endc-page': showPage('mh-sld-page'); break;
-//         case 'mh-sld-page': showPage('mh-sl-left-endc-page'); break;
-//         case 'mh-cend-left-endc-page': showPage('ki-door-closed-page'); break;
-//         case 'ki-door-closed-page': showPage('mh-cend-right-endc-kc-page'); break;
-//         case 'mh-bh-left-endc-page': showPage('bh-entrance-page'); break;
-//         case 'bh-entrance-page': showPage('mh-bh-right-endc-page'); break;
-//         case 'mh-li-right-endc-page': showPage('li-door-closed-page'); break;
-//         case 'li-door-closed-page': showPage('mh-li-left-endc-page'); break;
-//     }
-// }
+// ---- 1. THE POPUP AT MOUSE ----
+function spawnPopupAtMouse(event, message, speed = 40) {
+    if (activePopup) activePopup.remove();
+
+    const popup = document.createElement('div');
+    popup.className = 'click-popup theme-burgundy-gold';
+    popup.style.left = event.pageX + 'px';
+    popup.style.top = (event.pageY - 70) + 'px';
+
+    popup.isDone = false;
+    popup.birthTime = Date.now(); // RECORD BIRTH
+
+    document.body.appendChild(popup);
+    activePopup = popup;
+
+    typeWriter(popup, message, speed);
+    stopEventPropagation(event);
+}
+
+// ---- 2. THE THEMED BOX (Bottom/Notification) ----
+function spawnThemedBox(message, positionClass) {
+    if (activePopup) activePopup.remove();
+
+    const box = document.createElement('div');
+    box.className = `theme-burgundy-gold ${positionClass}`;
+
+    // PRE-LOCK
+    box.isDone = false;
+    // RECORD BIRTH: This tells the listener when the box was created
+    box.birthTime = Date.now();
+
+    box.innerHTML = `<p class="box-text-content" style="margin:0; pointer-events:none;"></p>`;
+    document.body.appendChild(box);
+    activePopup = box;
+
+    const textTarget = box.querySelector('.box-text-content');
+    typeWriter(textTarget, message, 40);
+}
+
+// ---- THE GLOBAL CLICK CONTROLLER ----
+document.addEventListener('click', () => {
+    if (!activePopup) return;
+
+    // 1. THE BIRTH CHECK:
+    // If the box was created less than 150ms ago, ignore the click.
+    // This stops the "opening click" from triggering the "close logic".
+    const boxAge = Date.now() - activePopup.birthTime;
+    if (boxAge < 150) return;
+
+    // 2. THE LOCK:
+    // If isDone is false (typing is still happening), STOP.
+    if (activePopup.isDone !== true) {
+        console.log("Typing... Click blocked.");
+        return;
+    }
+
+    // 3. THE DISMISSAL:
+    // Only if isDone is TRUE and the box isn't brand new.
+    activePopup.style.opacity = '0';
+    activePopup.style.transition = 'opacity 0.2s ease';
+
+    setTimeout(() => {
+        if (activePopup) {
+            activePopup.remove();
+            activePopup = null;
+        }
+    }, 200);
+});
+
+// ---- 4. CUSTOM STOP FUNCTION ----
+function stopEventPropagation(e) {
+    if (!e) return;
+    if (typeof e.stopPropagation === "function") {
+        e.stopPropagation();
+    } else {
+        e.cancelBubble = true;
+    }
+}
+
 
 // ----- INVENTORY MENU ----- //
 inventoryTab.onclick = () => {
@@ -315,15 +276,27 @@ inventoryTab.onclick = () => {
 
 // ---- TYPEWRITER EFFECT ----
 function typeWriter(element, text, speed, callback) {
+    if (!element) return;
+
     let i = 0;
     element.textContent = '';
+
+    // Ensure the global activePopup is LOCKED the moment typing starts
+    if (activePopup) {
+        activePopup.isDone = false;
+    }
+
     function type() {
         if (i < text.length) {
             element.textContent += text.charAt(i);
             i++;
             setTimeout(type, speed);
-        } else if (callback) {
-            callback();
+        } else {
+            // UNLOCK: Only happens when the very last letter is rendered
+            if (activePopup) {
+                activePopup.isDone = true;
+            }
+            if (typeof callback === 'function') callback();
         }
     }
     type();
