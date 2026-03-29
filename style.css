@@ -905,12 +905,168 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#pr-pw-hb-projector-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 47%;
+    width: 19%;
+    height: 20%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #pr-pw-he-hitbox {
     position: absolute;
     top: 42%;
     left: 31%;
     width: 7%;
     height: 11%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-he-projector-hitbox {
+    position: absolute;
+    top: 19%;
+    left: 39%;
+    width: 23%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-po-hitbox {
+    position: absolute;
+    top: 37%;
+    left: 70%;
+    width: 6%;
+    height: 9%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-book-projector-hitbox {
+    position: absolute;
+    top: 37%;
+    left: 70%;
+    width: 6%;
+    height: 9%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-noBook-projector-hitbox {
+    position: absolute;
+    top: 37%;
+    left: 70%;
+    width: 6%;
+    height: 9%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-po-pw-hitbox {
+    position: absolute;
+    top: 5%;
+    left: 0%;
+    width: 53%;
+    height: 66%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-steps-po-enter-hitbox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-main-book-po-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 48%;
+    width: 18%;
+    height: 20%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-main-noBook-po-hitbox {
+    position: absolute;
+    top: 18%;
+    left: 40%;
+    width: 22%;
+    height: 25%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-po-hb-hitbox {
+    position: absolute;
+    top: 37%;
+    left: 40%;
+    width: 6%;
+    height: 9%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-po-he-hitbox {
+    position: absolute;
+    top: 42%;
+    left: 31%;
+    width: 7%;
+    height: 11%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-po-wr-hitbox {
+    position: absolute;
+    top: 12%;
+    left: 55%;
+    width: 17%;
+    height: 57%;
 
     background-color: transparent;
     border: 2px solid transparent;

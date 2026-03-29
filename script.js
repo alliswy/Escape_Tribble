@@ -25,7 +25,10 @@ const state = {
     discoveredBd: false,
     discoveredPr: false,
 
+    solvedWirePuzzle: false,
     foundPtCode: false,
+
+    isProjectorOn: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -61,13 +64,22 @@ const roomLeads = {
     // Projector Room (PR)
     'pr-steps-page':          { back: 'bd-back-door-open-page', forward: 'pr-main-page' },
     'pr-main-page':           { back: 'pr-steps-page' },
-    'pr-wr-main-page':        { back: 'pr-main-page' },
+    'pr-wr-main-page':        { back: () => state.isProjectorOn ? 'pr-main-po-page': 'pr-main-page'},
     'pr-pw-main-book-page':   { back: 'pr-main-page' },
     'pr-pw-main-noBook-page': { back: 'pr-main-page' },
-    'pr-pw-hole-book-page':   { back: 'pr-pw-main-book-page' },
-    'pr-pw-hole-noBook-page': { back: 'pr-pw-main-noBook-page' },
+    'pr-pw-hole-book-page':   { back: () => state.isProjectorOn ? 'pr-pw-main-book-po-page' : 'pr-pw-main-book-page'},
+    'pr-pw-hole-noBook-page': { back: () => state.isProjectorOn ? 'pr-pw-main-noBook-po-page' : 'pr-pw-main-noBook-page'},
     'pr-wr-wires-page':       { back: 'pr-wr-main-page', forward: 'pr-wr-box-page' },
     'pr-wr-box-page':         { back: 'pr-wr-wires-page' },
+    'pr-pw-book-projector-off-page': {back: 'pr-pw-main-book-page'},
+    'pr-pw-noBook-projector-off-page': {back: 'pr-pw-main-noBook-page'},
+
+    'pr-pw-book-projector-on-page':   { back: 'pr-pw-main-book-po-page' },
+    'pr-pw-noBook-projector-on-page': {back: 'pr-pw-main-noBook-po-page'},
+    'pr-pw-main-book-po-page':          {back: 'pr-main-po-page'},
+    'pr-pw-main-noBook-po-page':        {back: 'pr-main-po-page'},
+    'pr-main-po-page':                  {back: 'pr-steps-po-page'},
+    'pr-steps-po-page':                 { back: 'bd-back-door-open-page', forward: 'pr-main-po-page'},
 
     // Main Hall (Right Side)
     'mh-sl-right-endc-page':    { back: 'mh-sl-right-endc-page', forward: 'mh-hall-right-endc-page', left: 'mh-sld-page' },
@@ -147,7 +159,13 @@ function goRight()   { move('right'); }
 
 function move(dir) {
     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-    const dest = getDestination(dir, current?.id);
+    let dest = getDestination(dir, current?.id);
+
+    // ADD THIS: If dest is a function, execute it to get the string
+    if (typeof dest === 'function') {
+        dest = dest();
+    }
+
     if (dest) showPage(dest);
 }
 
@@ -552,8 +570,46 @@ function init() {
 
     //entering room behind book drop
     document.getElementById('bd-back-door-open-hitbox').onclick = () => showPage('bd-door-open-page')
-    document.getElementById('bd-back-door-enter-hitbox').onclick = () => showPage('pr-steps-page');
+    document.getElementById('bd-back-door-enter-hitbox').onclick = () =>  {
+        if (state.isProjectorOn) {
+            showPage ('pr-steps-po-page');
+        } else {
+            showPage('pr-steps-page');
+        }
+    }
+
     document.getElementById('pr-steps-enter-hitbox').onclick = () => showPage('pr-main-page');
+    document.getElementById('pr-steps-po-enter-hitbox').onclick = () => showPage('pr-main-po-page');
+    document.getElementById('pr-po-pw-hitbox').onclick = () => {
+        if (state.hasPwBook) {
+            showPage ('pr-pw-main-noBook-po-page');
+        } else {
+            showPage('pr-pw-main-book-po-page');
+        }
+    }
+    document.getElementById('pr-pw-main-book-po-hitbox').onclick = () => showPage('pr-pw-book-projector-on-page');
+    document.getElementById('pr-pw-main-noBook-po-hitbox').onclick = () => showPage('pr-pw-noBook-projector-on-page');
+
+    document.getElementById('pr-pw-he-projector-hitbox').onclick = () => showPage('pr-pw-noBook-projector-off-page');
+    document.getElementById('pr-pw-hb-projector-hitbox').onclick = () => showPage('pr-pw-book-projector-off-page');
+
+    document.getElementById('pr-pw-book-projector-hitbox').onclick = () => {
+        if (state.solvedWirePuzzle) {
+            showPage ('pr-pw-book-projector-on-page');
+        } else {
+            //fixme add feedback
+        }
+    }
+
+    document.getElementById('pr-po-wr-hitbox').onclick = () => showPage('pr-wr-main-page');
+
+    document.getElementById('pr-pw-noBook-projector-hitbox').onclick = () => {
+        if (state.solvedWirePuzzle) {
+            showPage ('pr-pw-noBook-projector-on-page');
+        } else {
+            //fixme add feedback
+        }
+    }
 
     //projector wall image depends on whether the user has the pw book or not
     document.getElementById('pr-pw-hitbox').onclick = () => {
@@ -564,6 +620,8 @@ function init() {
         }
     }
 
+    document.getElementById('pr-pw-po-he-hitbox').onclick = () => showPage('pr-pw-hole-noBook-page');
+    document.getElementById('pr-pw-po-hb-hitbox').onclick = () => showPage('pr-pw-hole-book-page');
     document.getElementById('pr-pw-hb-hitbox').onclick = () => showPage('pr-pw-hole-book-page');
     document.getElementById('pr-pw-he-hitbox').onclick = () => showPage('pr-pw-hole-noBook-page');
 
@@ -932,6 +990,7 @@ function initWirePuzzle() {
             setTimeout(() => {
                 document.getElementById('wire-solved-popup').classList.remove('hidden');
             }, 400);
+            state.solvedWirePuzzle = true;
         }
     }
 
