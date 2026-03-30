@@ -1871,6 +1871,31 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#cr-doors-1dc-cam-ld-hitbox {
+    position: absolute;
+    top: 11%;
+    left: 30%;
+    width: 19%;
+    height: 67%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cr-doors-1dc-cam-rd-hitbox {
+    position: absolute;
+    top: 5%;
+    left: 64%;
+    width: 17%;
+    height: 86%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 /* ----- CAMERA ROOM PAGES ----- */
 #cr-camr-door-closed-hitbox {
     position: absolute;

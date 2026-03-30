@@ -108,7 +108,7 @@ const roomLeads = {
 
     'mh-sld-page':            { left: 'mh-sl-left-endc-page', right: 'mh-sl-right-endc-page' },
 
-    // back hall
+    // back hall //fixme: take photos the opposite way down the hall for ease of navigating back hall
     'bh-entrance-page':       { back: 'mh-bh-right-endc-page', forward: 'bh-2-page', left: 'mh-bh-right-endc-page', right: 'mh-bh-left-endc-page' },
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page', forward: 'bh-4-page' },
@@ -763,7 +763,7 @@ function init() {
         } else if(!state.crlDoorOpen) {
             showPage('cr-main-1dc-page');
         } else {
-            //showPage('cr-main-page') //fixme add this later
+            showPage('cr-main-2dc-page');
         }
     }
 
