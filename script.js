@@ -65,7 +65,7 @@ const roomLeads = {
     // Book Drop (BD)
     'mh-bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
     'mh-bd-door-page':           { back: 'mh-bd-main-page', forward: 'mh-bd-slot-closed-page' },
-    'bd-door-open-page':      { back: 'bmh-d-main-page', forward: 'bd-cart-page' },
+    'bd-door-open-page':      { back: 'mh-bd-main-page', forward: 'bd-cart-page' },
     'mh-bd-slot-closed-page':    { back: 'mh-bd-door-page' },
     'mh-bd-door-handle-page':    { back: 'mh-bd-door-page' },
     'mh-bd-slot-open-key-page':  { back: 'mh-bd-slot-closed-page' },
