@@ -752,17 +752,17 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            // fixme await spawnThemedBox('It\'s unlocked !', "notification bottom");
+            await spawnThemedBox('It\'s unlocked!', "notification-bottom");
         }
         else {
-            // fixme await spawnThemedBox('Where am I going to find another key ??', "notification bottom");
+            await spawnThemedBox('It\'s locked! Where am I going to find another key ?', "notification-bottom");
         }
     };
     document.getElementById('ki-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.kiUnlocked) {
             showPage('ki-door-open-page');
         } else {
-            // fixme await spawnThemedBox('This door is locked too', "notification bottom");
+            await spawnThemedBox('This door\'s locked, too', "notification-bottom");
         }
     };
 
