@@ -759,6 +759,7 @@ function init() {
             showPage('cr-couches-key-page');
         }
     }
+    document.getElementById('cr-main-1dc-couches-hitbox').onclick = () => showPage('cr-couches-page');
     document.getElementById('cr-couches-key-couch-hitbox').onclick = () => showPage('cr-couch-key-page');
     document.getElementById('cr-couch-key-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-key-page');
     document.getElementById('cr-couch-key-hitbox').onclick = () => {

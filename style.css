@@ -1704,10 +1704,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #cr-main-1dc-couches-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 30%;
+    left: 0%;
+    width: 44%;
+    height: 69%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1717,10 +1717,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #cr-main-1dc-doors-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 11%;
+    left: 68%;
+    width: 30%;
+    height: 55%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1756,10 +1756,23 @@ input[type="range"]::-webkit-slider-thumb {
 
 #cr-doors-1dc-ld-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 9%;
+    left: 28%;
+    width: 20%;
+    height: 70%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cr-doors-1dc-rd-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
 
     background-color: transparent;
     border: 2px solid transparent;
