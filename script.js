@@ -64,10 +64,10 @@ const inventoryTab = document.getElementById('inventory-tab');
 const roomLeads = {
     // Book Drop (BD)
     'bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
-    'bd-door-page':           { back: 'bd-main-page', forward: 'bd-slot-closed-page' },
+    'mh-bd-door-page':           { back: 'bd-main-page', forward: 'bd-slot-closed-page' },
     'bd-door-open-page':      { back: 'bd-main-page', forward: 'bd-cart-page' },
-    'bd-slot-closed-page':    { back: 'bd-door-page' },
-    'bd-door-handle-page':    { back: 'bd-door-page' },
+    'bd-slot-closed-page':    { back: 'mh-bd-door-page' },
+    'mh-bd-door-handle-page':    { back: 'mh-bd-door-page' },
     'bd-slot-open-key-page':  { back: 'bd-slot-closed-page' },
     'bd-slot-open-page':      { back: 'bd-slot-closed-page' },
     'bd-cart-page':           { back: 'bd-door-open-page', forward: 'bd-books-page' },
@@ -104,10 +104,10 @@ const roomLeads = {
     'mh-trash-right-endc-page': { back: 'mh-bh-right-endc-page', forward: 'mh-bd-right-endc-page' },
     'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page', left: 'bd-main-page' },
     'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'li-door-closed-page' },
-    'mh-cend-right-endc-kc-page': { back: 'mh-li-right-endc-page', right: 'ki-door-closed-page' },
+    'mh-cend-right-endc-kc-page': { back: 'mh-li-right-endc-page', right: 'mh-ki-door-closed-page' },
 
     // Main Hall (Left Side)
-    'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'ki-door-closed-page' },
+    'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page' },
     'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'li-door-closed-page' },
     'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'bd-main-page' },
     'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page'},
@@ -160,9 +160,9 @@ const roomLeads = {
 
 
     //kitchen
-    'ki-door-closed-page':    { left: 'mh-cend-right-endc-kc-page', right: 'mh-cend-left-endc-page' },
-    'ki-door-handle-page':    { back: 'ki-door-closed-page' },
-    'ki-door-open-page':       {back: 'ki-door-closed-page', forward: 'ki-entrance-page'},
+    'mh-ki-door-closed-page':    { left: 'mh-cend-right-endc-kc-page', right: 'mh-cend-left-endc-page' },
+    'mh-ki-door-handle-page':    { back: 'mh-ki-door-closed-page' },
+    'ki-door-open-page':       {back: 'mh-ki-door-closed-page', forward: 'ki-entrance-page'},
     'ki-entrance-page':        {back: 'ki-door-open-page'},
     'ki-entrance-code-page':   {back: 'ki-door-open-page'},
     'ki-main-code-page':       {back: 'ki-entrance-code-page'},
@@ -567,11 +567,11 @@ function init() {
     // --- Book Drop (BD) Interactions ---
 
     // Main -> Door
-    document.getElementById('bd-door-hitbox').onclick = () => showPage('bd-door-page');
+    document.getElementById('bd-door-hitbox').onclick = () => showPage('mh-bd-door-page');
 
     // Door -> Slot or Handle
     document.getElementById('bd-slot-hitbox').onclick = () => showPage('bd-slot-closed-page');
-    document.getElementById('bd-handle-hitbox').onclick = () => showPage('bd-door-handle-page');
+    document.getElementById('bd-handle-hitbox').onclick = () => showPage('mh-bd-door-handle-page');
 
     // Inside the Slot
     document.getElementById('bd-closed-hitbox').onclick = () => {
@@ -737,7 +737,7 @@ function init() {
     //------ KITCHEN SECTION ------
 
     //handle and locking
-    document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('ki-door-handle-page');
+    document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('mh-ki-door-handle-page');
 
     //fixme - made pr book key for kitchen (potentially change)
     document.getElementById('ki-door-handle-keyhole-hitbox').onclick = () => {
