@@ -15,12 +15,18 @@ const state = {
     hasKiKey: false,
     hasLiKey: false,
     hasPwBook: false,
+    hasCamrKey: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
     kiUnlocked: false,
     liUnlocked: false,
     crUnlocked: false,
+    camrUnlocked: false,
+
+    camrDoorOpen: false, //this is the room with the two monitors in the creepy room
+    crlDoorOpen: false, //this is the door to the left of the camera room^ in the creepy room. Note: if this door is open, camrDoorOpen = true;
+    crDoorOpen: false,
 
     discoveredBd: false,
     discoveredPr: false,
@@ -29,6 +35,8 @@ const state = {
     foundPtCode: false,
 
     isProjectorOn: false,
+    isLeftMonitorOn: false,
+    isRightMonitorOn: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -108,7 +116,24 @@ const roomLeads = {
     'bh-sh-entrance-page':   {back: 'bh-4-page', forward: 'bh-sh-cr-dc-page'},
     'bh-sh-cr-dc-page':      {back: 'bh-sh-entrance-page'},
     'bh-end-page':          {back: 'bh-4-page'},
-    'bh-sh-cr-do-page':      {back: 'bh-sh-cr-dc-page'},
+    'bh-sh-cr-do-page':      {back: 'bh-sh-cr-dc-page' },
+    'sh-cr-door-open-page':    {back: 'bh-sh-cr-do-page'},
+    'sh-cr-door-closed-page':   {back: 'bh-sh-cr-dc-page'},
+
+    //creepy room
+    'cr-main-2dc-page':     {back: 'sh-cr-door-open-page'},
+    'cr-main-1dc-page':     {back: 'sh-cr-door-open-page'},
+    'cr-doors-2dc-page':    {back: 'cr-main-2dc-page'},
+    'cr-doors-1dc-page':    {back: 'cr-main-1dc-page'},
+    'cr-doors-1dc-cam-page': {back: 'cr-main-1dc-page'},
+    //fixme -- add functionality for page with both doors open on next line
+    'cr-couches-key-page':  {back: () => state.camrDoorOpen ? 'cr-main-1dc-page': 'cr-main-2dc-page'},
+    'cr-couch-key-page':    {back: 'cr-couches-key-page'},
+    'cr-couch-zoom-key-page': {back: 'cr-couch-key-page'},
+    //fixme same as last fixme
+    'cr-couches-page':        {back: () => state.camrDoorOpen ? 'cr-main-1dc-page': 'cr-main-2dc-page'},
+    'cr-couch-page':         {back: 'cr-couches-page'},
+    'cr-couch-zoom-page':    {back: 'cr-couch-page'},
 
 
     //kitchen
@@ -705,17 +730,66 @@ function init() {
 
 
     // ----- CREEPY ROOM SECTION -----
-    document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => {
+    document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('sh-cr-door-closed-page');
+    document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
+
+    document.getElementById('cr-door-closed-hitbox').onclick = () => {
         if (state.crUnlocked) {
-            showPage('bh-sh-cr-do-page');
+            showPage('sh-cr-door-open-page');
         }
         else {
             alert("it's locked"); //FIXME add pictures of the key pad and ability to type in the code
         }
     }
-    document.getElementById('bh-sh-cr-do-hitbox').onclick= () => {
 
+    document.getElementById('cr-door-open-hitbox').onclick= () => {
+        if (!state.camrDoorOpen) {
+            showPage('cr-main-2dc-page');
+        } else if(!state.crlDoorOpen) {
+            showPage('cr-main-1dc-page');
+        } else {
+            //showPage('cr-main-page') //fixme add this later
+        }
     }
+
+    document.getElementById('cr-main-2dc-couches-hitbox').onclick = () => {
+        if (state.hasCamrKey) {
+            showPage('cr-couches-page');
+        } else {
+            showPage('cr-couches-key-page');
+        }
+    }
+    document.getElementById('cr-couches-key-couch-hitbox').onclick = () => showPage('cr-couch-key-page');
+    document.getElementById('cr-couch-key-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-key-page');
+    document.getElementById('cr-couch-key-hitbox').onclick = () => {
+        showPage('cr-couch-zoom-page');
+        state.hasCamrKey = true;
+        const keySlot = document.getElementById('inv-camr-key');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        //fixme make sure the camr key shows in inventory
+    }
+    document.getElementById('cr-couches-couch-hitbox').onclick = () => showPage('cr-couch-page');
+    document.getElementById('cr-couch-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-page');
+    document.getElementById('cr-couch-hitbox').onclick = () => {
+        //fixme add feedback
+    }
+
+    document.getElementById('cr-main-2dc-doors-hitbox').onclick = () => showPage('cr-doors-2dc-page');
+    //fixme add image: document.getElementById('dr-doors-2dc-rd-hitbox').onclick = () => showPage('');
+
+    document.getElementById('cr-main-1dc-doors-hitbox').onclick = () => {
+        if (state.isLeftMonitorOn) {
+            showPage('cr-doors-1dc-cam-page')//fixme
+        } else {
+            showPage('cr-doors-1dc-page');
+        }
+
+        //fixme finish if/else logic for added cam pages
+    }
+
+
 
 
     // ------ LIBRARY SECTION ------
