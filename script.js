@@ -783,7 +783,11 @@ function init() {
         state.foundPtCode = true;
         showPage('ki-pt-code-page');
     }
-    //document.getElementById('ki-pt-code-hitbox').onclick= () => fixme add feedback
+    document.getElementById('ki-pt-code-hitbox').onclick= async (e) => {
+        await spawnThemedBox('3672', "notification-bottom");
+        await spawnThemedBox('Who would write a code here ?', "notification-bottom");
+        await spawnThemedBox('And what is it for ?', "notification-bottom");
+    }
 
 
     // ----- CREEPY ROOM SECTION -----
