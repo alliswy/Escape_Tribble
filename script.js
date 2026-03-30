@@ -30,6 +30,14 @@ const state = {
 
     discoveredBd: false,
     discoveredPr: false,
+    discoveredMh: false,
+    discoveredLi: false,
+    discoveredLo: false,
+    discoveredKi: false,
+    discoveredBh: false,
+    discoveredCr: false,
+    discoveredCamr: false,
+    discoveredSh: false,
 
     solvedWirePuzzle: false,
     foundPtCode: false,
@@ -496,6 +504,7 @@ function init() {
     document.getElementById('map-btn').onclick = () => {
         hamburgerDropdown.classList.remove('dropdown-open');
         document.getElementById('map-screen').classList.remove('hidden');
+        drawMap();
     };
 
     // Close map button
@@ -518,10 +527,6 @@ function init() {
                 item.classList.add('hidden');
             }
         });
-
-        // Reset map
-        document.querySelectorAll('.map-room').forEach(r => r.classList.add('hidden'));
-        document.querySelectorAll('.map-connector').forEach(c => c.classList.add('hidden'));
 
         // Close hint box if open
         document.getElementById('hint-box').classList.remove('hint-open');
@@ -947,22 +952,169 @@ function init() {
 }
 
 // ---- MAP SYSTEM ----
-function updateMap(currentRoom) {
-    // Discover rooms based on current room
-    if (currentRoom.startsWith('bd-')) state.discoveredBd = true;
-    if (currentRoom.startsWith('pr-')) state.discoveredPr = true;
+// Define all rooms with their grid positions and sizes
+// Each unit = 10px on canvas. x/y are grid coords, w/h are grid sizes.
+const mapRooms = {
+    mh:   { x: 4,  y: 14, w: 26, h: 3,  label: 'Main Hall',   key: 'mh' },
+    bd:   { x: 12, y: 8,  w: 4,  h: 4,  label: 'Book Drop',   key: 'bd' },
+    pr:   { x: 12, y: 2,  w: 4,  h: 4,  label: 'Projector',   key: 'pr' },
+    li:   { x: 18, y: 8,  w: 6,  h: 5,  label: 'Library',     key: 'li' },
+    lo:   { x: 20, y: 2,  w: 4,  h: 4,  label: 'Lounge',      key: 'lo' },
+    ki:   { x: 24, y: 18, w: 4,  h: 5,  label: 'Kitchen',     key: 'ki' },
+    bh:   { x: 6,  y: 18, w: 4,  h: 10, label: 'Back Hall',   key: 'bh' },
+    cr:   { x: 10, y: 22, w: 7,  h: 6,  label: 'Creepy Room', key: 'cr' },
+    cre:  { x: 10, y: 18, w: 4,  h: 3,  label: 'Entrance',    key: 'cre' },
+    camr: { x: 10, y: 29, w: 4,  h: 3,  label: 'Camera Room', key: 'camr' },
+    sh:   { x: 5,  y: 29, w: 3,  h: 3,  label: 'Side Hall',   key: 'sh' },
+};
 
-    // Show discovered rooms
-    if (state.discoveredBd) document.getElementById('map-room-bd').classList.remove('hidden');
-    if (state.discoveredPr) {
-        document.getElementById('map-room-pr').classList.remove('hidden');
-        document.getElementById('map-connector-bd-pr').classList.remove('hidden');
+// Define corridors as thin rectangles connecting rooms
+const mapCorridors = [
+    { rooms: ['bd', 'mh'],   dir: 'v' },
+    { rooms: ['bd', 'pr'],   dir: 'v' },
+    { rooms: ['li', 'mh'],   dir: 'v' },
+    { rooms: ['lo', 'li'],   dir: 'v' },
+    { rooms: ['ki', 'mh'],   dir: 'v' },
+    { rooms: ['bh', 'mh'],   dir: 'v' },
+    { rooms: ['cr', 'bh'],   dir: 'h' },
+    { rooms: ['cre', 'cr'],  dir: 'v' },
+    { rooms: ['camr', 'cr'], dir: 'v' },
+    { rooms: ['sh', 'bh'],   dir: 'v' },
+];
+
+// Which state flags indicate a room has been discovered
+const roomDiscovery = {
+    mh:   () => state.discoveredBd || state.discoveredMh,
+    bd:   () => state.discoveredBd,
+    pr:   () => state.discoveredPr,
+    li:   () => state.discoveredLi,
+    lo:   () => state.discoveredLo,
+    ki:   () => state.discoveredKi,
+    bh:   () => state.discoveredBh,
+    cr:   () => state.discoveredCr,
+    cre:  () => state.discoveredCr,
+    camr: () => state.discoveredCamr,
+    sh:   () => state.discoveredSh,
+};
+
+// Which room key corresponds to which page prefix
+function getRoomKeyFromPage(pageId) {
+    if (pageId.startsWith('bd-'))   return 'bd';
+    if (pageId.startsWith('pr-'))   return 'pr';
+    if (pageId.startsWith('mh-'))   return 'mh';
+    if (pageId.startsWith('li-'))   return 'li';
+    if (pageId.startsWith('ki-'))   return 'ki';
+    if (pageId.startsWith('bh-'))   return 'bh';
+    if (pageId.startsWith('cr-') || pageId.startsWith('sh-cr-')) return 'cr';
+    if (pageId.startsWith('camr-')) return 'camr';
+    if (pageId.startsWith('bh-sh-')) return 'sh';
+    return null;
+}
+
+let currentMapRoom = null;
+
+function updateMap(pageId) {
+    const roomKey = getRoomKeyFromPage(pageId);
+    if (roomKey) {
+        // Mark room as discovered
+        const discKey = 'discovered' + roomKey.charAt(0).toUpperCase() + roomKey.slice(1);
+        state[discKey] = true;
+        currentMapRoom = roomKey;
     }
+}
 
-    // Highlight current room
-    document.querySelectorAll('.map-room').forEach(r => r.classList.remove('current-room'));
-    if (currentRoom.startsWith('bd-')) document.getElementById('map-room-bd').classList.add('current-room');
-    if (currentRoom.startsWith('pr-')) document.getElementById('map-room-pr').classList.add('current-room');
+function drawMap() {
+    const canvas = document.getElementById('map-canvas');
+    const CELL = 14;
+    const COLS = 34;
+    const ROWS = 35;
+    canvas.width  = COLS * CELL;
+    canvas.height = ROWS * CELL;
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#0a0500';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw corridors first (behind rooms)
+    // Draw corridors as strict vertical or horizontal lines between room edges
+    // Draw corridors as explicit vertical or horizontal lines between room edges
+    mapCorridors.forEach(c => {
+        if (!c.rooms) return;
+        const bothDiscovered = c.rooms.every(key => roomDiscovery[key]?.());
+        if (!bothDiscovered) return;
+
+        const r1 = mapRooms[c.rooms[0]];
+        const r2 = mapRooms[c.rooms[1]];
+        if (!r1 || !r2) return;
+
+        const dir = c.dir || 'v'; // 'v' = vertical, 'h' = horizontal
+        let x1, y1, x2, y2;
+
+        if (dir === 'v') {
+            const topRoom    = r1.y < r2.y ? r1 : r2;
+            const bottomRoom = r1.y < r2.y ? r2 : r1;
+            const cx = (bottomRoom.x + bottomRoom.w / 2) * CELL;
+            x1 = cx;
+            y1 = (topRoom.y + topRoom.h) * CELL;
+            x2 = cx;
+            y2 = bottomRoom.y * CELL;
+        } else {
+            const leftRoom  = r1.x < r2.x ? r1 : r2;
+            const rightRoom = r1.x < r2.x ? r2 : r1;
+            const cy = (leftRoom.y + leftRoom.h / 2) * CELL;
+            x1 = (leftRoom.x + leftRoom.w) * CELL;
+            y1 = cy;
+            x2 = rightRoom.x * CELL;
+            y2 = cy;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = '#c9a84c';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    });
+
+    // Draw rooms
+    Object.values(mapRooms).forEach(room => {
+        const discovered = roomDiscovery[room.key]?.();
+        if (!discovered) return;
+
+        const isCurrent = room.key === currentMapRoom;
+        const rx = room.x * CELL;
+        const ry = room.y * CELL;
+        const rw = room.w * CELL;
+        const rh = room.h * CELL;
+
+        // Room fill
+        ctx.fillStyle = isCurrent
+            ? 'rgba(180, 120, 0, 0.8)'
+            : 'rgba(100, 20, 30, 0.85)';
+        ctx.fillRect(rx, ry, rw, rh);
+
+        // Room border
+        ctx.strokeStyle = isCurrent ? '#c9a84c' : 'rgba(180, 140, 40, 0.6)';
+        ctx.lineWidth = isCurrent ? 2 : 1;
+        ctx.strokeRect(rx, ry, rw, rh);
+
+        // Room label
+        const fontSize = Math.max(8, Math.min(rw, rh) / 3);
+        ctx.font = `${fontSize}px serif`;
+        ctx.fillStyle = isCurrent ? '#ffffff' : '#c9a84c';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(room.label, rx + rw / 2, ry + rh / 2);
+
+        // Current room dot
+        if (isCurrent) {
+            ctx.beginPath();
+            ctx.arc(rx + rw / 2, ry + rh / 2 - fontSize, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+        }
+    });
 }
 
 // ---- WIRE PUZZLE SYSTEM ----

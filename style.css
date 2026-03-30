@@ -1224,43 +1224,12 @@ input[type="range"]::-webkit-slider-thumb {
     color: #c9a84c;
     text-shadow: 0 0 15px rgba(200, 160, 0, 0.5);
     letter-spacing: 3px;
-    margin-bottom: 20px;
+    margin: 0;
 }
 
-#map-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.map-room {
-    width: 180px;
-    height: 60px;
-    background: rgba(100, 20, 30, 0.7);
+#map-canvas {
     border: 2px solid rgba(180, 140, 40, 0.5);
-    border-radius: 6px;
-    color: #c9a84c;
-    font-family: 'Special Elite', cursive;
-    font-size: 16px;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.map-room.current-room {
-    background: rgba(180, 120, 0, 0.6);
-    border-color: #c9a84c;
-    box-shadow: 0 0 15px rgba(200, 160, 0, 0.5);
-    color: #fff;
-}
-
-.map-connector {
-    color: #c9a84c;
-    font-size: 24px;
-    line-height: 1;
+    border-radius: 4px;
 }
 
 
