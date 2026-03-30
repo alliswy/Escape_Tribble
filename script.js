@@ -126,7 +126,7 @@ const roomLeads = {
     'bh-end-page':          {back: 'bh-4-page'},
     'bh-sh-cr-do-page':      {back: 'bh-sh-cr-dc-page' },
     'sh-cr-door-open-page':    {back: 'bh-sh-cr-do-page'},
-    'sh-cr-door-closed-page':   {back: 'bh-sh-cr-dc-page'},
+    'bh-sh-cr-door-closed-page':   {back: 'bh-sh-cr-dc-page'},
 
     //creepy room
     'cr-main-2dc-page':     {back: 'sh-cr-door-open-page'},
@@ -782,7 +782,7 @@ function init() {
 
 
     // ----- CREEPY ROOM SECTION -----
-    document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('sh-cr-door-closed-page');
+    document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('bh-sh-cr-door-closed-page');
     document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
 
     document.getElementById('cr-door-closed-hitbox').onclick = () => {
