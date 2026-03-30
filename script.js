@@ -135,6 +135,21 @@ const roomLeads = {
     'cr-couch-page':         {back: 'cr-couches-page'},
     'cr-couch-zoom-page':    {back: 'cr-couch-page'},
 
+    //camera room
+    //fixme add the person appearing and diseappearing between clicks
+    'cr-camr-door-closed-page': {back: 'cr-doors-2dc-page'},
+    'camr-main-page':           {back: 'cr-doors-1dc-page'},
+    'camr-main-ml-on-page':     {back: 'cr-doors-1dc-cam-page'},
+    'camr-main-ml-on-person-page': {back: 'cr-doors-1dc-cam-page'},
+    'camr-wp-page':             {back: 'camr-main-wp-page'},
+    'camr-we-page':             {back: 'camr-main-page'},
+    'camr-mlo-we-page':         {back: 'camr-main-ml-on-page'},
+    'camr-main-wp-page':        {back: 'cr-doors-1dc-cam-page'},
+    'camr-ml-off-page':         {back: 'camr-main-page'},
+    'camr-ml-on-page':          {back: 'camr-main-ml-on-page'},
+    'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person'},
+    'camr-mr-off-page':         {back: () => state.isLeftMonitorOn ? 'camr-main-mlo-page' : 'camr-main-page'},
+
 
     //kitchen
     'ki-door-closed-page':    { left: 'mh-cend-right-endc-kc-page', right: 'mh-cend-left-endc-page' },
@@ -459,7 +474,7 @@ function init() {
 
 
 
-    //fixme add back button from how to play
+    //fixme fix back button from how to play,, currently isn't working
 
 
     // ---- IN-GAME HAMBURGER MENU ----
@@ -788,6 +803,15 @@ function init() {
         }
 
         //fixme finish if/else logic for added cam pages
+    }
+
+    document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
+    document.getElementById('cr-camr-door-closed-hitbox').onclick = () => {
+        if (state.hasCamrKey) {
+            showPage('cr-doors-1dc-page');
+        } else {
+            //fixme add feedback
+        }
     }
 
 

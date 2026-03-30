@@ -1676,6 +1676,19 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#cr-board-hitbox {
+    position: absolute;
+    top: 16%;
+    left: 10%;
+    width: 66%;
+    height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #cr-main-2dc-couches-hitbox {
     position: absolute;
     top: 28%;
@@ -1851,6 +1864,111 @@ input[type="range"]::-webkit-slider-thumb {
     left: 56%;
     width: 27%;
     height: 43%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+/* ----- CAMERA ROOM PAGES ----- */
+#cr-camr-door-closed-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-wp-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-we-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-mlo-we-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-ml-off-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-ml-on-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-ml-on-person-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-mr-off-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 65%;
+    width: 21%;
+    height: 87%;
 
     background-color: transparent;
     border: 2px solid transparent;
