@@ -63,13 +63,13 @@ const inventoryTab = document.getElementById('inventory-tab');
 // ----- NAVIGATION MAP -----
 const roomLeads = {
     // Book Drop (BD)
-    'bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
-    'mh-bd-door-page':           { back: 'bd-main-page', forward: 'bd-slot-closed-page' },
-    'bd-door-open-page':      { back: 'bd-main-page', forward: 'bd-cart-page' },
-    'bd-slot-closed-page':    { back: 'mh-bd-door-page' },
+    'mh-bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
+    'mh-bd-door-page':           { back: 'mh-bd-main-page', forward: 'mh-bd-slot-closed-page' },
+    'bd-door-open-page':      { back: 'bmh-d-main-page', forward: 'bd-cart-page' },
+    'mh-bd-slot-closed-page':    { back: 'mh-bd-door-page' },
     'mh-bd-door-handle-page':    { back: 'mh-bd-door-page' },
-    'bd-slot-open-key-page':  { back: 'bd-slot-closed-page' },
-    'bd-slot-open-page':      { back: 'bd-slot-closed-page' },
+    'mh-bd-slot-open-key-page':  { back: 'mh-bd-slot-closed-page' },
+    'mh-bd-slot-open-page':      { back: 'mh-bd-slot-closed-page' },
     'bd-cart-page':           { back: 'bd-door-open-page', forward: 'bd-books-page' },
     'bd-back-door-handle-page': { back: 'bd-door-open-page' },
     'bd-books-page':          { back: 'bd-cart-page' },
@@ -102,14 +102,14 @@ const roomLeads = {
     'mh-hall-right-endc-page':  { back: 'mh-sl-right-endc-page', forward: 'mh-bh-right-endc-page' },
     'mh-bh-right-endc-page':    { back: 'mh-hall-right-endc-page', forward: 'mh-trash-right-endc-page', right: 'bh-entrance-page' },
     'mh-trash-right-endc-page': { back: 'mh-bh-right-endc-page', forward: 'mh-bd-right-endc-page' },
-    'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page', left: 'bd-main-page' },
-    'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'li-door-closed-page' },
+    'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page', left: 'mh-bd-main-page' },
+    'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'mh-li-door-closed-page' },
     'mh-cend-right-endc-kc-page': { back: 'mh-li-right-endc-page', right: 'mh-ki-door-closed-page' },
 
     // Main Hall (Left Side)
     'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page' },
-    'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'li-door-closed-page' },
-    'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'bd-main-page' },
+    'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'mh-li-door-closed-page' },
+    'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'mh-bd-main-page' },
     'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page'},
     'mh-hall-left-endc-page':   { back: 'mh-bh-left-endc-page', forward: 'mh-sl-left-endc-page' },
     'mh-sl-left-endc-page':     { back: 'mh-hall-left-endc-page', right: 'mh-sld-page' },
@@ -172,8 +172,8 @@ const roomLeads = {
     'ki-pt-noCode-page':        {back: 'ki-main-noCode-page'},
 
     //library
-    'li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
-    'li-door-handle-page':    { back: 'li-door-closed-page' },
+    'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
+    'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
 };
 
 // ----- 3. CORE FUNCTIONS ----
@@ -376,7 +376,7 @@ function init() {
     startButton.onclick = () => {
         menu.classList.add('hidden');
         play.classList.remove('hidden');
-        showPage('bd-main-page');
+        showPage('mh-bd-main-page');
         document.getElementById('inventory-drawer').classList.remove('hidden');
         document.getElementById('hamburger-menu').classList.remove('hidden');
         document.getElementById('hint-btn').classList.remove('hidden');
@@ -532,7 +532,7 @@ function init() {
         document.getElementById('hint-box').classList.remove('hint-open');
 
         // Return to start of game
-        showPage('bd-main-page');
+        showPage('mh-bd-main-page');
 
         // Reset wire puzzle
         wirePuzzleInitialized = false;
@@ -570,12 +570,12 @@ function init() {
     document.getElementById('bd-door-hitbox').onclick = () => showPage('mh-bd-door-page');
 
     // Door -> Slot or Handle
-    document.getElementById('bd-slot-hitbox').onclick = () => showPage('bd-slot-closed-page');
+    document.getElementById('bd-slot-hitbox').onclick = () => showPage('mh-bd-slot-closed-page');
     document.getElementById('bd-handle-hitbox').onclick = () => showPage('mh-bd-door-handle-page');
 
     // Inside the Slot
     document.getElementById('bd-closed-hitbox').onclick = () => {
-        state.hasBdKey ? showPage('bd-slot-open-page') : showPage('bd-slot-open-key-page');
+        state.hasBdKey ? showPage('mh-bd-slot-open-page') : showPage('mh-bd-slot-open-key-page');
     };
     document.getElementById('bd-key-hitbox').onclick = () => {
         state.hasBdKey = true;
@@ -583,9 +583,9 @@ function init() {
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
-        showPage('bd-slot-open-page');
+        showPage('mh-bd-slot-open-page');
     };
-    document.getElementById('bd-slot-open-hitbox').onclick = () => showPage('bd-slot-closed-page');
+    document.getElementById('bd-slot-open-hitbox').onclick = () => showPage('mh-bd-slot-closed-page');
 
     // bd Door Handle & Locking
     document.getElementById('bd-door-keyhole-hitbox').onclick = () => {
@@ -857,7 +857,7 @@ function init() {
     // ------ LIBRARY SECTION ------
 
     //door, handle, and locking
-    document.getElementById('li-door-handle-hitbox').onclick = () => showPage('li-door-handle-page');
+    document.getElementById('li-door-handle-hitbox').onclick = () => showPage('mh-li-door-handle-page');
 
 
     // ------ INVENTORY INSPECTION -----
