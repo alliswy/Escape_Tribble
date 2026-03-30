@@ -411,6 +411,13 @@ function init() {
         }
     };
 
+    // Sync fullscreen checkbox when user exits fullscreen with Escape key
+    document.addEventListener('fullscreenchange', () => {
+        const toggle = document.getElementById('fullscreen-toggle');
+        toggle.checked = !!document.fullscreenElement;
+    });
+
+
     //Exit button
     document.getElementById('exit-button').onclick = () => {
         window.close();
@@ -499,7 +506,32 @@ function init() {
     //Restart button
     document.getElementById('restart-btn').onclick = () => {
         hamburgerDropdown.classList.remove('dropdown-open');
-        location.reload();
+
+        // Reset all state flags
+        Object.keys(state).forEach(key => {
+            state[key] = false;
+        });
+
+        // Hide all inventory items
+        document.querySelectorAll('.inv-item').forEach(item => {
+            if (!item.classList.contains('empty')) {
+                item.classList.add('hidden');
+            }
+        });
+
+        // Reset map
+        document.querySelectorAll('.map-room').forEach(r => r.classList.add('hidden'));
+        document.querySelectorAll('.map-connector').forEach(c => c.classList.add('hidden'));
+
+        // Close hint box if open
+        document.getElementById('hint-box').classList.remove('hint-open');
+
+        // Return to start of game
+        showPage('bd-main-page');
+
+        // Reset wire puzzle
+        wirePuzzleInitialized = false;
+        document.getElementById('wire-solved-popup').classList.add('hidden');
     };
 
     //Quit to main menu button
@@ -934,25 +966,37 @@ function updateMap(currentRoom) {
 }
 
 // ---- WIRE PUZZLE SYSTEM ----
+let wirePuzzleInitialized = false;
+
 function openWirePuzzle() {
     document.getElementById('wire-puzzle').classList.remove('hidden');
-    initWirePuzzle();
+    if (!wirePuzzleInitialized) {
+        initWirePuzzle();
+        wirePuzzleInitialized = true;
+    } else {
+        // Redraw the canvas in case it was cleared while hidden
+        redrawWireCanvas();
+    }
 }
 
+// Persistent wire puzzle variables
+let wireColors, wireColorNames, wireNumWires, wireNodeRadius, wireLeftX, wireRightX;
+let wireLeftNodes, wireRightNodes, wireConnections, wireDragging, wireDragStart, wireDragCurrent, wireErrorFlash;
+let wireCtx, wireCanvas;
+
 function initWirePuzzle() {
-    const canvas = document.getElementById('wire-canvas');
-    const ctx = canvas.getContext('2d');
+    wireCanvas = document.getElementById('wire-canvas');
+    wireCtx = wireCanvas.getContext('2d');
 
-    // Canvas size
-    canvas.width = 500;
-    canvas.height = 350;
+    wireCanvas.width = 500;
+    wireCanvas.height = 350;
 
-    const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
-    const colorNames = ['red', 'blue', 'green', 'yellow', 'purple'];
-    const numWires = 5;
-    const nodeRadius = 14;
-    const leftX = 80;
-    const rightX = 420;
+    wireColors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
+    wireColorNames = ['red', 'blue', 'green', 'yellow', 'purple'];
+    wireNumWires = 5;
+    wireNodeRadius = 14;
+    wireLeftX = 80;
+    wireRightX = 420;
 
     // Shuffle right side order
     const rightOrder = [0, 1, 2, 3, 4];
@@ -961,195 +1005,183 @@ function initWirePuzzle() {
         [rightOrder[i], rightOrder[j]] = [rightOrder[j], rightOrder[i]];
     }
 
-    // Node positions
-    const leftNodes = colors.map((c, i) => ({
-        x: leftX,
+    wireLeftNodes = wireColors.map((c, i) => ({
+        x: wireLeftX,
         y: 50 + i * 60,
         color: c,
         index: i
     }));
 
-    const rightNodes = rightOrder.map((colorIdx, i) => ({
-        x: rightX,
+    wireRightNodes = rightOrder.map((colorIdx, i) => ({
+        x: wireRightX,
         y: 50 + i * 60,
-        color: colors[colorIdx],
+        color: wireColors[colorIdx],
         index: colorIdx
     }));
 
-    let connections = {}; // leftIndex -> rightIndex
-    let dragging = false;
-    let dragStart = null;
-    let dragCurrent = null;
-    let errorFlash = false;
+    wireConnections = {};
+    wireDragging = false;
+    wireDragStart = null;
+    wireDragCurrent = null;
+    wireErrorFlash = false;
 
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setupWireCanvasEvents();
+    drawWireCanvas();
+}
 
-        // Draw left labels
-        leftNodes.forEach((node, i) => {
-            ctx.font = '14px serif';
-            ctx.fillStyle = '#c9a84c';
-            ctx.textAlign = 'right';
-            ctx.fillText(colorNames[i], node.x - nodeRadius - 5, node.y + 5);
-        });
+function redrawWireCanvas() {
+    wireCanvas = document.getElementById('wire-canvas');
+    wireCtx = wireCanvas.getContext('2d');
+    drawWireCanvas();
+}
 
-        // Draw right labels
-        rightNodes.forEach((node, i) => {
-            ctx.font = '14px serif';
-            ctx.fillStyle = '#c9a84c';
-            ctx.textAlign = 'left';
-            ctx.fillText(colorNames[node.index], node.x + nodeRadius + 5, node.y + 5);
-        });
+function drawWireCanvas() {
+    wireCtx.clearRect(0, 0, wireCanvas.width, wireCanvas.height);
 
-        // Draw connections
-        Object.entries(connections).forEach(([leftIdx, rightIdx]) => {
-            const left = leftNodes[leftIdx];
-            const right = rightNodes.find(n => n.index === parseInt(rightIdx));
-            if (!right) return;
-            const isCorrect = left.color === right.color;
-            ctx.beginPath();
-            ctx.moveTo(left.x, left.y);
-            ctx.lineTo(right.x, right.y);
-            ctx.strokeStyle = isCorrect ? left.color : '#ff0000';
-            ctx.lineWidth = 4;
-            ctx.shadowColor = isCorrect ? left.color : '#ff0000';
-            ctx.shadowBlur = 10;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        });
+    // Draw connections
+    Object.entries(wireConnections).forEach(([leftIdx, rightIdx]) => {
+        const left = wireLeftNodes[leftIdx];
+        const right = wireRightNodes.find(n => n.index === parseInt(rightIdx));
+        if (!right) return;
+        const isCorrect = left.color === right.color;
+        wireCtx.beginPath();
+        wireCtx.moveTo(left.x, left.y);
+        wireCtx.lineTo(right.x, right.y);
+        wireCtx.strokeStyle = isCorrect ? left.color : '#ff0000';
+        wireCtx.lineWidth = 4;
+        wireCtx.shadowColor = isCorrect ? left.color : '#ff0000';
+        wireCtx.shadowBlur = 10;
+        wireCtx.stroke();
+        wireCtx.shadowBlur = 0;
+    });
 
-        // Draw drag line
-        if (dragging && dragStart && dragCurrent) {
-            ctx.beginPath();
-            ctx.moveTo(dragStart.x, dragStart.y);
-            ctx.lineTo(dragCurrent.x, dragCurrent.y);
-            ctx.strokeStyle = dragStart.color;
-            ctx.lineWidth = 3;
-            ctx.setLineDash([6, 4]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
-
-        // Draw left nodes
-        leftNodes.forEach(node => {
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2);
-            ctx.fillStyle = connections[node.index] !== undefined ? node.color : 'rgba(0,0,0,0.5)';
-            ctx.fill();
-            ctx.strokeStyle = node.color;
-            ctx.lineWidth = 3;
-            ctx.shadowColor = node.color;
-            ctx.shadowBlur = connections[node.index] !== undefined ? 15 : 5;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        });
-
-        // Draw right nodes
-        rightNodes.forEach(node => {
-            const connected = Object.values(connections).includes(node.index);
-            ctx.beginPath();
-            ctx.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2);
-            ctx.fillStyle = connected ? node.color : 'rgba(0,0,0,0.5)';
-            ctx.fill();
-            ctx.strokeStyle = node.color;
-            ctx.lineWidth = 3;
-            ctx.shadowColor = node.color;
-            ctx.shadowBlur = connected ? 15 : 5;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        });
-
-        // Error flash
-        if (errorFlash) {
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.25)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
+    // Draw drag line
+    if (wireDragging && wireDragStart && wireDragCurrent) {
+        wireCtx.beginPath();
+        wireCtx.moveTo(wireDragStart.x, wireDragStart.y);
+        wireCtx.lineTo(wireDragCurrent.x, wireDragCurrent.y);
+        wireCtx.strokeStyle = wireDragStart.color;
+        wireCtx.lineWidth = 3;
+        wireCtx.setLineDash([6, 4]);
+        wireCtx.stroke();
+        wireCtx.setLineDash([]);
     }
 
-    function getNodeAt(x, y, nodes) {
-        return nodes.find(n => Math.hypot(n.x - x, n.y - y) <= nodeRadius + 4);
-    }
+    // Draw left nodes
+    wireLeftNodes.forEach(node => {
+        wireCtx.beginPath();
+        wireCtx.arc(node.x, node.y, wireNodeRadius, 0, Math.PI * 2);
+        wireCtx.fillStyle = wireConnections[node.index] !== undefined ? node.color : 'rgba(0,0,0,0.5)';
+        wireCtx.fill();
+        wireCtx.strokeStyle = node.color;
+        wireCtx.lineWidth = 3;
+        wireCtx.shadowColor = node.color;
+        wireCtx.shadowBlur = wireConnections[node.index] !== undefined ? 15 : 5;
+        wireCtx.stroke();
+        wireCtx.shadowBlur = 0;
+    });
 
-    function getCanvasPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
-    }
+    // Draw right nodes
+    wireRightNodes.forEach(node => {
+        const connected = Object.values(wireConnections).includes(node.index);
+        wireCtx.beginPath();
+        wireCtx.arc(node.x, node.y, wireNodeRadius, 0, Math.PI * 2);
+        wireCtx.fillStyle = connected ? node.color : 'rgba(0,0,0,0.5)';
+        wireCtx.fill();
+        wireCtx.strokeStyle = node.color;
+        wireCtx.lineWidth = 3;
+        wireCtx.shadowColor = node.color;
+        wireCtx.shadowBlur = connected ? 15 : 5;
+        wireCtx.stroke();
+        wireCtx.shadowBlur = 0;
+    });
 
-    function checkSolved() {
-        if (Object.keys(connections).length < numWires) return;
-        const allCorrect = Object.entries(connections).every(([leftIdx, rightIdx]) => {
-            const left = leftNodes[leftIdx];
-            const right = rightNodes.find(n => n.index === parseInt(rightIdx));
-            return left && right && left.color === right.color;
-        });
-        if (allCorrect) {
-            setTimeout(() => {
-                document.getElementById('wire-solved-popup').classList.remove('hidden');
-            }, 400);
-            state.solvedWirePuzzle = true;
-        }
+    // Error flash
+    if (wireErrorFlash) {
+        wireCtx.fillStyle = 'rgba(255, 0, 0, 0.25)';
+        wireCtx.fillRect(0, 0, wireCanvas.width, wireCanvas.height);
     }
+}
 
-    canvas.onmousedown = (e) => {
-        const pos = getCanvasPos(e);
-        const node = getNodeAt(pos.x, pos.y, leftNodes);
+function getWireNodeAt(x, y, nodes) {
+    return nodes.find(n => Math.hypot(n.x - x, n.y - y) <= wireNodeRadius + 4);
+}
+
+function getWireCanvasPos(e) {
+    const rect = wireCanvas.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+}
+
+function checkWireSolved() {
+    if (Object.keys(wireConnections).length < wireNumWires) return;
+    const allCorrect = Object.entries(wireConnections).every(([leftIdx, rightIdx]) => {
+        const left = wireLeftNodes[leftIdx];
+        const right = wireRightNodes.find(n => n.index === parseInt(rightIdx));
+        return left && right && left.color === right.color;
+    });
+    if (allCorrect) {
+        setTimeout(() => {
+            document.getElementById('wire-solved-popup').classList.remove('hidden');
+        }, 400);
+        state.solvedWirePuzzle = true;
+    }
+}
+
+function setupWireCanvasEvents() {
+    wireCanvas.onmousedown = (e) => {
+        const pos = getWireCanvasPos(e);
+        const node = getWireNodeAt(pos.x, pos.y, wireLeftNodes);
         if (node) {
-            dragging = true;
-            dragStart = node;
-            dragCurrent = pos;
-            // Remove existing connection from this node
-            delete connections[node.index];
-            draw();
+            wireDragging = true;
+            wireDragStart = node;
+            wireDragCurrent = pos;
+            delete wireConnections[node.index];
+            drawWireCanvas();
         }
     };
 
-    canvas.onmousemove = (e) => {
-        if (!dragging) return;
-        dragCurrent = getCanvasPos(e);
-        draw();
+    wireCanvas.onmousemove = (e) => {
+        if (!wireDragging) return;
+        wireDragCurrent = getWireCanvasPos(e);
+        drawWireCanvas();
     };
 
-    canvas.onmouseup = (e) => {
-        if (!dragging) return;
-        dragging = false;
-        const pos = getCanvasPos(e);
-        const rightNode = getNodeAt(pos.x, pos.y, rightNodes);
-        if (rightNode && dragStart) {
-            // Check if right node already connected — remove old connection
-            Object.keys(connections).forEach(k => {
-                if (connections[k] === rightNode.index) delete connections[k];
+    wireCanvas.onmouseup = (e) => {
+        if (!wireDragging) return;
+        wireDragging = false;
+        const pos = getWireCanvasPos(e);
+        const rightNode = getWireNodeAt(pos.x, pos.y, wireRightNodes);
+        if (rightNode && wireDragStart) {
+            Object.keys(wireConnections).forEach(k => {
+                if (wireConnections[k] === rightNode.index) delete wireConnections[k];
             });
-            connections[dragStart.index] = rightNode.index;
-
-            // Check if wrong — flash error
-            if (dragStart.color !== rightNode.color) {
-                errorFlash = true;
-                draw();
+            wireConnections[wireDragStart.index] = rightNode.index;
+            if (wireDragStart.color !== rightNode.color) {
+                wireErrorFlash = true;
+                drawWireCanvas();
                 setTimeout(() => {
-                    errorFlash = false;
-                    draw();
+                    wireErrorFlash = false;
+                    drawWireCanvas();
                 }, 500);
             }
-            checkSolved();
+            checkWireSolved();
         }
-        dragStart = null;
-        dragCurrent = null;
-        draw();
+        wireDragStart = null;
+        wireDragCurrent = null;
+        drawWireCanvas();
     };
 
-    canvas.onmouseleave = () => {
-        if (dragging) {
-            dragging = false;
-            dragStart = null;
-            dragCurrent = null;
-            draw();
+    wireCanvas.onmouseleave = () => {
+        if (wireDragging) {
+            wireDragging = false;
+            wireDragStart = null;
+            wireDragCurrent = null;
+            drawWireCanvas();
         }
     };
-
-    draw();
 }
 
 init();
