@@ -453,7 +453,7 @@ function init() {
 
         // 3. THE BOXES (The "Await" chain)
         await spawnThemedBox("Click objects or doors to interact with them", "notification-bottom");
-        if (tutorialAborted) return; // Stop if they hit exit during box 1
+        if (tutorialAborted) return; // Stop if they hit exit during box 1 //fixme
 
         await spawnThemedBox("Use the arrows to move around the room!", "notification-arrow");
         if (tutorialAborted) return; // Stop if they hit exit during box 2
@@ -577,32 +577,35 @@ function init() {
     document.getElementById('bd-closed-hitbox').onclick = () => {
         state.hasBdKey ? showPage('mh-bd-slot-open-page') : showPage('mh-bd-slot-open-key-page');
     };
-    document.getElementById('bd-key-hitbox').onclick = () => {
+    document.getElementById('bd-key-hitbox').onclick = async (e) => {
         state.hasBdKey = true;
         const keySlot = document.getElementById('inv-bd-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
         showPage('mh-bd-slot-open-page');
+        await spawnThemedBox('A key!', "notification-bottom");
     };
     document.getElementById('bd-slot-open-hitbox').onclick = () => showPage('mh-bd-slot-closed-page');
 
     // bd Door Handle & Locking
-    document.getElementById('bd-door-keyhole-hitbox').onclick = () => {
+    document.getElementById('bd-door-keyhole-hitbox').onclick = async (e) => {
         if (state.hasBdKey) {
             state.bdUnlocked = true;
             const keySlot = document.getElementById('inv-bd-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            alert("Unlocked!"); // fixme feedback
+            await spawnThemedBox('It\'s unlocked !', "notification-bottom");
+        } else {
+            await spawnThemedBox('hm... I\'ll need to find a key for this door', "notification-bottom");
         }
     };
-    document.getElementById('bd-door-handle-hitbox').onclick = () => {
+    document.getElementById('bd-door-handle-hitbox').onclick = async (e) => {
         if (state.bdUnlocked) {
             showPage('bd-door-open-page');
         } else {
-            alert("It's locked."); //fixme feedback
+            await spawnThemedBox('I need to unlock the door first', "notification-bottom");
         }
     };
 
@@ -627,21 +630,23 @@ function init() {
     // door behind book drop and locking
     document.getElementById('bd-back-door-hitbox').onclick = () => showPage('bd-back-door-handle-page');
 
-    document.getElementById('bd-back-handle-keyhole-hitbox').onclick = () => {
+    document.getElementById('bd-back-handle-keyhole-hitbox').onclick = async (e) => {
         if (state.hasPrKey) {
             state.bdBackDoorUnlocked = true;
             const keySlot = document.getElementById('inv-pr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            alert("Unlocked!"); // fixme feedback
+            await spawnThemedBox('It\'s unlocked !', "notification-bottom");
+        } else {
+            await spawnThemedBox('I need to find another key...', "notification-bottom");
         }
     };
-    document.getElementById('bd-back-handle-handle-hitbox').onclick = () => {
+    document.getElementById('bd-back-handle-handle-hitbox').onclick = async (e) => {
         if (state.bdBackDoorUnlocked) {
             showPage('bd-back-door-open-page');
         } else {
-            alert("It's locked."); //fixme feedback
+            await spawnThemedBox('I need to unlock the door first', "notification-bottom");
         }
     };
 
@@ -740,24 +745,24 @@ function init() {
     document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('mh-ki-door-handle-page');
 
     //fixme - made pr book key for kitchen (potentially change)
-    document.getElementById('ki-door-handle-keyhole-hitbox').onclick = () => {
+    document.getElementById('ki-door-handle-keyhole-hitbox').onclick = async (e) => {
         if (state.hasKiKey) {
             state.kiUnlocked = true;
             const keySlot = document.getElementById('inv-ki-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            alert("Unlocked!"); // fixme feedback
+            // fixme await spawnThemedBox('It\'s unlocked !', "notification bottom");
         }
         else {
-            alert("it's locked");
+            // fixme await spawnThemedBox('Where am I going to find another key ??', "notification bottom");
         }
     };
-    document.getElementById('ki-door-handle-handle-hitbox').onclick = () => {
+    document.getElementById('ki-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.kiUnlocked) {
             showPage('ki-door-open-page');
         } else {
-            alert("It's locked."); //fixme feedback
+            // fixme await spawnThemedBox('This door is locked too', "notification bottom");
         }
     };
 
