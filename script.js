@@ -182,6 +182,7 @@ const roomLeads = {
     'ki-pt-code-page':          {back: 'ki-main-code-page'},
     'ki-pt-noCode-page':        {back: 'ki-main-noCode-page'},
 
+
     //c-wing left-progression/entrance/snack hall
     'mh-cw-stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page',},
     'mh-cw-stairs-page':        {back: 'mh-cw-stairs-rubble-page', forward: 'mh-cw-door-page'},
@@ -203,7 +204,18 @@ const roomLeads = {
     'cw-right-bath-id-page':    {back: 'cw-right-snh-id-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
     'cw-right-bath-page':       {back: 'cw-right-snh-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
     'cw-right-aw-page':         {back: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page', forward: 'cw-right-eh-page'}, //fixme add right
-    'cw-right-eh-page':          {back: 'cw-right-aw-page'}, //fixme add left and forward
+    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
+    'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', left: 'oh2-entrance-page'}, //fixme add right
+
+    //c-wing side halls
+    'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page'}, //fixme add left
+    'eh-door-page':             {back: 'cw-eh-entrance-page'},
+    'eh-door-plate-page':       {back: 'eh-door-page'},
+    'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page'}, //fixme add right
+    'oh2-entrance-page':        {back: 'cw-right-print-page', right: 'oh2-oh3-entrance-page'}, //fixme add right
+    'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page'}, //fixme add right
+    'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
 
     //c-wing inspections/doors
     'cw-chair-id-page':         {back: 'cw-left-bath-id-page'},
@@ -1001,6 +1013,7 @@ function init() {
     }
     document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {}; //fixme show wr room main page when added
 
+    document.getElementById('oh3-entrance-hitbox').onclick = () => showPage('oh2-oh3-entrance-page');
 
 
 
