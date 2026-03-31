@@ -183,11 +183,12 @@ const roomLeads = {
     'ki-pt-noCode-page':        {back: 'ki-main-noCode-page'},
 
     //c-wing left-progression/entrance/snack hall
-    'mh-cw-stairs-page':        {back: 'mh-cend-right-endc-kc-page', forward: 'mh-cw-door-page'},
+    'mh-cw-stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page',},
+    'mh-cw-stairs-page':        {back: 'mh-cw-stairs-rubble-page', forward: 'mh-cw-door-page'},
     'mh-cw-door-page':          {back: 'mh-cw-stairs-page'},
     'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
     'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
-    'cw-entrance-2-page':       {back: 'cw-entrance-page', left: () => state.hasWrId ? 'cw-left-bath-wrc-page': 'cw-left-bath-id-page'}, //fixme add left/right
+    'cw-entrance-2-page':       {back: 'cw-entrance-page', left: () => state.hasWrId ? 'cw-left-bath-wrc-page': 'cw-left-bath-id-page', right: 'cw-right-eh-page'}, //fixme add left/right
     'cw-left-bath-id-page':     {back: 'cw-entrance-2-page', left: 'cw-bath-door-page', forward: 'cw-left-snh-wrc-page'}, //fixme back is not correct, also add forward
     'cw-left-bath-wrc-page':    {back: 'cw-entrance-2-page', left: 'cw-bath-door-page', forward: 'cw-left-snh-wrc-page'}, //fixme back is not correct, also add forward
     'cw-left-snh-wrc-page':     {back: () => state.hasWrId ? 'cw-left-bath-wrc-page': 'cw-left-bath-id-page', forward: 'cw-wr-dc-page', right: 'snh-entrance-page'}, //fixme add right
@@ -954,7 +955,11 @@ function init() {
 
 
     // ------- C-WING SECTION -----
-    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('mh-cw-stairs-page'); //fixme add door sound effect
+    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('mh-cw-stairs-rubble-page'); //fixme add door sound effect
+    document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async (e) => {
+        //fixme add feedback
+    }
+    document.getElementById('mh-cw-stairs-hitbox').onclick = () => showPage('mh-cw-stairs-page');
     document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => showPage('mh-cw-door-page');
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
     //^fixme add some stuff on the plate page
