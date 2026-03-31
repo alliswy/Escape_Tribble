@@ -1676,8 +1676,8 @@ input[type="range"]::-webkit-slider-thumb {
 #cr-main-2dc-doors-hitbox {
     position: absolute;
     top: 16%;
-    left: 61%;
-    width: 38%;
+    left: 59%;
+    width: 35%;
     height: 67%;
 
     background-color: transparent;
@@ -1703,7 +1703,7 @@ input[type="range"]::-webkit-slider-thumb {
     position: absolute;
     top: 11%;
     left: 68%;
-    width: 30%;
+    width: 24%;
     height: 55%;
 
     background-color: transparent;
@@ -1871,9 +1871,9 @@ input[type="range"]::-webkit-slider-thumb {
 #cr-camr-door-closed-hitbox {
     position: absolute;
     top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    left: 39%;
+    width: 30%;
+    height: 96%;
 
     background-color: transparent;
     border: 2px solid transparent;
