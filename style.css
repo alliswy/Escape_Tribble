@@ -2049,3 +2049,84 @@ input[type="range"]::-webkit-slider-thumb {
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
 }
+
+/* ----- MAIN HALL PAGES ---- */
+#mh-cend-right-endc-ki-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 65%;
+    width: 14%;
+    height: 67%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-cend-right-endc-cw-hitbox {
+    position: absolute;
+    top: 23%;
+    left: 26%;
+    width: 21%;
+    height: 47%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+/* ----- C-WING PAGES ---- */
+
+#mh-cw-stairs-door-hitbox {
+    position: absolute;
+    top: 5%;
+    left: 30%;
+    width: 17%;
+    height: 62%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-cw-door-hitbox {
+    position: absolute;
+    top: 50%;
+    left: 28%;
+    width: 12%;
+    height: 38%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-cw-door-plate-hitbox {
+    position: absolute;
+    top: 28%;
+    left: 42%;
+    width: 5%;
+    height: 15%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-cw-plate-hitbox {
+    position: absolute;
+    top: 19%;
+    left: 15%;
+    width: 17%;
+    height: 58%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}

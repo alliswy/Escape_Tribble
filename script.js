@@ -180,6 +180,15 @@ const roomLeads = {
     'ki-pt-code-page':          {back: 'ki-main-code-page'},
     'ki-pt-noCode-page':        {back: 'ki-main-noCode-page'},
 
+    //c-wing
+    'mh-cw-stairs-page':        {back: 'mh-cend-right-endc-kc-page', forward: 'mh-cw-door-page'},
+    'mh-cw-door-page':          {back: 'mh-cw-stairs-page'},
+    'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
+    'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
+    'cw-entrance-2-page':       {back: 'cw-entrance-page'}, //fixme add left/right
+
+
+
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
@@ -769,6 +778,7 @@ function init() {
 
 
     //------ KITCHEN SECTION ------
+    document.getElementById('mh-cend-right-endc-ki-hitbox').onclick = () => showPage('mh-ki-door-closed-page');
 
     //handle and locking
     document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('mh-ki-door-handle-page');
@@ -903,19 +913,28 @@ function init() {
     document.getElementById('camr-ml-off-hitbox').onclick = () => {
         //showPage() fixme show page with password input option
     }
-
     document.getElementById('camr-main-mr-hitbox').onclick = () => {
         showPage('camr-mr-off-page');
     }
-
     document.getElementById('camr-main-wp-window-hitbox').onclick = () => {
         showPage('camr-wp-page');
         state.justFoundWp = true;
     }
-
     document.getElementById('camr-wp-hitbox').onclick = async (e) => {
         await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-bottom");
     }
+
+
+
+
+    // ------- C-WING SECTION -----
+    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('mh-cw-stairs-page'); //fixme add door sound effect
+    document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => showPage('mh-cw-door-page');
+    document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
+    //^fixme add some stuff on the plate page
+    document.getElementById('mh-cw-door-hitbox').onclick = () => showPage('cw-entrance-page');
+
+
 
 
 
