@@ -8,6 +8,10 @@
 
 
 let score = 0;
+
+// 1. UTILITIES
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 // ------ 1. GAME STATE -----
 const state = {
     hasBdKey: false,
@@ -41,6 +45,9 @@ const state = {
 
     solvedWirePuzzle: false,
     foundPtCode: false,
+
+    foundWp: false,
+    justFoundWp: false,
 
     isProjectorOn: false,
     isLeftMonitorOn: false,
@@ -149,14 +156,16 @@ const roomLeads = {
     'camr-main-page':           {back: 'cr-doors-1dc-page'},
     'camr-main-ml-on-page':     {back: 'cr-doors-1dc-cam-page'},
     'camr-main-ml-on-person-page': {back: 'cr-doors-1dc-cam-page'},
-    'camr-wp-page':             {back: 'camr-main-wp-page'},
+    'camr-wp-page':             {back: 'camr-main-page'},
     'camr-we-page':             {back: 'camr-main-page'},
     'camr-mlo-we-page':         {back: 'camr-main-ml-on-page'},
-    'camr-main-wp-page':        {back: 'cr-doors-1dc-cam-page'},
-    'camr-ml-off-page':         {back: 'camr-main-page'},
+    'camr-main-wp-page':        {back: 'cr-doors-1dc-page'},
+    'camr-ml-off-page':         {back: () => state.foundWp ? 'camr-main-page':'camr-main-wp-page'},
+    //fixme - add text box on the screen when they go back to the above page (camr-main-wp-page) !
     'camr-ml-on-page':          {back: 'camr-main-ml-on-page'},
     'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person'},
-    'camr-mr-off-page':         {back: () => state.isLeftMonitorOn ? 'camr-main-mlo-page' : 'camr-main-page'},
+    //note for next line: if the left monitor is on, they already visited the left monitor, and thus already saw the window person !
+    'camr-mr-off-page':         {back: () => state.isLeftMonitorOn ? 'camr-main-mlo-page' : state.foundWp ? 'camr-main-page':'camr-main-wp-page'},
 
 
     //kitchen
@@ -183,7 +192,7 @@ function getDestination(direction, pageId) {
 }
 
 // Replace your old showPage with this:
-function showPage(pageId) {
+async function showPage(pageId) {
     allPages.forEach(p => p.classList.add('hidden'));
     const target = document.getElementById(pageId);
     if (target) {
@@ -198,6 +207,26 @@ function showPage(pageId) {
     rightArrow.classList.toggle('hidden', !currentPaths.right);
 
     updateMap(pageId);
+
+    //spawn textbox when certain page is shown !
+    switch (pageId) {
+        case 'camr-main-wp-page': {
+            // Wait 20ms for the browser to draw the new image
+            await delay(20);
+            // Now fire the typewriter
+            await spawnThemedBox("What's that in the window ??", "notification-bottom");
+            state.foundWp = true;
+        }
+        case 'camr-main-page': {
+            if (state.justFoundWp) {
+                state.justFoundWp = false;
+                await spawnThemedBox("They're gone!", "notification-bottom");
+            }
+        }
+
+        //fixme add more as needed
+
+    }
 }
 
 function goBack()    { move('back'); }
@@ -852,12 +881,40 @@ function init() {
     }
 
     document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
-    document.getElementById('cr-camr-door-closed-hitbox').onclick = () => {
+    document.getElementById('cr-camr-door-closed-hitbox').onclick = async (e) => {
         if (state.hasCamrKey) {
             showPage('cr-doors-1dc-page');
         } else {
             //fixme add feedback
         }
+    }
+
+    //----- CAMERA ROOM SECTION -----
+    document.getElementById('cr-doors-1dc-rd-hitbox').onclick = () => {
+        showPage('camr-main-page');
+        //fixme add checks for if mr on or ml on or whatnot
+    }
+    document.getElementById('camr-main-window-hitbox').onclick = () => {
+        showPage('camr-we-page');
+    }
+    document.getElementById('camr-main-ml-hitbox').onclick = () => {
+        showPage('camr-ml-off-page');
+    }
+    document.getElementById('camr-ml-off-hitbox').onclick = () => {
+        //showPage() fixme show page with password input option
+    }
+
+    document.getElementById('camr-main-mr-hitbox').onclick = () => {
+        showPage('camr-mr-off-page');
+    }
+
+    document.getElementById('camr-main-wp-window-hitbox').onclick = () => {
+        showPage('camr-wp-page');
+        state.justFoundWp = true;
+    }
+
+    document.getElementById('camr-wp-hitbox').onclick = async (e) => {
+        await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-bottom");
     }
 
 

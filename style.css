@@ -138,13 +138,15 @@ body {
     bottom: 30px !important;    /* Distance from the floor */
     left: 50% !important;      /* Horizontal center */
     transform: translateX(-50%) !important;
-
     /* Force ignore vertical centering */
     top: auto !important;
 
-    /*width: 60%;*/
-    min-width: 320px;
-    max-width: 800px;
+    width: max-content;      /* 1. Forces the box to be exactly as wide as the text */
+    max-width: 90vw;         /* 2. Prevents it from going off-screen on mobile */
+    min-width: 0 !important; /* 3. Removes your 320px restriction */
+
+    /* Optional: Add some padding so the text doesn't touch the edges */
+    padding: 15px 25px;
 
     /* Make sure text looks good */
     text-align: center;
@@ -1881,10 +1883,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #camr-wp-hitbox {
     position: absolute;
-    top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    top: 20%;
+    left: 34%;
+    width: 23%;
+    height: 57%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1894,10 +1896,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #camr-we-hitbox {
     position: absolute;
-    top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    top: 2%;
+    left: 28%;
+    width: 37%;
+    height: 89%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1920,10 +1922,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #camr-ml-off-hitbox {
     position: absolute;
-    top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    top: 16%;
+    left: 5%;
+    width: 91%;
+    height: 72%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1959,10 +1961,88 @@ input[type="range"]::-webkit-slider-thumb {
 
 #camr-mr-off-hitbox {
     position: absolute;
-    top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    top: 18%;
+    left: 6%;
+    width: 90%;
+    height: 72%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-ml-hitbox {
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    width: 20%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-mr-hitbox {
+    position: absolute;
+    top: 29%;
+    left: 70%;
+    width: 24%;
+    height: 25%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-window-hitbox {
+    position: absolute;
+    top: 19%;
+    left: 15%;
+    width: 17%;
+    height: 58%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-wp-ml-hitbox {
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    width: 20%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-wp-mr-hitbox {
+    position: absolute;
+    top: 29%;
+    left: 70%;
+    width: 24%;
+    height: 25%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-wp-window-hitbox {
+    position: absolute;
+    top: 19%;
+    left: 15%;
+    width: 17%;
+    height: 58%;
 
     background-color: transparent;
     border: 2px solid transparent;
