@@ -20,6 +20,7 @@ const state = {
     hasLiKey: false,
     hasPwBook: false,
     hasCamrKey: false,
+    hasWrId: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -27,6 +28,7 @@ const state = {
     liUnlocked: false,
     crUnlocked: false,
     camrUnlocked: false,
+    wrUnlocked: false,
 
     camrDoorOpen: false, //this is the room with the two monitors in the creepy room
     crlDoorOpen: false, //this is the door to the left of the camera room^ in the creepy room. Note: if this door is open, camrDoorOpen = true;
@@ -180,13 +182,29 @@ const roomLeads = {
     'ki-pt-code-page':          {back: 'ki-main-code-page'},
     'ki-pt-noCode-page':        {back: 'ki-main-noCode-page'},
 
-    //c-wing
+    //c-wing hallways
     'mh-cw-stairs-page':        {back: 'mh-cend-right-endc-kc-page', forward: 'mh-cw-door-page'},
     'mh-cw-door-page':          {back: 'mh-cw-stairs-page'},
     'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
     'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
-    'cw-entrance-2-page':       {back: 'cw-entrance-page'}, //fixme add left/right
+    'cw-entrance-2-page':       {back: 'cw-entrance-page', left: () => state.hasWrId ? 'cw-left-bath-wrc-page': 'cw-left-bath-id-page'}, //fixme add left/right
+    'cw-left-bath-id-page':     {back: 'cw-entrance-2-page', left: 'cw-bath-door-page', forward: 'cw-left-snh-wrc-page'}, //fixme back is not correct, also add forward
+    'cw-left-bath-wrc-page':    {back: 'cw-entrance-2-page', left: 'cw-bath-door-page', forward: 'cw-left-snh-wrc-page'}, //fixme back is not correct, also add forward
+    'cw-left-snh-wrc-page':     {back: () => state.hasWrId ? 'cw-left-bath-wrc-page': 'cw-left-bath-id-page', forward: 'cw-wr-dc-page'}, //fixme add right
+    'cw-left-snh-wro-page':     {forward: 'cw-elevator-wr-do-page'}, //fixme add back
+    'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
+    'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
 
+
+    //c-wing inspections/doors
+    'cw-chair-id-page':         {back: 'cw-left-bath-id-page'},
+    'cw-chair-page':            {back: 'cw-left-bath-wrc-page'},
+    'cw-bath-door-page':        {right: () => state.hasWrId ? 'cw-left-bath-wrc-page':'cw-left-bath-id-page'},
+    'cw-bath-page':             {back: 'cw-bath-door-page'},
+    'cw-bath-sink-page':        {back: 'cw-bath-page'},
+    'cw-elevator-page':         {right: () => state.wrUnlocked ? 'cw-elevator-wr-do-page': 'cw-wr-dc-page'},
+    'cw-wr-handle-unlocked-page': {back: 'cw-elevator-wr-do-page'},
+    'cw-wr-handle-locked-page': {back: 'cw-wr-dc-page'},
 
 
     //library
@@ -933,7 +951,42 @@ function init() {
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
     //^fixme add some stuff on the plate page
     document.getElementById('mh-cw-door-hitbox').onclick = () => showPage('cw-entrance-page');
-
+    document.getElementById('cw-left-bath-id-chair-hitbox').onclick = () => showPage('cw-chair-id-page');
+    document.getElementById('cw-id-hitbox').onclick = () => {
+        state.hasWrId = true;
+        const keySlot = document.getElementById('inv-wr-id')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('cw-chair-page');
+    }
+    document.getElementById('cw-bath-door-hitbox').onclick = async (e) => {
+        showPage('cw-bath-page');
+        await spawnThemedBox('temp message', "notification-bottom");// fixme
+    }
+    document.getElementById('cw-bath-sink-hitbox').onclick = () => showPage('cw-bath-sink-page');
+    document.getElementById('cw-bath-sink-sink-hitbox').onclick = async (e) => {
+        await spawnThemedBox('temp message', "notification-bottom"); //fixme add feedback
+    }
+    document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('cw-wr-handle-unlocked-page');
+    document.getElementById('cw-wr-dc-hitbox').onclick = () => showPage('cw-wr-handle-locked-page');
+    document.getElementById('cw-wr-scanner-hitbox').onclick = async (e) => {
+        if (state.hasWrId) {
+        state.wrUnlocked = true;
+        showPage('cw-wr-handle-unlocked-page');
+        //fixme currently keeps id in inventory -- do I want it this way ?
+        //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('cw-elevator-hitbox').onclick = async (e) => {
+        //fixme add feedback
+    }
+    document.getElementById('cw-wr-locked-handle-hitbox').onclick = async (e) => {
+        //fixme add feedback
+    }
+    document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {}; //fixme show wr room main page when added
 
 
 
