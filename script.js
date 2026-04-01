@@ -20,6 +20,7 @@ const state = {
     hasLiKey: false,
     hasPwBook: false,
     hasCamrKey: false,
+    hasClrKey: false,
     hasWrId: false,
 
     bdUnlocked: false,
@@ -212,10 +213,20 @@ const roomLeads = {
     'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page'}, //fixme add left
     'eh-door-page':             {back: 'cw-eh-entrance-page'},
     'eh-door-plate-page':       {back: 'eh-door-page'},
-    'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page'}, //fixme add right
+    'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', forward: 'oh1-left-1-page'}, //fixme add right
+    'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left or back
+    'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
+    'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasLiKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'}, //fixme is this really Li key or should it be Clr key ?
+    'oh1-left-4-page':          {back: 'oh1-left-3-page'},
+    'oh1-left-4-key-page':      {back: 'oh1-left-3-page'},
+    'oh1-exit-2-page':          {right: 'oh1-left-2-page'}, //fixme add left
+    'oh1-books-page':           {back: 'oh1-left-4-page'}, //fixme add right
+    'oh1-books-key-page':       {back: 'oh1-left-4-key-page'}, //fixme add right
+
     'oh2-entrance-page':        {back: 'cw-right-print-page', right: 'oh2-oh3-entrance-page'}, //fixme add right
     'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page'}, //fixme add right
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
+
 
     //c-wing inspections/doors
     'cw-chair-id-page':         {back: 'cw-left-bath-id-page'},
@@ -1012,8 +1023,22 @@ function init() {
         //fixme add feedback
     }
     document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {}; //fixme show wr room main page when added
-
     document.getElementById('oh3-entrance-hitbox').onclick = () => showPage('oh2-oh3-entrance-page');
+
+    document.getElementById('cw-oh1-entrance-hitbox').onclick = () => showPage('oh1-left-1-page');
+    document.getElementById('oh1-left-4-key-books-hitbox').onclick = () => showPage('oh1-books-key-page');
+    document.getElementById('oh1-books-hitbox').onclick = async (e) => {
+        await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
+    }
+    document.getElementById('oh1-books-key-hitbox').onclick = async (e) => {
+        state.hasLiKey = true;
+        const keySlot = document.getElementById('inv-li-key')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('oh1-books-page');
+        //fixme add feedback
+    }
 
 
 
