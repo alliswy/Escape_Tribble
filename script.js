@@ -198,6 +198,9 @@ const roomLeads = {
     'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
     'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
     'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: () => state.hasWrId ? 'cw-right-snh-page': 'cw-right-snh-id-page'},
+    //fixme add cw-left-eh-page
+    'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page'}, //fixme add left
+    'cw-left-2-page':           {back: 'cw-left-1-page', left: 'cw-oh1-entrance-page'}, //fixme add forward: 'cw-left-eh-page'
 
     //c-wing right progression/hallways
     'cw-right-snh-id-page':     {forward: 'cw-right-bath-id-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
@@ -222,13 +225,15 @@ const roomLeads = {
     'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasLiKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page', right: 'oh1-exit-2-page'},
     'oh1-right-3-page':         {back: 'oh1-right-2-page'}, //fixme add right: oh1-exit-1-page
-    'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page'},
+    'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page', forward: 'cw-oh2-entrance-page'},
     'oh1-books-page':           {back: 'oh1-left-4-page'}, //fixme add right
     'oh1-books-key-page':       {back: 'oh1-left-4-key-page'}, //fixme add right
 
-    'oh2-entrance-page':        {back: 'cw-right-print-page', right: 'oh2-oh3-entrance-page'}, //fixme add right
-    'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page'}, //fixme add right
+    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page'},
+    'oh2-entrance-page':        {back: 'cw-oh2-entrance-page', right: 'oh2-oh3-entrance-page'},
+    'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page', right: 'oh2-exit-page'},
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
+    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page'}, //fixme add forward
 
 
     //c-wing inspections/doors
