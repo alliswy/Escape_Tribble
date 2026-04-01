@@ -185,9 +185,9 @@ const roomLeads = {
 
 
     //c-wing left-progression/entrance/snack hall
-    'mh-cw-stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page',},
-    'mh-cw-stairs-page':        {back: 'mh-cw-stairs-rubble-page', forward: 'mh-cw-door-page'},
-    'mh-cw-door-page':          {back: 'mh-cw-stairs-page'},
+    'stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page',},
+    'stairs-page':        {back: 'stairs-rubble-page', forward: 'mh-cw-door-page'},
+    'mh-cw-door-page':          {back: 'stairs-page'},
     'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
     'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
     'cw-entrance-2-page':       {back: 'cw-entrance-page', left: () => state.hasWrId ? 'cw-left-bath-wrc-page': 'cw-left-bath-id-page', right: 'cw-right-eh-page'}, //fixme add left/right
@@ -242,8 +242,8 @@ const roomLeads = {
     'cw-chair-id-page':         {back: 'cw-left-bath-id-page'},
     'cw-chair-page':            {back: 'cw-left-bath-wrc-page'},
     'cw-bath-door-page':        {right: () => state.hasWrId ? 'cw-left-bath-wrc-page':'cw-left-bath-id-page', left: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page'},
-    'cw-bath-page':             {back: 'cw-bath-door-page'},
-    'cw-bath-sink-page':        {back: 'cw-bath-page'},
+    'bath-page':             {back: 'cw-bath-door-page'},
+    'bath-sink-page':        {back: 'bath-page'},
     'cw-elevator-page':         {left: () => state.hasWrId ? 'cw-right-snh-page': 'cw-right-snh-id-page', right: () => state.wrUnlocked ? 'cw-elevator-wr-do-page': 'cw-wr-dc-page'},
     'cw-wr-handle-unlocked-page': {back: 'cw-elevator-wr-do-page'},
     'cw-wr-handle-locked-page': {back: 'cw-wr-dc-page'},
@@ -1037,11 +1037,11 @@ function init() {
 
 
     // ------- C-WING SECTION -----
-    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('mh-cw-stairs-rubble-page'); //fixme add door sound effect
+    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('stairs-rubble-page'); //fixme add door sound effect
     document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async (e) => {
         //fixme add feedback
     }
-    document.getElementById('mh-cw-stairs-hitbox').onclick = () => showPage('mh-cw-stairs-page');
+    document.getElementById('mh-cw-stairs-hitbox').onclick = () => showPage('stairs-page');
     document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => showPage('mh-cw-door-page');
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
     //^fixme add some stuff on the plate page
