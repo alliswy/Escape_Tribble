@@ -210,9 +210,10 @@ const roomLeads = {
     'cw-right-aw-page':         {back: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page', forward: 'cw-right-eh-page'}, //fixme add right
     'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
-    'cw-right-print-page':      {back: 'cw-right-oh1-page', left: 'oh2-entrance-page'}, //fixme add right
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: 'print-page', left: 'oh2-entrance-page'}, //fixme add right
 
     //c-wing side halls
+    'print-page':               {back: 'cw-right-print-page'},
     'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page'}, //fixme add left
     'eh-door-page':             {back: 'cw-eh-entrance-page'},
     'eh-door-plate-page':       {back: 'eh-door-page'},
@@ -540,6 +541,9 @@ function init() {
         document.getElementById('tutorial-master-left-arrow').classList.remove('hidden');
         document.getElementById('tutorial-master-right-arrow').classList.remove('hidden');
         document.getElementById('inventory-drawer').classList.remove('hidden');
+        const panel = document.getElementById('inventory-panel');
+        // Use remove to force the closed state
+        panel.classList.remove('inventory-open');
 
         // 2. THE EXIT BUTTON (Stops the ghost finish)
         document.getElementById('tutorial-exit-btn').onclick = () => {
@@ -556,7 +560,6 @@ function init() {
 
         await spawnThemedBox("<- click here to open/close inventory tab", "notification-inventory");
         if (tutorialAborted) return; // Stop if they hit exit during box 2
-        const panel = document.getElementById('inventory-panel');
         panel.classList.toggle('inventory-open')
         document.getElementById('inv-pw-book').classList.remove('hidden');
 
@@ -574,6 +577,9 @@ function init() {
 // helper to avoid repeating the hide logic
     function hideTutorialUI() {
         tutorial.classList.add('hidden');
+        const panel = document.getElementById('inventory-panel');
+        // Use remove to force the closed state
+        panel.classList.remove('inventory-open');
         document.getElementById('inventory-drawer').classList.add('hidden');
         // Hide the arrows too!
         document.getElementById('tutorial-master-left-arrow').classList.add('hidden');
@@ -1047,6 +1053,7 @@ function init() {
         showPage('oh1-books-page');
         //fixme add feedback
     }
+    document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
 
 
 

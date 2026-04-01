@@ -135,11 +135,11 @@ body {
 /* Bottom Popup */
 .notification-bottom {
     position: fixed !important;
-    bottom: 30px !important;    /* Distance from the floor */
+    top: 30px !important;    /* Distance from the floor */
     left: 50% !important;      /* Horizontal center */
     transform: translateX(-50%) !important;
     /* Force ignore vertical centering */
-    top: auto !important;
+    bottom: auto !important;
 
     width: max-content;      /* 1. Forces the box to be exactly as wide as the text */
     max-width: 90vw;         /* 2. Prevents it from going off-screen on mobile */
@@ -2404,6 +2404,19 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #cw-oh1-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#print-screen-hitbox {
     position: absolute;
     top: 0%;
     left: 27%;
