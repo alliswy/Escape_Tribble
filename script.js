@@ -217,9 +217,12 @@ const roomLeads = {
     'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left or back
     'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
     'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasLiKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'}, //fixme is this really Li key or should it be Clr key ?
-    'oh1-left-4-page':          {back: 'oh1-left-3-page'},
-    'oh1-left-4-key-page':      {back: 'oh1-left-3-page'},
-    'oh1-exit-2-page':          {right: 'oh1-left-2-page'}, //fixme add left
+    'oh1-left-4-page':          {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
+    'oh1-left-4-key-page':      {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
+    'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasLiKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
+    'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page', right: 'oh1-exit-2-page'},
+    'oh1-right-3-page':         {back: 'oh1-right-2-page'}, //fixme add right: oh1-exit-1-page
+    'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page'},
     'oh1-books-page':           {back: 'oh1-left-4-page'}, //fixme add right
     'oh1-books-key-page':       {back: 'oh1-left-4-key-page'}, //fixme add right
 
