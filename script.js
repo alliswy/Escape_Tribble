@@ -214,6 +214,7 @@ const roomLeads = {
 
     //c-wing side halls
     'print-page':               {back: 'cw-right-print-page'},
+    'print-screen-page':        {back: 'print-page'},
     'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page'}, //fixme add left
     'eh-door-page':             {back: 'cw-eh-entrance-page'},
     'eh-door-plate-page':       {back: 'eh-door-page'},
