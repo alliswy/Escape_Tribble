@@ -929,9 +929,30 @@
             </div>
             <div id="hamburger-dropdown" class="dropdown-closed">
                 <div class="dropdown-item" id="map-btn">View Map</div>
+                <div class="dropdown-item" id="ingame-settings-btn">Settings</div>
                 <div class="dropdown-item" id="restart-btn">Restart</div>
                 <div class="dropdown-item" id="quit-btn">Exit to Main Menu</div>
             </div>
+        </div>
+
+        <!-- In-Game Settings Panel -->
+        <div id="ingame-settings" class="hidden">
+            <h2 id="ingame-settings-title">Settings</h2>
+            <div class="setting-row">
+                <label for="ingame-music-slider">Music</label>
+                <input type="range" id="ingame-music-slider" min="0" max="100" value="50">
+                <span id="ingame-music-value">50</span>
+            </div>
+            <div class="setting-row">
+                <label for="ingame-sfx-slider">SFX</label>
+                <input type="range" id="ingame-sfx-slider" min="0" max="100" value="50">
+                <span id="ingame-sfx-value">50</span>
+            </div>
+            <div class="setting-row">
+                <label for="ingame-fullscreen-toggle">Fullscreen</label>
+                <input type="checkbox" id="ingame-fullscreen-toggle">
+            </div>
+            <div class="menu-btn" id="ingame-settings-close-btn">Close</div>
         </div>
 
         <!-- Hint Button -->

@@ -517,12 +517,6 @@ function init() {
         }
     };
 
-    // Sync fullscreen checkbox when user exits fullscreen with Escape key
-    document.addEventListener('fullscreenchange', () => {
-        const toggle = document.getElementById('fullscreen-toggle');
-        toggle.checked = !!document.fullscreenElement;
-    });
-
 
     //Exit button
     document.getElementById('exit-button').onclick = () => {
@@ -614,6 +608,56 @@ function init() {
     document.getElementById('map-close-btn').onclick = () => {
         document.getElementById('map-screen').classList.add('hidden');
     };
+
+    // In-game settings button
+    document.getElementById('ingame-settings-btn').onclick = () => {
+        hamburgerDropdown.classList.remove('dropdown-open');
+        document.getElementById('ingame-settings').classList.remove('hidden');
+
+        // Sync fullscreen checkbox state
+        document.getElementById('ingame-fullscreen-toggle').checked = !!document.fullscreenElement;
+    };
+
+// In-game settings close button
+    document.getElementById('ingame-settings-close-btn').onclick = () => {
+        document.getElementById('ingame-settings').classList.add('hidden');
+    };
+
+// In-game music slider
+    document.getElementById('ingame-music-slider').oninput = (e) => {
+        document.getElementById('ingame-music-value').textContent = e.target.value;
+        // Keep main menu slider in sync
+        document.getElementById('music-slider').value = e.target.value;
+        document.getElementById('music-value').textContent = e.target.value;
+        console.log('Music volume:', e.target.value);
+    };
+
+// In-game SFX slider
+    document.getElementById('ingame-sfx-slider').oninput = (e) => {
+        document.getElementById('ingame-sfx-value').textContent = e.target.value;
+        // Keep main menu slider in sync
+        document.getElementById('sfx-slider').value = e.target.value;
+        document.getElementById('sfx-value').textContent = e.target.value;
+        console.log('SFX volume:', e.target.value);
+    };
+
+// In-game fullscreen toggle
+    document.getElementById('ingame-fullscreen-toggle').onchange = (e) => {
+        if (e.target.checked) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+        // Keep main menu toggle in sync
+        document.getElementById('fullscreen-toggle').checked = e.target.checked;
+    };
+
+// Sync in-game fullscreen toggle when Escape is pressed
+    document.addEventListener('fullscreenchange', () => {
+        const isFullscreen = !!document.fullscreenElement;
+        document.getElementById('ingame-fullscreen-toggle').checked = isFullscreen;
+        document.getElementById('fullscreen-toggle').checked = isFullscreen;
+    });
 
     //Restart button
     document.getElementById('restart-btn').onclick = () => {
