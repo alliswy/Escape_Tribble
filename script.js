@@ -799,6 +799,7 @@ function closeSecurityTerminal() {
 
 function init() {
     //Menu System
+    runMenuTypewriter();
     startButton.onclick = () => {
         menu.classList.add('hidden');
         play.classList.remove('hidden');
