@@ -229,7 +229,7 @@ const roomLeads = {
     'cw-right-aw-page':         {back: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page', forward: 'cw-right-eh-page'}, //fixme add right
     'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
-    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: 'print-page', left: 'oh2-entrance-page'}, //fixme add right
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: 'print-page', left: 'cw-oh2-entrance-page'}, //fixme add right
 
     //c-wing side halls
     'print-page':               {back: 'cw-right-print-page'},
@@ -250,7 +250,7 @@ const roomLeads = {
     'oh1-books-page':           {back: 'oh1-left-4-page'}, //fixme add right
     'oh1-books-key-page':       {back: 'oh1-left-4-key-page'}, //fixme add right
 
-    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page', right: 'cw-right-print-page'},
+    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page', right: 'cw-right-print-page', left: 'cw-left-1-page'},
     'oh2-entrance-page':        {back: 'cw-oh2-entrance-page', right: 'oh2-oh3-entrance-page'},
     'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page', right: 'oh2-exit-page'},
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
