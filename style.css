@@ -2237,10 +2237,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #camr-ml-on-hitbox {
     position: absolute;
-    top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    top: 23%;
+    left: 12%;
+    width: 77%;
+    height: 57%;
 
     background-color: transparent;
     border: 2px solid transparent;

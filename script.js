@@ -761,7 +761,7 @@ function checkSecurityPass() {
         setTimeout(() => {
             closeSecurityTerminal();
             state.cameraAccessed = true;
-            showPage('tempPage');
+            showPage('camr-ml-on-page');
         }, 3000);
 
     }
@@ -1327,6 +1327,7 @@ function init() {
 
         //fixme finish if/else logic for added cam pages
     }
+    document.getElementById('cr-doors-1dc-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
 
     document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
     document.getElementById('cr-camr-door-closed-hitbox').onclick = async (e) => {
@@ -1354,7 +1355,7 @@ function init() {
         const hitbox = document.getElementById('camr-ml-off-hitbox');
 
         if (state.cameraAccessed) {
-            //fixme showPage('tempPage');
+            showPage('camr-ml-on-page');
             return;
         }
 
