@@ -15,6 +15,38 @@ body:not(.debug-hitboxes) .hitbox {
     outline: none;
 }
 
+/* This part creates the glow inside the hitbox */
+.hitbox::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    /* Slightly larger, dense core */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+
+    /* Spectral Cyan Gradient: Sharp white center to a cold, misty blue */
+    background: radial-gradient(circle,
+    rgba(255, 255, 255, 1) 0%,      /* Intense white center */
+    rgba(150, 230, 255, 0.9) 35%,   /* Bright cold blue inner ring */
+    rgba(150, 230, 255, 0) 100%);
+
+    /* Layered "Bloom" effect for maximum brightness and transparency */
+    box-shadow:
+            0 0 8px 2px rgba(255, 255, 255, 0.7),   /* Core glow */
+            0 0 18px 8px rgba(100, 220, 255, 0.4),  /* Bright cold halo */
+            0 0 35px 15px rgba(100, 220, 255, 0.15); /* Large spectral haze */
+
+    pointer-events: none;
+    z-index: 15;
+
+    /* Boosts the 'light emission' look */
+    filter: brightness(1.5);
+}
+
 body {
     display: flex;
     flex-direction: column;
