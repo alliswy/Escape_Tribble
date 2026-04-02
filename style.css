@@ -643,80 +643,130 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 /* ----- WORDLE ---- */
-/* The Main Overlay Container */
+/* The main overlay - we keep this full screen but transparent */
+/*#wordle-minigame {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100vw;*/
+/*    height: 100vh;*/
+/*    background: rgba(0, 0, 0, 0.4); !* Dim the rest of the room slightly *!*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    z-index: 1000;*/
+/*}*/
+
+/* The actual "Computer Screen" box */
 #wordle-minigame {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(15, 15, 20, 0.98); /* Deep dark blue-black */
-    padding: 30px;
-    border: 3px solid #4a9eff; /* Electric blue border */
-    border-radius: 12px;
-    z-index: 10000; /* Ensure it stays above everything */
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(74, 158, 255, 0.3);
-    text-align: center;
-    font-family: 'Courier New', Courier, monospace;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Keeps the base alignment centered */
+    z-index: 1000;
+    pointer-events: none; /* Allows you to click things behind the transparent area */
 }
 
-/* The Grid Layout */
+#wordle-ui-wrapper {
+    pointer-events: auto;
+    background: #0F0E0D;
+    color: #26e600;
+    font-family: 'Courier New', Courier, monospace;
+
+    width: 580px;
+    /* Added a tiny bit more vertical padding to accommodate the taller grid */
+    padding: 20px 30px;
+    height: auto;
+    margin-top: 6vh;
+
+    border: none;
+    box-shadow: none;
+    text-align: center;
+    border-radius: 4px;
+}
+
+#wordle-ui-wrapper h2 {
+    font-size: 1.1rem;
+    color: #26e600;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #26e60044;
+    padding-bottom: 5px;
+}
+
+/* THE GRID: Wider layout, shorter vertical footprint */
 .wordle-grid {
     display: grid;
     grid-template-columns: repeat(5, 55px);
-    grid-template-rows: repeat(6, 55px);
+    /* KEY CHANGE: Increased row height slightly to 48px */
+    grid-template-rows: repeat(6, 48px);
+    /* KEY CHANGE: Increased gap to 10px so boxes don't touch */
     gap: 10px;
     justify-content: center;
-    margin-bottom: 20px;
+    margin: 12px 0;
 }
 
-/* Individual Tiles */
 .wordle-tile {
     width: 55px;
-    height: 55px;
-    border: 2px solid #3a3a3c;
+    /* KEY CHANGE: Matches the grid row height */
+    height: 48px;
+    border: 1px solid #333; /* Dark border to define the edges */
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    align-items: center;
+    font-size: 1.4rem; /* Slightly larger text to match the taller box */
     font-weight: bold;
-    color: white;
-    text-transform: uppercase;
-    background: #121213;
-    transition: all 0.3s ease;
+    color: #26e600;
+    background: transparent;
+    box-sizing: border-box;
 }
 
-/* Wordle State Colors */
-.correct {
-    background-color: #538d4e !important;
-    border-color: #538d4e !important;
-} /* Green */
-.present {
-    background-color: #b59f3b !important;
-    border-color: #b59f3b !important;
-} /* Yellow */
-.absent {
-    background-color: #3a3a3c !important;
-    border-color: #3a3a3c !important;
-}  /* Gray */
-
-/* The Input Box */
+/* INPUT SECTION: Compact to save vertical space */
 #wordle-input {
-    width: 200px;
-    padding: 12px;
-    background: #1a1a1a;
-    border: 1px solid #4a9eff;
-    color: #4a9eff;
+    background: #0F0E0D;
+    border: 1px solid #26e600;
+    color: #26e600;
+    font-family: 'Courier New', Courier, monospace;
+    width: 180px;
     text-align: center;
-    font-size: 1.3rem;
-    letter-spacing: 4px;
-    outline: none;
+    font-size: 1rem;
+    padding: 6px;
+    margin-top: 5px;
+}
+
+/* RESULTS */
+.wordle-tile.correct { background: #538d4e !important; color: white; border: none; }
+.wordle-tile.present { background: #c9b458 !important; color: white; border: none; }
+.wordle-tile.absent  { background: #3a3a3c !important; color: #888; border: none; }
+
+#wordle-ui-wrapper button {
+    background: #222;
+    color: #26e600;
+    border: 1px solid #26e600;
+    padding: 6px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
     text-transform: uppercase;
 }
 
-#wordle-input::placeholder {
-    color: #444;
-    letter-spacing: 1px;
+#wordle-ui-wrapper button:hover {
+    background: #26e600;
+    color: #000;
 }
+
+#wordle-minigame:not(.hidden) ~ #master-back-arrow,
+#wordle-minigame:not(.hidden) ~ #camr-mr-off-hitbox {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden;
+}
+
 
 /* Ensure 'hidden' works correctly */
 .hidden {
@@ -2026,7 +2076,7 @@ input[type="range"]::-webkit-slider-thumb {
     top: 20%;
     left: 34%;
     width: 23%;
-    height: 57%;
+    height: 66%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2143,7 +2193,7 @@ input[type="range"]::-webkit-slider-thumb {
     top: 19%;
     left: 15%;
     width: 17%;
-    height: 58%;
+    height: 66%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2182,7 +2232,7 @@ input[type="range"]::-webkit-slider-thumb {
     top: 19%;
     left: 15%;
     width: 17%;
-    height: 58%;
+    height: 76%;
 
     background-color: transparent;
     border: 2px solid transparent;

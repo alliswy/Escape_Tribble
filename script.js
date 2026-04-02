@@ -55,6 +55,10 @@ const state = {
     isProjectorOn: false,
     isLeftMonitorOn: false,
     isRightMonitorOn: false,
+
+    wonWordle: false,
+    terminalSolved: false,
+    savedKey: "", //this variable is the password for the left monitor in the camera room
 }
 
 // ----- 2. SELECTORS -----
@@ -168,7 +172,22 @@ const roomLeads = {
     'camr-ml-on-page':          {back: 'camr-main-ml-on-page'},
     'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person'},
     //note for next line: if the left monitor is on, they already visited the left monitor, and thus already saw the window person !
-    'camr-mr-off-page':         {back: () => state.isLeftMonitorOn ? 'camr-main-mlo-page' : state.foundWp ? 'camr-main-page':'camr-main-wp-page'},
+    'camr-mr-off-page':         {
+        back: () => {
+            // 1. Check if the Wordle is currently open
+            const wordleContainer = document.getElementById('wordle-minigame');
+            const isWordleOpen = wordleContainer && !wordleContainer.classList.contains('hidden');
+
+            // 2. If it's open, "disable" the back button by returning the current page (stay put)
+            if (isWordleOpen) {
+                console.log("Terminal active: Navigation locked.");
+                return 'camr-mr-off-page';
+            }
+
+            // 3. Otherwise, run your normal logic
+            return state.isLeftMonitorOn ? 'camr-main-mlo-page' : state.foundWp ? 'camr-main-page' : 'camr-main-wp-page';
+        }
+    },
 
 
     //kitchen
@@ -601,14 +620,12 @@ function processGuess(guess, onWin) {
     const targetArr = targetWord.split("");
     let targetCopy = [...targetArr];
 
-    // Pass 1: Greens
+    // Pass 1: Greens (Correct)
     guessArr.forEach((letter, i) => {
         const tile = document.getElementById(`tile-${startIdx + i}`);
         tile.textContent = letter;
         if (letter === targetArr[i]) {
-            tile.style.backgroundColor = '#538d4e';
-            tile.style.borderColor = '#538d4e';
-            tile.dataset.state = 'correct';
+            tile.classList.add('correct');
             targetCopy[i] = null;
         }
     });
@@ -616,34 +633,104 @@ function processGuess(guess, onWin) {
     // Pass 2: Yellows/Grays
     guessArr.forEach((letter, i) => {
         const tile = document.getElementById(`tile-${startIdx + i}`);
-        if (tile.dataset.state !== 'correct') {
+        if (!tile.classList.contains('correct')) {
             const matchIndex = targetCopy.indexOf(letter);
             if (matchIndex > -1) {
-                tile.style.backgroundColor = '#b59f3b';
-                tile.style.borderColor = '#b59f3b';
+                tile.classList.add('present');
                 targetCopy[matchIndex] = null;
             } else {
-                tile.style.backgroundColor = '#3a3a3c';
-                tile.style.borderColor = '#3a3a3c';
+                tile.classList.add('absent');
             }
         }
     });
 
     if (guess === targetWord) {
         isGameOver = true;
-        setTimeout(() => { onWin(); }, 600);
+        // Save the win data to your state
+        state.terminalSolved = true;
+        state.savedKey = targetWord;
+
+        setTimeout(() => {
+            showSuccessUI(); // Show the success screen inside the terminal
+            onWin();         // Still run your callback for game logic (unlocking doors, etc.)
+        }, 600);
     } else {
         currentGuessCount++;
+        // --- FAILURE STATE (Hidden Answer) ---
         if (currentGuessCount >= 6) {
             isGameOver = true;
-            alert(`LOCKED. Correct Key: ${targetWord}`);
-            closeWordle();
+            showFailureUI(onWin); // We pass the win callback so the new game knows what the prize is
         }
     }
 }
 
+function showFailureUI(onWin) {
+    const wrapper = document.getElementById('wordle-ui-wrapper');
+    const input = document.getElementById('wordle-input');
+
+    // Hide the input box so they stop typing
+    if (input) input.style.display = 'none';
+
+    const failMenu = document.createElement('div');
+    failMenu.innerHTML = `
+        <div style="margin-top: 20px; border-top: 1px solid #ff4a4a; padding-top: 15px;">
+            <p style="color: #ff4a4a; font-weight: bold; margin-bottom: 15px;">
+                [ERROR] UNAUTHORIZED ACCESS DETECTED
+            </p>
+            <button id="retry-btn" style="background: #4a9eff; color: white; border: none; padding: 12px 25px; cursor: pointer; font-family: monospace; font-weight: bold; letter-spacing: 1px;">
+                REBOOT TERMINAL
+            </button>
+        </div>
+    `;
+    wrapper.appendChild(failMenu);
+
+    // Clicking REBOOT calls startWordle again, which clears the board and picks a NEW word
+    document.getElementById('retry-btn').onclick = () => {
+        startWordle(onWin);
+    };
+}
+
+function showSuccessUI() {
+    const wrapper = document.getElementById('wordle-ui-wrapper');
+    const input = document.getElementById('wordle-input');
+
+    // Hide the input box
+    if (input) input.style.display = 'none';
+
+    // Create the success message
+    const successMenu = document.createElement('div');
+    successMenu.innerHTML = `
+        <div style="margin-top: 20px; border-top: 1px solid #538d4e; padding-top: 15px;">
+            <p style="color: #538d4e; font-weight: bold; margin-bottom: 5px;">
+                [SUCCESS] ENCRYPTION BYPASSED
+            </p>
+            <p style="color: #aaa; font-family: monospace; font-size: 0.9rem; margin-bottom: 15px;">
+                KEYWORD OBTAINED: <span style="color: white; letter-spacing: 2px; font-size: 1.1rem;">${state.savedKey}</span>
+            </p>
+            <button onclick="closeWordle()" style="background: #538d4e; color: white; border: none; padding: 10px 20px; cursor: pointer; font-family: monospace; font-weight: bold;">
+                EXIT TERMINAL
+            </button>
+        </div>
+    `;
+    wrapper.appendChild(successMenu);
+}
+
 function closeWordle() {
+    // 1. Hide the Wordle overlay
     document.getElementById('wordle-minigame').classList.add('hidden');
+
+    // 2. Bring back the Back Arrow
+    const backArrow = document.getElementById('master-back-arrow');
+    if (backArrow) {
+        backArrow.style.visibility = 'visible';
+        backArrow.style.pointerEvents = 'auto';
+    }
+
+    // 3. Bring back the Monitor Hitbox
+    const hitbox = document.getElementById('camr-mr-off-hitbox');
+    if (hitbox) {
+        hitbox.style.display = 'block';
+    }
 }
 
 
@@ -1215,6 +1302,50 @@ function init() {
     document.getElementById('camr-wp-hitbox').onclick = async (e) => {
         await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-bottom");
     }
+
+    document.getElementById('camr-mr-off-hitbox').onclick = async (e) => {
+        const container = document.getElementById('wordle-minigame');
+        const backArrow = document.getElementById('master-back-arrow');
+        const hitbox = document.getElementById('camr-mr-off-hitbox');
+
+        // 1. Guard: If Wordle is already open, do nothing.
+        if (container && !container.classList.contains('hidden')) {
+            return;
+        }
+
+        // 2. Open the terminal
+        container.classList.remove('hidden');
+
+        // --- NEW: HIDE GAME UI ---
+        if (backArrow) backArrow.style.visibility = 'hidden';
+        if (hitbox) hitbox.style.display = 'none';
+        // -------------------------
+
+        if (state.terminalSolved) {
+            // If already solved, rebuild the UI to show the win screen
+            container.innerHTML = `
+            <div id="wordle-ui-wrapper">
+                <h2 style="color:#538d4e; margin-bottom:10px;">TERMINAL DECRYPTED</h2>
+                <div class="wordle-grid" id="static-grid"></div>
+            </div>
+        `;
+
+            const grid = document.getElementById('static-grid');
+            for (let letter of state.savedKey) {
+                const tile = document.createElement('div');
+                tile.className = 'wordle-tile correct';
+                tile.textContent = letter;
+                grid.appendChild(tile);
+            }
+
+            showSuccessUI();
+        } else {
+            // Start a fresh game if not solved
+            startWordle(() => {
+                // Callback when they win: You might want to show the arrow again here!
+            });
+        }
+    };
 
 
 
