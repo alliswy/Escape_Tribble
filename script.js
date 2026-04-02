@@ -301,6 +301,9 @@ async function showPage(pageId) {
         case 'camr-main-wp-page': {
             // Wait 20ms for the browser to draw the new image
             await delay(20);
+            document.getElementById('camr-main-wp-ml-hitbox').classList.add('hidden');
+            document.getElementById('camr-main-wp-mr-hitbox').classList.add('hidden');
+            document.getElementById('master-back-arrow').classList.add('hidden');
             // Now fire the typewriter
             await spawnThemedBox("What's that in the window ??", "notification-bottom");
             state.foundWp = true;
