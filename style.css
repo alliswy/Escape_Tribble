@@ -2782,3 +2782,189 @@ input[type="range"]::-webkit-slider-thumb {
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
 }
+
+
+/* ----- LIBRARY HITBOXES -----*/
+
+/* MID WALL SECTION HITBOXES */
+#li-mw-tv-hitbox {
+    position: absolute;
+    top: 39%;
+    left: 27%;
+    width: 28%;
+    height: 16%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-read-hitbox {
+    position: absolute;
+    top: 16%;
+    left: 57%;
+    width: 25%;
+    height: 14%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-read-hitbox {
+    position: absolute;
+    top: 21%;
+    left: 11%;
+    width: 65%;
+    height: 33%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-read-on-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-remotes-hitbox {
+    position: absolute;
+    top: 77%;
+    left: 40%;
+    width: 31%;
+    height: 14%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-2r-wr-hitbox {
+    position: absolute;
+    top: 41%;
+    left: 18%;
+    width: 27%;
+    height: 23%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-2r-br-hitbox {
+    position: absolute;
+    top: 49%;
+    left: 46%;
+    width: 39%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-wr-hitbox {
+    position: absolute;
+    top: 46%;
+    left: 24%;
+    width: 26%;
+    height: 22%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-br-hitbox {
+    position: absolute;
+    top: 44%;
+    left: 37%;
+    width: 38%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-br-hitbox {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    width: 22%;
+    height: 14%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-wr-hitbox {
+    position: absolute;
+    top: 76%;
+    left: 44%;
+    width: 14%;
+    height: 11%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-hitbox {
+    position: absolute;
+    top: 21%;
+    left: 15%;
+    width: 72%;
+    height: 62%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mr-ro-tv-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-mw-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}

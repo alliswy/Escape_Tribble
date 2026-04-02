@@ -22,6 +22,8 @@ const state = {
     hasCamrKey: false,
     hasClrKey: false,
     hasWrId: false,
+    hasWr: false, //wr here is white remote
+    hasBr: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -55,6 +57,9 @@ const state = {
     isProjectorOn: false,
     isLeftMonitorOn: false,
     isRightMonitorOn: false,
+    isLiLaptopOn: false,
+    isLiTvOn: false,
+    isLiReadOn: false,
 
     wonWordle: false,
     //terminalSolved: false,
@@ -289,6 +294,20 @@ const roomLeads = {
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-rw-page':           {left: 'li-main-2dc-page'}, //fixme add do check
     'li-main-lw-page':          {right: 'li-main-2dc-page'}, //fixme add do check
+
+    //library mid-wall pages
+    'li-mid-wall-page':     {back: 'li-main-2dc-page'}, //fixme check for do
+    'li-tv-2r-page':        {back: 'li-mid-wall-page'},
+    'li-tv-br-page':        {back: 'li-mid-wall-page'},
+    'li-tv-wr-page':        {back: 'li-mid-wall-page'},
+    'li-tv-page':           {back: 'li-mid-wall-page'},
+    'li-2r-page':           {back: 'li-tv-2r-page'},
+    'li-wr-page':           {back: 'li-tv-wr-page'},
+    'li-br-page':           {back: 'li-tv-br-page'},
+    'li-nr-page':           {back: 'li-tv-page'},
+    'li-read-page':         {back: 'li-mid-wall-page'},
+    'li-read-on-page':      {back: 'li-mid-wall-ro-page'},
+
 };
 
 // ----- 3. CORE FUNCTIONS ----
@@ -1515,6 +1534,70 @@ function init() {
 
     //door, handle, and locking
     document.getElementById('li-door-handle-hitbox').onclick = () => showPage('li-door-open-page');
+
+
+    //mid wall section
+    document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
+    document.getElementById('li-mw-tv-hitbox').onclick = () => {
+        if (state.hasBr && state.hasWr) {
+            showPage('li-tv-page');
+        } else if (state.hasBr) {
+            showPage('li-tv-wr-page');
+        } else if (state.hasWr) {
+            showPage('li-tv-br-page');
+        } else {
+            //fixme add check if tv is on/off
+            showPage('li-tv-2r-page');
+        }
+    }
+    document.getElementById('li-mw-read-hitbox').onclick = () => showPage('li-read-page');
+    document.getElementById('li-read-page').onclick = async (e) => {
+        if (state.hasWr) {
+            showPage('li-read-on-page');
+            //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('li-read-on-hitbox').onclick = async (e) => {
+        //fixme add feedback
+    }
+
+    document.getElementById('li-tv-remotes-hitbox').onclick = () => showPage('li-2r-page');
+    document.getElementById('li-tv-br-hitbox').onclick = () => showPage('li-br-page');
+    document.getElementById('li-tv-wr-hitbox').onclick = () => showPage('li-wr-page');
+    document.getElementById('li-2r-wr-hitbox').onclick = () => {
+        state.hasWr = true;
+        const keySlot = document.getElementById('inv-wr');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-br-page');
+    }
+    document.getElementById('li-2r-br-hitbox').onclick = () => {
+        state.hasBr = true;
+        const keySlot = document.getElementById('inv-Br');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-wr-page');
+    }
+    document.getElementById('li-wr-hitbox').onclick = () => {
+        state.hasWr = true;
+        const keySlot = document.getElementById('inv-wr');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-nr-page');
+    }
+    document.getElementById('li-br-hitbox').onclick = () => {
+        state.hasBr = true;
+        const keySlot = document.getElementById('inv-Br');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-nr-page');
+    }
 
 
     // ------ INVENTORY INSPECTION -----
