@@ -284,6 +284,11 @@ const roomLeads = {
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
+    'li-door-open-page':         {back: 'li-door-closed-page', forward: 'li-entrance-page'},
+    'li-entrance-page':          {back: 'li-door-open-page', right: 'li-main-2dc-page'}, //fixme add check for if one door is open
+    'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
+    'li-main-rw-page':           {left: 'li-main-2dc-page'}, //fixme add do check
+    'li-main-lw-page':          {right: 'li-main-2dc-page'}, //fixme add do check
 };
 
 // ----- 3. CORE FUNCTIONS ----
@@ -1509,7 +1514,7 @@ function init() {
     // ------ LIBRARY SECTION ------
 
     //door, handle, and locking
-    document.getElementById('li-door-handle-hitbox').onclick = () => showPage('mh-li-door-handle-page');
+    document.getElementById('li-door-handle-hitbox').onclick = () => showPage('li-door-open-page');
 
 
     // ------ INVENTORY INSPECTION -----
