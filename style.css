@@ -768,6 +768,118 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 
+/* ---- LEFT MONITOR PASSWORD INPUT PAGE --- */
+#security-login-minigame {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1005;
+    pointer-events: none;
+}
+
+#security-ui-wrapper {
+    pointer-events: auto;
+    background: #0F0E0D;
+    color: #26e600;
+    font-family: 'Courier New', Courier, monospace;
+    width: 450px;
+    padding: 0; /* Remove padding to let header stretch */
+    margin-top: 6vh;
+    border: 1px solid #26e60044;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.terminal-header {
+    background: #26e60022;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    border-bottom: 1px solid #26e60044;
+}
+
+.terminal-body {
+    padding: 30px 20px;
+}
+
+.status-line {
+    font-size: 0.8rem;
+    margin-bottom: 25px;
+    opacity: 0.8;
+}
+
+.input-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.cursor { font-size: 1.5rem; font-weight: bold; }
+
+#security-pass-input {
+    background: #111;
+    border: 1px solid #26e60033;
+    color: #26e600;
+    outline: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.8rem;
+    letter-spacing: 8px;
+    width: 200px;
+    text-align: center;
+    padding: 5px;
+    text-transform: uppercase;
+}
+
+#security-feedback {
+    height: 20px;
+    font-size: 0.85rem;
+    color: #26e600;
+    margin-top: 15px;
+}
+
+.security-button-row {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    border-top: 1px solid #26e60011;
+}
+
+.security-button-row button {
+    background: transparent;
+    border: 1px solid #26e600;
+    color: #26e600;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+    transition: 0.2s;
+}
+
+.security-button-row button:hover {
+    background: #26e600;
+    color: #000;
+}
+
+/* Add this to your CSS file */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+.authorizing-text {
+    animation: pulse 0.5s infinite;
+}
+
+
+
+
 /* Ensure 'hidden' works correctly */
 .hidden {
     display: none !important;

@@ -57,7 +57,7 @@ const state = {
     isRightMonitorOn: false,
 
     wonWordle: false,
-    terminalSolved: false,
+    //terminalSolved: false,
     savedKey: "", //this variable is the password for the left monitor in the camera room
 }
 
@@ -647,7 +647,7 @@ function processGuess(guess, onWin) {
     if (guess === targetWord) {
         isGameOver = true;
         // Save the win data to your state
-        state.terminalSolved = true;
+        state.wonWordle = true;
         state.savedKey = targetWord;
 
         setTimeout(() => {
@@ -734,13 +734,71 @@ function closeWordle() {
 }
 
 
+// --------- LEFT MONITOR PASSWORD PAGE ------
+function checkSecurityPass() {
+    const input = document.getElementById('security-pass-input');
+    const feedback = document.getElementById('security-feedback');
+    const status = document.getElementById('status-text');
+
+    const userAttempt = input.value.trim().toUpperCase();
+    const correctKey = state.savedKey ? state.savedKey.toUpperCase() : "";
+
+    // THIS IS THE "SUCCESS BLOCK" (The 'if' part)
+    if (state.wonWordle && userAttempt === correctKey) {
+
+        // 1. Show the "Authorizing" state immediately
+        feedback.innerText = "AUTHORIZING...";
+        feedback.style.color = "#26e600";
+        status.innerText = "VERIFYING KEY...";
+
+        // 2. Change status halfway through (at 1.2 seconds)
+        setTimeout(() => {
+            status.innerText = "BYPASSING FIREWALL...";
+        }, 1500);
+
+        // 3. Final Redirect (at 3 seconds)
+        // This gives them enough time to actually read the "Firewall" message
+        setTimeout(() => {
+            closeSecurityTerminal();
+            state.cameraAccessed = true;
+            showPage('tempPage');
+        }, 3000);
+
+    }
+    // THIS IS THE "FAILURE BLOCK" (The 'else' part)
+    else {
+        feedback.innerText = "[ERROR] INCORRECT PASSWORD";
+        feedback.style.color = "#ff4444";
+        status.innerText = "ACCESS DENIED";
+        input.value = "";
+    }
+}
+
+
+// The Reset (Disconnect)
+function closeSecurityTerminal() {
+    document.getElementById('security-login-minigame').classList.add('hidden');
+
+    const backArrow = document.getElementById('master-back-arrow');
+    const hitbox = document.getElementById('camr-ml-off-hitbox');
+
+    // Bring everything back
+    if (backArrow) {
+        backArrow.style.visibility = 'visible';
+        backArrow.style.pointerEvents = 'auto';
+    }
+    if (hitbox) {
+        hitbox.style.display = 'block';
+    }
+}
+
+
 
 
 // ----- 5. INITIALIZE EVENT LISTENERS -----
 
 function init() {
     //Menu System
-    runMenuTypewriter();
     startButton.onclick = () => {
         menu.classList.add('hidden');
         play.classList.remove('hidden');
@@ -1290,8 +1348,21 @@ function init() {
         showPage('camr-ml-off-page');
     }
     document.getElementById('camr-ml-off-hitbox').onclick = () => {
-        //showPage() fixme show page with password input option
-    }
+        const secContainer = document.getElementById('security-login-minigame');
+        const backArrow = document.getElementById('master-back-arrow');
+        const hitbox = document.getElementById('camr-ml-off-hitbox');
+
+        if (state.cameraAccessed) {
+            //fixme showPage('tempPage');
+            return;
+        }
+
+        secContainer.classList.remove('hidden');
+
+        // Hide UI elements
+        if (backArrow) backArrow.style.visibility = 'hidden';
+        if (hitbox) hitbox.style.display = 'none';
+    };
     document.getElementById('camr-main-mr-hitbox').onclick = () => {
         showPage('camr-mr-off-page');
     }
@@ -1321,7 +1392,7 @@ function init() {
         if (hitbox) hitbox.style.display = 'none';
         // -------------------------
 
-        if (state.terminalSolved) {
+        if (state.wonWordle) {
             // If already solved, rebuild the UI to show the win screen
             container.innerHTML = `
             <div id="wordle-ui-wrapper">

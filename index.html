@@ -991,6 +991,31 @@
     <div id="wordle-minigame" class="hidden">
     </div>
 
+    <div id="security-login-minigame" class="hidden">
+        <div id="security-ui-wrapper">
+            <div class="terminal-header">
+                <span class="header-title">SEC-CAM ACCESS v2.4</span>
+                <span class="header-bit">[ 5-BIT ENCRYPTION ]</span>
+            </div>
+
+            <div class="terminal-body">
+                <div class="status-line">SYSTEM STATUS: <span id="status-text">LOCKED</span></div>
+
+                <div class="input-area">
+                    <span class="cursor">></span>
+                    <input type="text" id="security-pass-input" placeholder="_____" maxlength="5" autocomplete="off">
+                </div>
+
+                <div id="security-feedback">READY FOR INPUT...</div>
+            </div>
+
+            <div class="security-button-row">
+                <button onclick="checkSecurityPass()" class="btn-auth">AUTHORIZE</button>
+                <button onclick="closeSecurityTerminal()" class="btn-disc">DISCONNECT</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
