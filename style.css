@@ -2718,6 +2718,58 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#wr-left-desk-key-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-left-desk-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-desk-key-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-desk-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #print-screen-hitbox {
     position: absolute;
     top: 0%;

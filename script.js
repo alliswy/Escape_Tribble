@@ -273,6 +273,14 @@ const roomLeads = {
     'cw-wr-handle-locked-page': {back: 'cw-wr-dc-page'},
 
 
+    //writing room pages
+    'wr-left-page':         {back: 'cw-elevator-wr-do-page'}, //fixme add right and forward (with check_
+    'wr-left-desk-key-page': {back: 'wr-left-page', forward: 'wr-desk-key-page'},
+    'wr-desk-key-page':      {back: 'wr-left-desk-key-page'},
+    'wr-left-desk-page':        {back: 'wr-left-page', forward: 'wr-desk-page'},
+    'wr-desk-page':             {back:'wr-left-desk-page'},
+
+
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
