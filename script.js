@@ -135,7 +135,12 @@ const roomLeads = {
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page', forward: 'bh-4-page' },
     'bh-4-page':            { back: 'bh-3-page', forward: 'bh-end-page', left: 'bh-sh-entrance-page'},
-    'bh-sh-entrance-page':   {back: 'bh-4-page', forward: 'bh-sh-cr-dc-page'},
+    'bh-sh-entrance-page':   {back: 'bh-4-page', forward: 'bh-sh-cr-dc-page', left: 'bh-rev-1-page'},
+    'bh-rev-1-page':            {forward: 'bh-rev-2-page', right: 'bh-sh-entrance-page'},
+    'bh-rev-2-page':            {back: 'bh-rev-1-page', forward: 'bh-rev-3-page'},
+    'bh-rev-3-page':            {back: 'bh-rev-2-page', forward: 'bh-rev-4-page'},
+    'bh-rev-4-page':            {back: 'bh-rev-3-page', right: 'mh-bh-right-endc-page', left: 'mh-bh-left-endc-page'},
+    //fixme add another imgae here coming out of the bh but curr in mh
     'bh-sh-cr-dc-page':      {back: 'bh-sh-entrance-page'},
     'bh-end-page':          {back: 'bh-4-page'},
     'bh-sh-cr-do-page':      {back: 'bh-sh-cr-dc-page' },
