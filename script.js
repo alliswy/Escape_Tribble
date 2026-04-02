@@ -231,7 +231,7 @@ const roomLeads = {
     'oh1-books-page':           {back: 'oh1-left-4-page'}, //fixme add right
     'oh1-books-key-page':       {back: 'oh1-left-4-key-page'}, //fixme add right
 
-    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page'},
+    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page', right: 'cw-right-print-page'},
     'oh2-entrance-page':        {back: 'cw-oh2-entrance-page', right: 'oh2-oh3-entrance-page'},
     'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page', right: 'oh2-exit-page'},
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
@@ -464,6 +464,189 @@ function runMenuTypewriter() {
         });
     });
 }
+
+//------- WORDLE STUFF ------ //
+
+//word bank for the wordle
+const WORD_BANK = [
+    "APPLE","BEACH","BREAD","BRUSH","CANDY","CHESS","CLEAN","DANCE","DREAM","DRIVE",
+    "EARTH","FEAST","FIELD","FRUIT","GRAPE","GREEN","HAPPY","HEART","HOUSE","JUICE",
+    "LEMON","LUNCH","MONEY","OCEAN","PARTY","PEACE","PIZZA","RIVER","SLEEP","SMILE",
+    "SNACK","SOUTH","SPOON","STARS","STUDY","SUNNY","SWEET","TIGER","TOAST","TOUCH",
+    "TRAIN","TRUCK","TULIP","WATER","WHALE","WORLD","WRITE","YOUTH","ZEBRA",
+
+    "ABOVE","ADULT","AFTER","AGREE","ALIVE","ALLOW","AMONG","ANGRY","APPLY","ARENA",
+    "ARISE","ARMOR","ASIDE","ASSET","AUDIO","AWFUL","BASIC","BASIN","BEGIN","BELOW",
+    "BENCH","BIRTH","BLACK","BLANK","BLAST","BLEND","BLOCK","BOARD","BOATS","BONUS",
+    "BRAIN","BRAVE","BREAK","BRIEF","BRING","BROKE","BUILD","BUILT","BURNT","CABLE",
+    "CALMS","CAMEL","CANAL","CARDS","CARRY","CATCH","CAUSE","CHAIN","CHAIR","CHART",
+    "CHECK","CHEEK","CHEST","CHIEF","CHILD","CHOIR","CIVIL","CLAIM","CLASS","CLEAR",
+    "CLIMB","CLOCK","CLOSE","CLOTH","CLOUD","COACH","COAST","COLOR","COMIC","COUNT",
+    "COURT","COVER","CRAFT","CRANE","CREAM","CRIME","CROSS","CROWD","CROWN","CRUSH",
+    "CURVE","DAILY","DATES","DEALT","DELAY","DELTA","DEPTH","DIARY","DIGIT","DIRTY",
+    "DRINK","DRONE","DROWN","DRUMS","DUSTY","EAGER","EARLY","EIGHT","ELBOW","ELITE",
+    "EMPTY","ENEMY","ENJOY","ENTER","EQUAL","EVENT","EVERY","EXACT","EXIST","EXTRA",
+    "FAITH","FALSE","FAULT","FAVOR","FENCE","FIFTH","FIFTY","FIGHT","FINAL","FIRST",
+    "FIXED","FLAME","FLASH","FLEET","FLOAT","FLOOD","FLOOR","FLOUR","FLUTE","FOCUS",
+    "FORGE","FORMS","FORTH","FORTY","FOUND","FRAME","FRESH","FRONT","FROST","FUNNY",
+    "GIANT","GIVEN","GLASS","GLOVE","GOING","GRACE","GRADE","GRAIN","GRAND","GRANT",
+    "GRASS","GREAT","GREET","GROUP","GUARD","GUESS","GUIDE","HABIT","HANDS","HEAVY",
+    "HELLO","HILLS","HONEY","HOTEL","HUMAN","IDEAL","IMAGE","INDEX","INNER","INPUT",
+    "ISSUE","ITEMS","JOINT","JUDGE","KNIFE","KNOCK","LABEL","LABOR","LAKES","LARGE",
+    "LASER","LATER","LAUGH","LAYER","LEADS","LEARN","LEASE","LEAST","LEAVE","LEGAL",
+    "LEVEL","LIGHT","LIMIT","LINKS","LIVES","LOCAL","LOGIC","LUCKY","MAGIC","MAJOR",
+    "MAKER","MARCH","MATCH","MAYBE","MEDIA","METAL","MIGHT","MINOR","MODEL","MONTH",
+    "MORAL","MOTOR","MOUNT","MOUTH","MOVIE","MUSIC","NEEDS","NEVER","NIGHT","NOISE",
+    "NORTH","NOTES","NOVEL","NURSE","OFFER","OFTEN","ORDER","OTHER","OWNER","PANEL",
+    "PAPER","PARTY","PEACE","PHONE","PHOTO","PIANO","PILOT","PITCH","PLACE","PLAIN",
+    "PLANE","PLANT","PLATE","POINT","POUND","POWER","PRESS","PRICE","PRIDE","PRIZE",
+    "PROOF","PROUD","QUEEN","QUICK","QUIET","QUITE","RADIO","RAISE","RANGE","RAPID",
+    "RATIO","REACH","READY","RELAX","REPLY","RESET","RIGHT","ROBOT","ROCKY","ROUGH",
+    "ROUND","ROUTE","ROYAL","RURAL","SCALE","SCENE","SCOPE","SCORE","SENSE","SERVE",
+    "SHAKE","SHARE","SHARP","SHEET","SHELF","SHIFT","SHINE","SHIRT","SHOCK","SHORE",
+    "SHORT","SHOUT","SIGHT","SINCE","SKILL","SLIDE","SMALL","SMITH","SMOKE","SOLID",
+    "SOLVE","SOUND","SPACE","SPEAK","SPEED","SPEND","SPICE","SPORT","STAGE","STAIR",
+    "STAKE","STAND","START","STATE","STEAM","STEEL","STICK","STILL","STOCK","STONE",
+    "STOOD","STORE","STORM","STORY","STRIP","STUCK","STYLE","SUGAR","SUITE","SUPER",
+    "TAKEN","TASTE","TAXES","TEACH","TEETH","TERMS","THANK","THEFT","THEIR","THEME",
+    "THERE","THESE","THICK","THING","THINK","THIRD","THOSE","THREE","THROW","TIGHT",
+    "TIMES","TIRED","TITLE","TODAY","TOKEN","TOTAL","TOUGH","TOWER","TRACK","TRADE",
+    "TREAT","TREND","TRIAL","TRIBE","TRICK","TRUST","TRUTH","TWICE","UNDER","UNITS",
+    "UNTIL","UPPER","UPSET","URBAN","USAGE","USUAL","VALID","VALUE","VIDEO","VIRUS",
+    "VISIT","VITAL","VOICE","WASTE","WATCH","WHEEL","WHERE","WHICH","WHILE","WHITE",
+    "WHOLE","WOMAN","WORRY","WORTH","WRONG"
+];
+
+let targetWord = "";
+let currentGuessCount = 0;
+let isGameOver = false;
+
+function startWordle(onWinCallback) {
+    // Reset and pick a new word
+    targetWord = WORD_BANK[Math.floor(Math.random() * WORD_BANK.length)].toUpperCase();
+    currentGuessCount = 0;
+    isGameOver = false;
+
+    const container = document.getElementById('wordle-minigame');
+    container.classList.remove('hidden');
+
+    container.innerHTML = `
+        <div id="wordle-ui-wrapper" style="text-align:center;">
+            <h2 style="color:#4a9eff; font-family:monospace;">SYSTEM OVERRIDE</h2>
+            <div class="wordle-grid" id="wordle-grid" style="display:grid; grid-template-columns:repeat(5, 50px); gap:8px; justify-content:center; margin-bottom:15px;"></div>
+            <input type="text" maxlength="5" id="wordle-input" placeholder="KEYWORD..." autocomplete="off" style="width:250px; padding:10px; background:#1a1a1a; border:1px solid #4a9eff; color:white; text-align:center; font-size:1.2rem;">
+            <div style="margin-top:15px;">
+                <button onclick="closeWordle()" style="background:#333; color:#aaa; border:none; padding:5px 15px; cursor:pointer; font-size:0.8rem;">ABORT</button>
+            </div>
+        </div>
+    `;
+
+    const grid = document.getElementById('wordle-grid');
+    for(let i = 0; i < 30; i++) {
+        const tile = document.createElement('div');
+        tile.className = 'wordle-tile';
+        tile.id = `tile-${i}`;
+        // CSS for tile
+        Object.assign(tile.style, {
+            width: '50px', height: '50px', border: '2px solid #3a3a3c',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '1.8rem', fontWeight: 'bold', color: 'white', textTransform: 'uppercase'
+        });
+        grid.appendChild(tile);
+    }
+
+    const input = document.getElementById('wordle-input');
+    input.focus();
+
+    input.addEventListener('keydown', (e) => {
+        if (isGameOver) return;
+
+        if (e.key === "Enter") {
+            const currentGuess = input.value.toUpperCase();
+
+            // 1. Check if it's 5 letters
+            if (currentGuess.length !== 5) {
+                triggerInputError(input);
+                return;
+            }
+
+            // 2. THE WORD LIST CHECK:
+            // This checks if the typed word exists anywhere in your WORD_BANK array
+            if (!WORD_BANK.includes(currentGuess)) {
+                spawnThemedBox("NOT IN WORD LIST", "notification-bottom"); // Use your existing notification system
+                triggerInputError(input);
+                return;
+            }
+
+            // 3. If it passes both, process the guess
+            processGuess(currentGuess, onWinCallback);
+            input.value = "";
+        }
+    });
+
+    // Helper function to show the player the word was rejected
+    function triggerInputError(inputEl) {
+        inputEl.style.borderColor = "#ff4a4a"; // Red flash
+        inputEl.style.transform = "translateX(5px)"; // Tiny shake
+        setTimeout(() => {
+            inputEl.style.borderColor = "#4a9eff";
+            inputEl.style.transform = "translateX(0)";
+        }, 200);
+    }
+}
+
+function processGuess(guess, onWin) {
+    const startIdx = currentGuessCount * 5;
+    const guessArr = guess.split("");
+    const targetArr = targetWord.split("");
+    let targetCopy = [...targetArr];
+
+    // Pass 1: Greens
+    guessArr.forEach((letter, i) => {
+        const tile = document.getElementById(`tile-${startIdx + i}`);
+        tile.textContent = letter;
+        if (letter === targetArr[i]) {
+            tile.style.backgroundColor = '#538d4e';
+            tile.style.borderColor = '#538d4e';
+            tile.dataset.state = 'correct';
+            targetCopy[i] = null;
+        }
+    });
+
+    // Pass 2: Yellows/Grays
+    guessArr.forEach((letter, i) => {
+        const tile = document.getElementById(`tile-${startIdx + i}`);
+        if (tile.dataset.state !== 'correct') {
+            const matchIndex = targetCopy.indexOf(letter);
+            if (matchIndex > -1) {
+                tile.style.backgroundColor = '#b59f3b';
+                tile.style.borderColor = '#b59f3b';
+                targetCopy[matchIndex] = null;
+            } else {
+                tile.style.backgroundColor = '#3a3a3c';
+                tile.style.borderColor = '#3a3a3c';
+            }
+        }
+    });
+
+    if (guess === targetWord) {
+        isGameOver = true;
+        setTimeout(() => { onWin(); }, 600);
+    } else {
+        currentGuessCount++;
+        if (currentGuessCount >= 6) {
+            isGameOver = true;
+            alert(`LOCKED. Correct Key: ${targetWord}`);
+            closeWordle();
+        }
+    }
+}
+
+function closeWordle() {
+    document.getElementById('wordle-minigame').classList.add('hidden');
+}
+
+
 
 
 // ----- 5. INITIALIZE EVENT LISTENERS -----
