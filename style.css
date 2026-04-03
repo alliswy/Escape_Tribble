@@ -2828,10 +2828,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-read-on-hitbox {
     position: absolute;
-    top: 0%;
-    left: 27%;
-    width: 45%;
-    height: 99%;
+    top: 25%;
+    left: 12%;
+    width: 64%;
+    height: 32%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2961,6 +2961,253 @@ input[type="range"]::-webkit-slider-thumb {
     top: 17%;
     left: 7%;
     width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-ro-mw-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-tvo-mw-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-ro-tvo-mw-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-wr-tvo-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-wr-tvo-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-on-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-tvo-read-hitbox {
+    position: absolute;
+    top: 18%;
+    left: 57%;
+    width: 24%;
+    height: 12%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-tvo-tv-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-ro-tvo-tv-hitbox {
+    position: absolute;
+    top: 40%;
+    left: 27%;
+    width: 28%;
+    height: 15%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-ro-read-hitbox {
+    position: absolute;
+    top: 18%;
+    left: 58%;
+    width: 20%;
+    height: 13%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-tvo-tv-hitbox {
+    position: absolute;
+    top: 40%;
+    left: 27%;
+    width: 28%;
+    height: 15%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-ro-tvo-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 7%;
+    width: 43%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-ro-tvo-read-hitbox {
+    position: absolute;
+    top: 19%;
+    left: 57%;
+    width: 24%;
+    height: 11%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-ro-tv-hitbox {
+    position: absolute;
+    top: 39%;
+    left: 27%;
+    width: 28%;
+    height: 16%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-wr-tvo-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 24%;
+    width: 26%;
+    height: 21%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-wr-tv-hitbox {
+    position: absolute;
+    top: 24%;
+    left: 18%;
+    width: 67%;
+    height: 51%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-wr-tvo-hitbox {
+    position: absolute;
+    top: 24%;
+    left: 19%;
+    width: 67%;
+    height: 54%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-tvo-wr-hitbox {
+    position: absolute;
+    top: 79%;
+    left: 44%;
+    width: 13%;
+    height: 7%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tv-on-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 14%;
+    width: 72%;
     height: 55%;
 
     background-color: transparent;

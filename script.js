@@ -290,24 +290,33 @@ const roomLeads = {
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
     'li-door-open-page':         {back: 'li-door-closed-page', forward: 'li-entrance-page'},
-    'li-entrance-page':          {back: 'li-door-open-page', right: 'li-main-2dc-page'}, //fixme add check for if one door is open
+    'li-entrance-page':          {back: 'li-door-open-page', right: state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
+    'li-main-2dc-ro-page':      {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
+    'li-main-2dc-tvo-page':     {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
+    'li-main-2dc-ro-tvo-page':  {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-rw-page':           {left: 'li-main-2dc-page'}, //fixme add do check
     'li-main-lw-page':          {right: 'li-main-2dc-page'}, //fixme add do check
 
     //library mid-wall pages
     'li-mid-wall-page':     {back: 'li-main-2dc-page'}, //fixme check for do
-    'li-tv-2r-page':        {back: 'li-mid-wall-page'},
-    'li-tv-br-page':        {back: 'li-mid-wall-page'},
-    'li-tv-wr-page':        {back: 'li-mid-wall-page'},
-    'li-tv-page':           {back: 'li-mid-wall-page'},
+    'li-mid-wall-ro-page':  {back: 'li-main-2dc-ro-page'},
+    'li-mid-wall-tvo-page': {back: 'li-main-2dc-tvo-page'},
+    'li-mid-wall-ro-tvo-page': {back: 'li-main-2dc-ro-tvo-page'},
+    'li-tv-2r-page':        { back: () => state.isLiReadOn ? 'li-mid-wall-ro-page' : 'li-mid-wall-page' },
+    'li-tv-br-page':        { back: () => state.isLiReadOn ? 'li-mid-wall-ro-page' : 'li-mid-wall-page' },
+    'li-tv-wr-page':        { back: () => state.isLiReadOn ? 'li-mid-wall-ro-page' : 'li-mid-wall-page' },
+    'li-tv-wr-tvo-page':    {back: () => state.isLiReadOn ? 'li-mid-wall-ro-tvo-page' : 'li-mid-wall-tvo-page'},
+    'li-tv-page':           { back: () => state.isLiReadOn ? 'li-mid-wall-ro-page' : 'li-mid-wall-page' },
+    'li-tv-on-page':        {back: () => state.isLiReadOn ? 'li-mid-wall-ro-tvo-page': 'li-mid-wall-tvo-page'},
     'li-2r-page':           {back: 'li-tv-2r-page'},
     'li-wr-page':           {back: 'li-tv-wr-page'},
+    'li-wr-tvo-page':       {back: 'li-tv-wr-tvo-page'},
     'li-br-page':           {back: 'li-tv-br-page'},
     'li-nr-page':           {back: 'li-tv-page'},
-    'li-read-page':         {back: 'li-mid-wall-page'},
-    'li-read-on-page':      {back: 'li-mid-wall-ro-page'},
-
+    'li-nr-tvo-page':       {back: 'li-tv-on-page'},
+    'li-read-page':         {back: () => state.isLiTvOn ? 'li-mid-wall-tvo-page' : 'li-mid-wall-page'},
+    'li-read-on-page':      {back: () => state.isLiTvOn ? 'li-mid-wall-ro-tvo-page' : 'li-mid-wall-ro-page'},
 };
 
 // ----- 3. CORE FUNCTIONS ----
@@ -1538,6 +1547,9 @@ function init() {
 
     //mid wall section
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
+    document.getElementById('li-main-ro-mw-hitbox').onclick = () => showPage('li-mid-wall-ro-page');
+    document.getElementById('li-main-ro-tvo-mw-hitbox').onclick = () => showPage('li-mid-wall-ro-tvo-page');
+    document.getElementById('li-main-tvo-mw-hitbox').onclick = () => showPage('li-mid-wall-tvo-page');
     document.getElementById('li-mw-tv-hitbox').onclick = () => {
         if (state.hasBr && state.hasWr) {
             showPage('li-tv-page');
@@ -1546,13 +1558,35 @@ function init() {
         } else if (state.hasWr) {
             showPage('li-tv-br-page');
         } else {
-            //fixme add check if tv is on/off
             showPage('li-tv-2r-page');
         }
     }
+    document.getElementById('li-mw-tvo-tv-hitbox').onclick = () => {
+        if (state.hasBr && state.hasWr) {
+            showPage('li-tv-on-page');
+        } else {
+            showPage('li-tv-wr-tvo-page');
+        }
+    }
+    document.getElementById('li-mw-ro-tv-hitbox').onclick = () => {
+        if (state.hasBr && state.hasWr) {
+            showPage('li-tv-page');
+        } else {
+            showPage('li-tv-br-page');
+        }
+    }
+    document.getElementById('li-mw-ro-tvo-tv-hitbox').onclick = () => showPage('li-tv-on-page');
     document.getElementById('li-mw-read-hitbox').onclick = () => showPage('li-read-page');
+    document.getElementById('li-mw-tvo-read-hitbox').onclick = () => showPage('li-read-page');
+    document.getElementById('li-mw-ro-read-hitbox').onclick = () => showPage('li-read-on-page');
+    document.getElementById('li-mw-ro-tvo-read-hitbox').onclick = () => showPage('li-read-page');
     document.getElementById('li-read-page').onclick = async (e) => {
         if (state.hasWr) {
+            state.isLiReadOn = true;
+            const keySlot = document.getElementById('inv-wr');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
             showPage('li-read-on-page');
             //fixme add feedback
         } else {
@@ -1566,6 +1600,7 @@ function init() {
     document.getElementById('li-tv-remotes-hitbox').onclick = () => showPage('li-2r-page');
     document.getElementById('li-tv-br-hitbox').onclick = () => showPage('li-br-page');
     document.getElementById('li-tv-wr-hitbox').onclick = () => showPage('li-wr-page');
+    document.getElementById('li-tv-tvo-wr-hitbox').onclick = () => showPage('li-wr-tvo-page');
     document.getElementById('li-2r-wr-hitbox').onclick = () => {
         state.hasWr = true;
         const keySlot = document.getElementById('inv-wr');
@@ -1590,6 +1625,14 @@ function init() {
         }
         showPage('li-nr-page');
     }
+    document.getElementById('li-wr-tvo-hitbox').onclick = () => {
+        state.hasWr = true;
+        const keySlot = document.getElementById('inv-wr');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-nr-tvo-page');
+    }
     document.getElementById('li-br-hitbox').onclick = () => {
         state.hasBr = true;
         const keySlot = document.getElementById('inv-Br');
@@ -1597,6 +1640,55 @@ function init() {
             keySlot.classList.remove('hidden');
         }
         showPage('li-nr-page');
+    }
+    document.getElementById('li-tv-on-hitbox').onclick = () => {
+        //fixme add feedback
+    }
+    document.getElementById('li-tv-hitbox').onclick = async (e) => {
+        if (state.hasBr) {
+            state.isLiTvOn = true;
+            const keySlot = document.getElementById('inv-br');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            showPage('li-tv-on-page');
+            //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('li-tv-wr-tv-hitbox').onclick = async (e) => {
+        if (state.hasBr) {
+            state.isLiTvOn = true;
+            const keySlot = document.getElementById('inv-br');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            showPage('li-tv-wr-tvo-page');
+            //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('li-tv-wr-tvo-hitbox').onclick = async (e) => {
+        if (state.hasBr) {
+            //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('li-read-hitbox').onclick = async (e) => {
+        if (state.hasWr) {
+            state.isLiReadOn = true;
+            const keySlot = document.getElementById('inv-wr');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            showPage('li-read-on-page');
+            //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
     }
 
 
