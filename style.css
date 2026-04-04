@@ -643,19 +643,6 @@ input[type="range"]::-webkit-slider-thumb {
 
 
 /* ----- WORDLE ---- */
-/* The main overlay - we keep this full screen but transparent */
-/*#wordle-minigame {*/
-/*    position: fixed;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100vw;*/
-/*    height: 100vh;*/
-/*    background: rgba(0, 0, 0, 0.4); !* Dim the rest of the room slightly *!*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*    z-index: 1000;*/
-/*}*/
 
 /* The actual "Computer Screen" box */
 #wordle-minigame {
@@ -876,7 +863,6 @@ input[type="range"]::-webkit-slider-thumb {
 .authorizing-text {
     animation: pulse 0.5s infinite;
 }
-
 
 
 
@@ -2829,6 +2815,19 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #print-screen-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#print-screen-2-hitbox {
     position: absolute;
     top: 0%;
     left: 27%;
