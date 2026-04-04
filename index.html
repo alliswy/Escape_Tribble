@@ -1247,7 +1247,19 @@
 
 
     <!-- PRINTER CALIBRATION GAME ----->
+    <div id="printer-sync-minigame" class="hidden">
+        <div class="ui-text">SYSTEM SYNC: LEVEL <span id="level-num">1</span>/6</div>
 
+        <div id="printer-monitor-area" onclick="checkSync()">
+            <div id="static-target"></div>
+            <div id="scanner-bar"></div>
+        </div>
+
+        <div class="ui-text" id="msg">CALIBRATING OPTICS...</div>
+        <div class="ui-text" id="msg2">Click when the white is within the green zone to calibrate</div>
+
+        <button id="printer-back-btn" onclick="exitPrinterGame()">[ ABORT CALIBRATION ]</button>
+    </div>
 
     <script src="script.js"></script>
 </body>

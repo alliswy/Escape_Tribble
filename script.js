@@ -60,6 +60,7 @@ const state = {
     isLiLaptopOn: false,
     isLiTvOn: false,
     isLiReadOn: false,
+    isPrinterCalibrated: false,
 
     wonWordle: false,
     //terminalSolved: false,
@@ -785,6 +786,131 @@ function closeWordle() {
         hitbox.style.display = 'block';
     }
 }
+
+
+// ---- PRINTER SYNC MINIMGAME ----
+// --- Settings ---
+const CONSTANT_SPEED = 3.0;
+const totalLevels = 5; // UPDATED TO 6
+
+// --- State ---
+let currentLevel = 1;
+let barPos = 0;
+let barDir = 1;
+let isRunning = true;
+let lastPos = 0; // For "Smart Random"
+
+let currentTarget = { pos: 0, width: 22 };
+
+const monitor = document.getElementById('printer-monitor-area');
+const bar = document.getElementById('scanner-bar');
+const target = document.getElementById('static-target');
+
+function generateRandomTarget() {
+    // Level 1: 22% | Level 5: 10%
+    // (Math: 25 - (5 * 3) = 10)
+    const newWidth = 25 - (currentLevel * 3);
+
+    const maxLeft = 100 - newWidth;
+    let newPos;
+
+    let attempts = 0;
+    do {
+        newPos = Math.floor(Math.random() * maxLeft);
+        attempts++;
+    } while (Math.abs(newPos - lastPos) < 25 && attempts < 10);
+
+    lastPos = newPos;
+    currentTarget = { pos: newPos, width: newWidth };
+
+    // DOM Updates
+    const targetEl = document.getElementById('static-target');
+    const levelEl = document.getElementById('level-num');
+
+    if (targetEl) {
+        targetEl.style.left = currentTarget.pos + "%";
+        targetEl.style.width = currentTarget.width + "%";
+    }
+    if (levelEl) {
+        levelEl.innerText = currentLevel;
+    }
+}
+
+function update() {
+    if (!isRunning) return;
+
+    barPos += CONSTANT_SPEED * barDir;
+    const maxPos = monitor.clientWidth - bar.clientWidth;
+
+    if (barPos >= maxPos) { barPos = maxPos; barDir = -1; }
+    else if (barPos <= 0) { barPos = 0; barDir = 1; }
+
+    bar.style.left = barPos + "px";
+    requestAnimationFrame(update);
+}
+
+function checkSync() {
+    if (!isRunning) return;
+
+    const containerWidth = monitor.clientWidth;
+    const barMidPercent = ((barPos + (bar.clientWidth / 2)) / containerWidth) * 100;
+
+    const targetStart = currentTarget.pos;
+    const targetEnd = currentTarget.pos + currentTarget.width;
+
+    if (barMidPercent >= targetStart && barMidPercent <= targetEnd) {
+        currentLevel++;
+
+        if (currentLevel > totalLevels) {
+            win();
+        } else {
+            generateRandomTarget();
+            flash("white");
+        }
+    } else {
+        reset();
+    }
+}
+
+function reset() {
+    currentLevel = 1;
+    generateRandomTarget();
+    flash("red");
+}
+
+function win() {
+    isRunning = false;
+    document.getElementById('msg').innerText = "CALIBRATION SUCCESSFUL";
+    state.isPrinterCalibrated = true;
+}
+
+function flash(type) {
+    if (type === "white") {
+        monitor.style.borderColor = "white";
+        setTimeout(() => monitor.style.borderColor = "#00ff00", 100);
+    } else {
+        monitor.style.backgroundColor = "rgba(255,0,0,0.5)";
+        setTimeout(() => monitor.style.backgroundColor = "black", 150);
+    }
+}
+
+function exitPrinterGame() {
+    // 1. Kill the animation loop
+    isRunning = false;
+
+    // 2. FORCE hide the minigame specifically
+    const minigame = document.getElementById('printer-sync-minigame');
+    if (minigame) {
+        minigame.classList.add('hidden');
+    }
+
+    // 3. Now show the room page
+    // Note: Use 'print-screen-page' or 'print-page'—whichever matches your HTML
+    showPage('print-screen-page');
+
+    console.log("Minigame manually hidden and returning to room.");
+}
+
 
 
 
@@ -1564,7 +1690,16 @@ function init() {
         //fixme add feedback
     }
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
+    document.getElementById('print-screen-2-hitbox').onclick = () => {
+        showPage('printer-sync-minigame');
 
+        // 3. Reset the state
+        currentLevel = 1;
+        isRunning = true;
+
+        generateRandomTarget();
+        update();
+    }
 
 
 

@@ -641,6 +641,67 @@ input[type="range"]::-webkit-slider-thumb {
     left: 0;
 }
 
+/* ---- PRINTER SYNC MINIGAME -----*/
+#printer-monitor-area {
+    position: relative; width: 600px; height: 150px;
+    background: #000; border: 4px solid #00ff00;
+    margin: 50px auto; overflow: hidden; cursor: pointer;
+}
+#scanner-bar {
+    position: absolute; top: 0; left: 0;
+    width: 10px; height: 100%; background: #fff;
+    box-shadow: 0 0 15px #fff; z-index: 100; pointer-events: none;
+}
+#static-target {
+    position: absolute; top: 0; height: 100%;
+    background: rgba(0, 255, 0, 0.4); border: 2px solid lime;
+    z-index: 10; box-sizing: border-box;
+}
+/* Update these specific lines */
+#printer-sync-minigame {
+    /* Standard .fit properties */
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+
+    /* Centering Logic */
+    display: flex;
+    flex-direction: column;   /* Stack text, then box, then more text */
+    justify-content: center; /* Center vertically */
+    align-items: center;     /* Center horizontally */
+
+    background: #111;        /* Dark background to make text pop */
+    z-index: 2000;           /* Ensure it's above your room images */
+}
+
+#printer-sync-minigame .ui-text {
+    margin: 15px 0;          /* Add space between text and the monitor box */
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 1.5rem;
+    text-align: center;
+    width: 100%;             /* Ensure the text has room to center */
+}
+.ui-text { margin-top: 20px; font-size: 1.2rem; }
+
+#printer-back-btn {
+    margin-top: 30px;
+    background: transparent;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+#printer-back-btn:hover {
+    background: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px #00ff00;
+}
+
 
 /* ----- WORDLE ---- */
 
