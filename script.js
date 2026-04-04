@@ -64,6 +64,8 @@ const state = {
     wonWordle: false,
     //terminalSolved: false,
     savedKey: "", //this variable is the password for the left monitor in the camera room
+    enteredCode: "",
+    correctCode: "3672",
 }
 
 // ----- 2. SELECTORS -----
@@ -151,6 +153,8 @@ const roomLeads = {
     'bh-sh-cr-do-page':      {back: 'bh-sh-cr-dc-page' },
     'sh-cr-door-open-page':    {back: 'bh-sh-cr-do-page'},
     'bh-sh-cr-door-closed-page':   {back: 'bh-sh-cr-dc-page'},
+    'bh-sh-cr-door-handle-page':    {back: 'bh-sh-cr-door-closed-page'},
+    'bh-sh-cr-door-keypad-page':    {back: 'bh-sh-cr-door-handle-page'},
 
     //creepy room
     'cr-main-2dc-page':     {back: 'sh-cr-door-open-page'},
@@ -783,6 +787,27 @@ function closeWordle() {
 }
 
 
+
+// ------ creepy room keypad functionality  ------
+
+// 2. THIS HANDLES THE TYPING (Keep this outside/separate)
+async function inputKey(num) {
+    enteredCode += num;
+    console.log("Input: " + enteredCode);
+
+    if (enteredCode.length === 4) {
+        if (enteredCode === "3672") {
+            state.crUnlocked = true;
+            await spawnThemedBox('It worked ! I should be able to open the door now', 'notification-bottom');
+            // Go to the next room
+        } else {
+            await spawnThemedBox('It didn\'t work', 'notification-bottom'); //fixme feedback
+            enteredCode = ""; // Reset to try again
+        }
+    }
+}
+
+
 // --------- LEFT MONITOR PASSWORD PAGE ------
 function checkSecurityPass() {
     const input = document.getElementById('security-pass-input');
@@ -1320,13 +1345,17 @@ function init() {
     document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('bh-sh-cr-door-closed-page');
     document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
 
-    document.getElementById('cr-door-closed-hitbox').onclick = () => {
+    document.getElementById('bh-sh-cr-door-closed-hitbox').onclick = () => showPage('bh-sh-cr-door-handle-page');
+    document.getElementById('bh-sh-cr-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.crUnlocked) {
             showPage('sh-cr-door-open-page');
+        } else {
+            await spawnThemedBox('I need to unlock the door first', 'notification-bottom');
         }
-        else {
-            alert("it's locked"); //FIXME add pictures of the key pad and ability to type in the code
-        }
+    }
+    document.getElementById('bh-sh-cr-door-handle-keypad-hitbox').onclick = () => {
+        showPage('bh-sh-cr-door-keypad-page');
+        enteredCode = ""; //resets entered code
     }
 
     document.getElementById('cr-door-open-hitbox').onclick= () => {

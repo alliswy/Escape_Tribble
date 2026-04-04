@@ -1921,6 +1921,38 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+/* Position the grid over the physical buttons in the photo */
+.button-grid {
+    position: absolute;
+    /* Adjusted coordinates specifically for the blue buttons */
+    top: 37.5%;
+    left: 37.5%;
+    width: 23.5%;
+    height: 35.5%;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 8px; /* Gap in pixels works well here */
+    z-index: 15;
+}
+
+/* Base style for the keypad buttons */
+.button-grid .hitbox {
+    position: relative;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- REMOVE GLOW --- */
+/* This specifically targets the ::after pseudo-element
+   (your glow effect) only for hitboxes within the keypad container
+   and hides it completely. */
+#bh-sh-cr-door-keypad-page .hitbox::after {
+    display: none !important;
+}
+
 /* ----- CREEPY ROOM ----*/
 
 #cr-door-open-hitbox {
@@ -1936,12 +1968,38 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
-#cr-door-closed-hitbox {
+#bh-sh-cr-door-closed-hitbox {
     position: absolute;
     top: 16%;
     left: 10%;
     width: 66%;
     height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bh-sh-cr-door-handle-keypad-hitbox {
+    position: absolute;
+    top: 15%;
+    left: 48%;
+    width: 10%;
+    height: 21%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bh-sh-cr-door-handle-handle-hitbox {
+    position: absolute;
+    top: 54%;
+    left: 35%;
+    width: 20%;
+    height: 14%;
 
     background-color: transparent;
     border: 2px solid transparent;
