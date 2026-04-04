@@ -1910,10 +1910,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #bh-sh-cr-dc-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 3%;
+    left: 16%;
+    width: 28%;
+    height: 89%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1957,10 +1957,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #cr-door-open-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 0;
+    left: 33%;
+    width: 35%;
+    height: 100%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1970,10 +1970,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #bh-sh-cr-door-closed-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 44%;
+    left: 57%;
+    width: 10%;
+    height: 22%;
 
     background-color: transparent;
     border: 2px solid transparent;
