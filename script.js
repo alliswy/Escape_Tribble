@@ -53,6 +53,7 @@ const state = {
 
     foundWp: false,
     justFoundWp: false,
+    justTurnedOnMl: false,
 
     isProjectorOn: false,
     isLeftMonitorOn: false,
@@ -138,7 +139,7 @@ const roomLeads = {
 
     'mh-sld-page':            { left: 'mh-sl-left-endc-page', right: 'mh-sl-right-endc-page' },
 
-    // back hall //fixme: take photos the opposite way down the hall for ease of navigating back hall
+    // back hall
     'bh-entrance-page':       { forward: 'bh-2-page', left: 'mh-bh-right-endc-page', right: 'mh-bh-left-endc-page' },
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page', forward: 'bh-4-page' },
@@ -166,12 +167,10 @@ const roomLeads = {
     'cr-doors-1dc-cam-page': {back: 'cr-main-1dc-page'},
     'cr-doors-cam-page':     {back: 'cr-main-page'},
     'cr-doors-page':        {back: 'cr-main-page'},
-    //fixme -- add functionality for page with both doors open on next line
-    'cr-couches-key-page':  {back: () => state.camrDoorOpen ? 'cr-main-1dc-page': 'cr-main-2dc-page'},
+    'cr-couches-key-page':  {back: () => state.camrDoorOpen ? state.crlDoorOpen ? 'cr-main-page' : 'cr-main-1dc-page': 'cr-main-2dc-page'},
     'cr-couch-key-page':    {back: 'cr-couches-key-page'},
     'cr-couch-zoom-key-page': {back: 'cr-couch-key-page'},
-    //fixme same as last fixme
-    'cr-couches-page':        {back: () => state.camrDoorOpen ? 'cr-main-1dc-page': 'cr-main-2dc-page'},
+    'cr-couches-page':        {back: () => state.camrDoorOpen ? state.crlDoorOpen ? 'cr-main-page' : 'cr-main-1dc-page': 'cr-main-2dc-page'},
     'cr-couch-page':         {back: 'cr-couches-page'},
     'cr-couch-zoom-page':    {back: 'cr-couch-page'},
     'clr-main-page':        {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'}, //fixme add cr-doors-page
@@ -179,7 +178,7 @@ const roomLeads = {
     'clr-cloth-octagon-page': {back: 'clr-cloth-page'},
 
     //camera room
-    //fixme add the person appearing and diseappearing between clicks
+    //fixme add the person on the camera appearing and diseappearing between clicks
     'cr-camr-door-closed-page': {back: 'cr-doors-2dc-page'},
     'camr-main-page':           {back: () => state.crlDoorOpen ? 'cr-doors-page' :'cr-doors-1dc-page'},
     'camr-main-ml-on-page':     {back: () => state.crlDoorOpen ? 'cr-doors-cam-page' : 'cr-doors-1dc-cam-page'},
@@ -189,9 +188,8 @@ const roomLeads = {
     'camr-mlo-we-page':         {back: 'camr-main-ml-on-page'},
     'camr-main-wp-page':        {back: 'cr-doors-1dc-page'},
     'camr-ml-off-page':         {back: () => state.foundWp ? 'camr-main-page':'camr-main-wp-page'},
-    //fixme - add text box on the screen when they go back to the above page (camr-main-wp-page) !
-    'camr-ml-on-page':          {back: 'camr-main-ml-on-page'},
-    'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person'},
+    'camr-ml-on-page':          {back: () => state.justTurnedOnMl ? 'camr-main-ml-on-person-page' :'camr-main-ml-on-page'},
+    'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person-page'}, //fixme, finish all this stuff w the person in the camera
     //note for next line: if the left monitor is on, they already visited the left monitor, and thus already saw the window person !
     'camr-mr-off-page':         {
         back: () => {
@@ -367,13 +365,17 @@ async function showPage(pageId) {
             // Now fire the typewriter
             await spawnThemedBox("What's that in the window ??", "notification-bottom");
             state.foundWp = true;
-        }
+        } break;
         case 'camr-main-page': {
             if (state.justFoundWp) {
                 state.justFoundWp = false;
                 await spawnThemedBox("They're gone!", "notification-bottom");
             }
-        }
+        } break;
+        case 'camr-main-ml-on-person-page': {
+            await spawnThemedBox("Wait, there's something in the camera feed", "notification-bottom");
+            state.justTurnedOnMl = false;
+        } break;
 
         //fixme add more as needed
 
@@ -972,6 +974,7 @@ function checkSecurityPass() {
         setTimeout(() => {
             closeSecurityTerminal();
             state.cameraAccessed = true;
+            state.justTurnedOnMl = true;
             showPage('camr-ml-on-page');
         }, 3000);
 
@@ -1624,6 +1627,12 @@ function init() {
     }
     document.getElementById('camr-wp-hitbox').onclick = async (e) => {
         await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-bottom");
+    }
+    document.getElementById('camr-main-ml-on-person-hitbox').onclick = async (e) => {
+        showPage('camr-ml-on-person-page');
+    }
+    document.getElementById('camr-ml-on-person-hitbox').onclick = async (e) => {
+        //fixme add feedback
     }
 
     document.getElementById('camr-mr-off-hitbox').onclick = async (e) => {

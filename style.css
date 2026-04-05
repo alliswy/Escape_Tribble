@@ -2463,10 +2463,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #camr-ml-on-person-hitbox {
     position: absolute;
-    top: 3%;
-    left: 65%;
-    width: 21%;
-    height: 87%;
+    top: 24%;
+    left: 18%;
+    width: 45%;
+    height: 49%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2488,6 +2488,58 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #camr-main-ml-hitbox {
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    width: 20%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-ml-on-person-hitbox {
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    width: 20%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-mlo-ml-hitbox {
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    width: 20%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-mlo-mr-hitbox {
+    position: absolute;
+    top: 30%;
+    left: 39%;
+    width: 20%;
+    height: 24%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#camr-main-mlo-window-hitbox {
     position: absolute;
     top: 30%;
     left: 39%;
