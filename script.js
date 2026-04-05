@@ -64,6 +64,8 @@ const state = {
     isPrinterCalibrated: false,
 
     wonWordle: false,
+    foundWordle: false,
+    foundml: false,
     //terminalSolved: false,
     savedKey: "", //this variable is the password for the left monitor in the camera room
     enteredCode: "",
@@ -398,6 +400,96 @@ function move(dir) {
 
     if (dest) showPage(dest);
 }
+
+// ---------- HINT SYSTEM LOGIC ------------
+const hintRules = [
+    {
+        condition: () => !state.bdUnlocked && !state.hasBdKey,
+        text: "Try looking in the book drop"
+    },
+    {
+        condition: () => !state.bdUnlocked && state.hasBdKey,
+        text: "They key you're holding opens the book drop door. Make sure to click on the keyhole to unlock the door before opening it by clicking on the handle"
+    },
+    {
+        condition: () => state.bdUnlocked && !state.bdBackDoorUnlocked && !state.hasPrKey,
+        text: "Try looking in the book depository in the book drop room"
+    },
+    {
+        condition: () => !state.bdBackDoorUnlocked && state.hasPrKey,
+        text: "The key you're holding opens the door in the book drop room. Don't forget to click on the keyhole to unlock the door before opening it"
+    },
+    {
+        condition: () => state.bdBackDoorUnlocked && !state.solvedWirePuzzle,
+        text: "Try inspecting the back section with all the wires in the projector room"
+    },
+    {
+        condition: () => state.solvedWirePuzzle && !state.isProjectorOn,
+        text: "Try inspecting the projector. Maybe it can be turned on now that you've fixed the wires."
+    },
+    {
+        condition: () => state.solvedWirePuzzle && !state.hasPwBook && state.isProjectorOn,
+        text: "Look around in the projector room for a collectible item"
+    },
+    {
+        condition: () => !state.kiUnlocked && !state.hasKiKey,
+        text: "Try inspecting the book in your inventory. Click on an inventory item to inspect it closer."
+    },
+    {
+        condition: () => !state.kiUnlocked && state.hasKiKey,
+        text: "The key you're holding unlocks the kitchen door in the main hallway. Don't forget to unlock the door before opening it."
+    },
+    {
+        condition: () => state.kiUnlocked && !state.foundPtCode,
+        text: "Try looking around in the kitchen for a clue"
+    },
+    {
+        condition: () => state.foundPtCode && !state.crUnlocked, //fixme add check for if they found back hallway
+        text: "Try looking around the back hallway for a door you can unlock. The code from the kitchen may be useful there."
+    },
+    {
+        condition: () => state.crUnlocked && !state.hasCamrKey,
+        text: "Try looking around in the creepy room for a key."
+    },
+    {
+        condition: () => !state.camrUnlocked && state.hasCamrKey,
+        text: "The key you're holding unlocks a door in the creepy room."
+    },
+    {
+        condition: () => state.camrUnlocked && !state.wonWordle && !state.isLeftMonitorOn && !state.foundWordle,
+        text: "Try looking closer at the right monitor in the camera room"
+    },
+    {
+        condition: () => !state.wonWordle && !state.isLeftMonitorOn && state.foundWordle,
+        text: "You'll need to solve the wordle to continue." //fixme add an option to skip the wordle
+    },
+    {
+        condition: () => state.wonWordle && !state.isLeftMonitorOn && !state.foundMl,
+        text: "Try looking closer at the left monitor in the camera room"
+    },
+    {
+        condition: () => state.wonWordle && !state.isLeftMonitorOn && state.foundMl,
+        text: "For the left monitor in the camera room, the password is 5 letters, and so is the wordle..."
+    },
+    //fixme add more
+
+
+
+
+
+    {
+        // Default hint (always keep at the bottom)
+        condition: () => true,
+        text: "Keep looking around, there's a detail you've missed."
+    }
+];
+
+function getCurrentHint() {
+    // .find() stops at the first object where the condition returns true
+    const match = hintRules.find(rule => rule.condition());
+    return match ? match.text : "No hints available.";
+}
+
 
 // ----- TEXTBOX NOTIFICATIONS ----
 let activePopup = null;
@@ -975,6 +1067,7 @@ function checkSecurityPass() {
             closeSecurityTerminal();
             state.cameraAccessed = true;
             state.justTurnedOnMl = true;
+            state.isLeftMonitorOn = true;
             showPage('camr-ml-on-page');
         }, 3000);
 
@@ -1246,6 +1339,8 @@ function init() {
     const hintBox = document.getElementById('hint-box');
 
     hintBtn.onclick = () => {
+        document.getElementById('hint-text').innerText = getCurrentHint();
+        //document.getElementById('hint-box').classList.remove('hidden');
         hintBox.classList.toggle('hint-open');
     };
 
@@ -1367,6 +1462,7 @@ function init() {
 
     document.getElementById('pr-pw-book-projector-hitbox').onclick = () => {
         if (state.solvedWirePuzzle) {
+            state.isProjectorOn = true;
             showPage ('pr-pw-book-projector-on-page');
         } else {
             //fixme add feedback
@@ -1377,6 +1473,7 @@ function init() {
 
     document.getElementById('pr-pw-noBook-projector-hitbox').onclick = () => {
         if (state.solvedWirePuzzle) {
+            state.isProjectorOn = true;
             showPage ('pr-pw-noBook-projector-on-page');
         } else {
             //fixme add feedback
@@ -1560,6 +1657,7 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
+            state.camrUnlocked = true; state.camrDoorOpen = true;
             showPage('cr-doors-1dc-page');
         } else {
             //fixme add feedback
@@ -1603,6 +1701,7 @@ function init() {
         showPage('camr-ml-off-page');
     }
     document.getElementById('camr-ml-off-hitbox').onclick = () => {
+        state.foundMl = true;
         const secContainer = document.getElementById('security-login-minigame');
         const backArrow = document.getElementById('master-back-arrow');
         const hitbox = document.getElementById('camr-ml-off-hitbox');
@@ -1636,6 +1735,7 @@ function init() {
     }
 
     document.getElementById('camr-mr-off-hitbox').onclick = async (e) => {
+        state.foundWordle = true;  //fixme bug check this
         const container = document.getElementById('wordle-minigame');
         const backArrow = document.getElementById('master-back-arrow');
         const hitbox = document.getElementById('camr-mr-off-hitbox');
