@@ -258,10 +258,10 @@ const roomLeads = {
     'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', forward: 'oh1-left-1-page'}, //fixme add right
     'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left or back
     'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
-    'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasLiKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'}, //fixme is this really Li key or should it be Clr key ?
+    'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'}, //fixme is this really Li key or should it be Clr key ?
     'oh1-left-4-page':          {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-left-4-key-page':      {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
-    'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasLiKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
+    'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page', right: 'oh1-exit-2-page'},
     'oh1-right-3-page':         {back: 'oh1-right-2-page'}, //fixme add right: oh1-exit-1-page
     'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page', forward: 'cw-oh2-entrance-page'},
@@ -1671,6 +1671,7 @@ function init() {
             //fixme add feedback
         }
     }
+    //fixme add the other wr interactions/door opening
     document.getElementById('cw-elevator-hitbox').onclick = async (e) => {
         //fixme add feedback
     }
@@ -1686,8 +1687,8 @@ function init() {
         await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
     }
     document.getElementById('oh1-books-key-hitbox').onclick = async (e) => {
-        state.hasLiKey = true;
-        const keySlot = document.getElementById('inv-li-key')
+        state.hasClrKey = true;
+        const keySlot = document.getElementById('inv-clr-key')
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
