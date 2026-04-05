@@ -2177,6 +2177,108 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#cr-1dc-ld-door-closed-hitbox {
+    position: absolute;
+    top: 9%;
+    left: 28%;
+    width: 20%;
+    height: 70%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cr-doors-cam-ld-hitbox {
+    position: absolute;
+    top: 18%;
+    left: 20%;
+    width: 20%;
+    height: 70%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cr-doors-cam-rd-hitbox {
+    position: absolute;
+    top: 15%;
+    left: 56%;
+    width: 21%;
+    height: 78%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#clr-main-cloth-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 56%;
+    width: 25%;
+    height: 40%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#clr-cloth-hitbox {
+    position: absolute;
+    top: 38%;
+    left: 41%;
+    width: 39%;
+    height: 59%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#clr-cloth-octagon-hitbox {
+    position: absolute;
+    top: 37%;
+    left: 43%;
+    width: 30%;
+    height: 40%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cr-main-couches-hitbox  {
+    position: absolute;
+    top: 42%;
+    left: 11%;
+    width: 32%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cr-main-doors-hitbox  {
+    position: absolute;
+    left: 64%;
+    width: 23%;
+    height: 49%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #cr-couches-key-couch-hitbox {
     position: absolute;
     top: 26%;

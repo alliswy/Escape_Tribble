@@ -160,9 +160,12 @@ const roomLeads = {
     //creepy room
     'cr-main-2dc-page':     {back: 'sh-cr-door-open-page'},
     'cr-main-1dc-page':     {back: 'sh-cr-door-open-page'},
+    'cr-main-page':         {back: 'sh-cr-door-open-page'},
     'cr-doors-2dc-page':    {back: 'cr-main-2dc-page'},
     'cr-doors-1dc-page':    {back: 'cr-main-1dc-page'},
     'cr-doors-1dc-cam-page': {back: 'cr-main-1dc-page'},
+    'cr-doors-cam-page':     {back: 'cr-main-page'},
+    'cr-doors-page':        {back: 'cr-main-page'},
     //fixme -- add functionality for page with both doors open on next line
     'cr-couches-key-page':  {back: () => state.camrDoorOpen ? 'cr-main-1dc-page': 'cr-main-2dc-page'},
     'cr-couch-key-page':    {back: 'cr-couches-key-page'},
@@ -171,12 +174,15 @@ const roomLeads = {
     'cr-couches-page':        {back: () => state.camrDoorOpen ? 'cr-main-1dc-page': 'cr-main-2dc-page'},
     'cr-couch-page':         {back: 'cr-couches-page'},
     'cr-couch-zoom-page':    {back: 'cr-couch-page'},
+    'clr-main-page':        {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'}, //fixme add cr-doors-page
+    'clr-cloth-page':       {back: 'clr-main-page'},
+    'clr-cloth-octagon-page': {back: 'clr-cloth-page'},
 
     //camera room
     //fixme add the person appearing and diseappearing between clicks
     'cr-camr-door-closed-page': {back: 'cr-doors-2dc-page'},
-    'camr-main-page':           {back: 'cr-doors-1dc-page'},
-    'camr-main-ml-on-page':     {back: 'cr-doors-1dc-cam-page'},
+    'camr-main-page':           {back: () => state.crlDoorOpen ? 'cr-doors-page' :'cr-doors-1dc-page'},
+    'camr-main-ml-on-page':     {back: () => state.crlDoorOpen ? 'cr-doors-cam-page' : 'cr-doors-1dc-cam-page'},
     'camr-main-ml-on-person-page': {back: 'cr-doors-1dc-cam-page'},
     'camr-wp-page':             {back: 'camr-main-page'},
     'camr-we-page':             {back: 'camr-main-page'},
@@ -1495,7 +1501,7 @@ function init() {
         } else if(!state.crlDoorOpen) {
             showPage('cr-main-1dc-page');
         } else {
-            showPage('cr-main-2dc-page');
+            showPage('cr-main-page');
         }
     }
 
@@ -1506,6 +1512,7 @@ function init() {
             showPage('cr-couches-key-page');
         }
     }
+    document.getElementById('cr-main-couches-hitbox').onclick = () => showPage('cr-couches-page');
     document.getElementById('cr-main-1dc-couches-hitbox').onclick = () => showPage('cr-couches-page');
     document.getElementById('cr-couches-key-couch-hitbox').onclick = () => showPage('cr-couch-key-page');
     document.getElementById('cr-couch-key-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-key-page');
@@ -1526,6 +1533,9 @@ function init() {
 
     document.getElementById('cr-main-2dc-doors-hitbox').onclick = () => showPage('cr-doors-2dc-page');
     //fixme add image: document.getElementById('dr-doors-2dc-rd-hitbox').onclick = () => showPage('');
+    document.getElementById('cr-main-doors-hitbox').onclick = () => {
+        state.isLeftMonitorOn ? showPage('cr-doors-cam-page') : showPage('cr-doors-page');
+    }
 
     document.getElementById('cr-main-1dc-doors-hitbox').onclick = () => {
         if (state.isLeftMonitorOn) {
@@ -1537,14 +1547,45 @@ function init() {
         //fixme finish if/else logic for added cam pages
     }
     document.getElementById('cr-doors-1dc-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
+    document.getElementById('cr-doors-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
 
     document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
     document.getElementById('cr-camr-door-closed-hitbox').onclick = async (e) => {
         if (state.hasCamrKey) {
+            state.bdUnlocked = true;
+            const keySlot = document.getElementById('inv-camr-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
             showPage('cr-doors-1dc-page');
         } else {
             //fixme add feedback
         }
+    }
+    document.getElementById('cr-doors-1dc-cam-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
+    document.getElementById('cr-1dc-ld-door-closed-hitbox').onclick = async (e) => {
+        if (state.hasClrKey) {
+            state.bdUnlocked = true;
+            const keySlot = document.getElementById('inv-clr-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            showPage('cr-doors-cam-page');
+        } else {
+            await spawnThemedBox('I need to find a key for this door', "notification-bottom");
+        }
+    }
+    document.getElementById('clr-main-cloth-hitbox').onclick = () => {
+        showPage('clr-cloth-page');
+        //fixme add feedback
+    }
+    document.getElementById('clr-cloth-hitbox').onclick = () => {showPage('clr-cloth-octagon-page');}
+    document.getElementById('clr-cloth-octagon-hitbox').onclick = async (e) => {
+        //fixme add feedback
+    }
+    document.getElementById('cr-doors-cam-ld-hitbox').onclick = () => {
+        showPage('clr-main-page');
+        //fixme add feedback
     }
 
     //----- CAMERA ROOM SECTION -----
