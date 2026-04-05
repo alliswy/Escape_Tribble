@@ -1794,9 +1794,15 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Item image */
 #item-overlay-img {
-    max-width: 70vw;
-    max-height: 80vh;
-    border-radius: 10px;
+    /* Increase these two values to zoom in */
+    max-width: 95vw;   /* Was 70vw */
+    max-height: 95vh;  /* Was 80vh */
+
+    /* Keep these to ensure it stays centered and sharp */
+    width: auto;
+    height: auto;
+    display: block;
+    margin: auto;
 }
 
 /* Close button */
@@ -2875,12 +2881,64 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#printer-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 39%;
+    width: 24%;
+    height: 46%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#printer-paper-hitbox {
+    position: absolute;
+    top: 36%;
+    left: 38%;
+    width: 25%;
+    height: 48%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#print-paper-hitbox {
+    position: absolute;
+    top: 47%;
+    left: 19%;
+    width: 17%;
+    height: 25%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-print-room-hitbox {
+    position: absolute;
+    top: 17%;
+    left: 37%;
+    width: 23%;
+    height: 68%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #print-screen-hitbox {
     position: absolute;
-    top: 0%;
-    left: 27%;
-    width: 45%;
-    height: 99%;
+    top: 51%;
+    left: 35%;
+    width: 33%;
+    height: 24%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2890,10 +2948,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #print-screen-2-hitbox {
     position: absolute;
-    top: 0%;
-    left: 27%;
-    width: 45%;
-    height: 99%;
+    top: 25%;
+    left: 14%;
+    width: 79%;
+    height: 54%;
 
     background-color: transparent;
     border: 2px solid transparent;

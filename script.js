@@ -244,11 +244,14 @@ const roomLeads = {
     'cw-right-aw-page':         {back: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page', forward: 'cw-right-eh-page'}, //fixme add right
     'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
-    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: 'print-page', left: 'cw-oh2-entrance-page'}, //fixme add right
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page'}, //fixme add right
 
     //c-wing side halls
-    'print-page':               {back: 'cw-right-print-page'},
-    'print-screen-page':        {back: 'print-page'}, //fixme add more for this page
+    'print-main-page':          {back: 'cw-right-print-page'},
+    'print-page':               {back: 'print-main-page'},
+    'print-main-paper-page':    {back: 'cw-right-print-page'},
+    'print-paper-page':         {back: 'print-main-paper-page'},
+    'print-screen-page':        {back: () => state.isPrinterCalibrated ? 'print-paper-page' : 'print-page'}, //fixme add more for this page
     'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page'}, //fixme add left
     'eh-door-page':             {back: 'cw-eh-entrance-page'},
     'eh-door-plate-page':       {back: 'eh-door-page'},
@@ -791,7 +794,7 @@ function closeWordle() {
 // ---- PRINTER SYNC MINIMGAME ----
 // --- Settings ---
 const CONSTANT_SPEED = 3.0;
-const totalLevels = 5; // UPDATED TO 6
+const totalLevels = 6; // UPDATED TO 6
 
 // --- State ---
 let currentLevel = 1;
@@ -807,13 +810,14 @@ const bar = document.getElementById('scanner-bar');
 const target = document.getElementById('static-target');
 
 function generateRandomTarget() {
-    // Level 1: 22% | Level 5: 10%
-    // (Math: 25 - (5 * 3) = 10)
+    // Scaling for 6 levels:
+    // Level 1: 22% | Level 6: 7%
     const newWidth = 25 - (currentLevel * 3);
 
     const maxLeft = 100 - newWidth;
     let newPos;
 
+    // SMART RANDOM: Forces the box to move significantly from the last spot
     let attempts = 0;
     do {
         newPos = Math.floor(Math.random() * maxLeft);
@@ -823,7 +827,7 @@ function generateRandomTarget() {
     lastPos = newPos;
     currentTarget = { pos: newPos, width: newWidth };
 
-    // DOM Updates
+    // Update the DOM elements
     const targetEl = document.getElementById('static-target');
     const levelEl = document.getElementById('level-num');
 
@@ -881,6 +885,7 @@ function reset() {
 function win() {
     isRunning = false;
     document.getElementById('msg').innerText = "CALIBRATION SUCCESSFUL";
+    document.getElementById('msg2').innerText = "PRINTING...";
     state.isPrinterCalibrated = true;
 }
 
@@ -1689,6 +1694,8 @@ function init() {
         showPage('oh1-books-page');
         //fixme add feedback
     }
+    document.getElementById('printer-hitbox').onclick = () => showPage('print-page');
+    document.getElementById('printer-paper-hitbox').onclick = () => showPage('print-paper-page');
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
         showPage('printer-sync-minigame');
@@ -1700,6 +1707,10 @@ function init() {
         generateRandomTarget();
         update();
     }
+    document.getElementById('print-paper-hitbox').onclick = () => {
+        openOverlay("print-paper", "cw-images/cw-sideHall-images/print-paper-item.png");
+    };
+    document.getElementById('cw-right-print-room-hitbox').onclick = () => {state.isPrinterCalibrated ? showPage('print-main-paper-page') : showPage('print-main-page')};
 
 
 
@@ -1942,6 +1953,12 @@ function init() {
         const overlay = document.getElementById("item-overlay");
         overlay.classList.add("hidden");
 
+        currentOverlayItem = null;
+    });
+
+    // Close when clicking the blurred backdrop (the background, not the image)
+    document.querySelector('.overlay-backdrop').addEventListener("click", () => {
+        overlay.classList.add("hidden");
         currentOverlayItem = null;
     });
 
