@@ -303,7 +303,7 @@ const roomLeads = {
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
-    'li-door-open-page':         {back: 'li-door-closed-page', forward: 'li-entrance-page'},
+    'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: 'li-entrance-page'},
     'li-entrance-page':          {back: 'li-door-open-page', right: state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-page':      {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
@@ -1759,8 +1759,32 @@ function init() {
     // ------ LIBRARY SECTION ------
 
     //door, handle, and locking
-    document.getElementById('li-door-handle-hitbox').onclick = () => showPage('li-door-open-page');
-
+    document.getElementById('li-door-handle-hitbox').onclick = () => {
+        if (state.liUnlocked) {
+            showPage('li-door-open-page');
+        } else {
+            showPage('mh-li-door-handle-page');
+        }
+    }
+    document.getElementById('li-door-handle-keyhole-hitbox').onclick = async (e) => {
+        if (state.hasLiKey) {
+            state.liUnlocked = true;
+            const keySlot = document.getElementById('inv-li-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            await spawnThemedBox("It's unlocked !", 'notification-bottom');
+        } else {
+            await spawnThemedBox('I need to find a key for this door', 'notification-bottom');
+        }
+    }
+    document.getElementById('li-door-handle-handle-hitbox').onclick = async (e) => {
+        if (state.liUnlocked) {
+            showPage('li-door-open-page');
+        } else {
+            await spawnThemedBox('I need to unlock the door first', "notification-bottom");
+        }
+    }
 
     //mid wall section
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
