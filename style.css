@@ -3545,3 +3545,129 @@ input[type="range"]::-webkit-slider-thumb {
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
 }
+
+
+
+/* ---- LIBRARY OFFICE PAGES */
+
+#li-office-door-closed-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 14%;
+    width: 72%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-office-door-open-hitbox {
+    position: absolute;
+    top: 6%;
+    left: 34%;
+    width: 34%;
+    height: 94%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#lo-main-left-ls-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 7%;
+    width: 34%;
+    height: 96%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#lo-storage-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 26%;
+    width: 56%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#lo-main-right-desk-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 34%;
+    width: 48%;
+    height: 39%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#lo-desk-hitbox {
+    position: absolute;
+    top: 23%;
+    left: 63%;
+    width: 30%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#lo-desk-monitor-hitbox {
+    position: absolute;
+    top: 40%;
+    left: 66%;
+    width: 25%;
+    height: 21%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#lo-monitor-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 14%;
+    width: 72%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+
+/* -------- LIBRARY STORAGE PAGES -----------*/
+
+#ls-lo-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+

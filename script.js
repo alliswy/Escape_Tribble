@@ -24,6 +24,7 @@ const state = {
     hasWrId: false,
     hasWr: false, //wr here is white remote
     hasBr: false,
+    hasLoKey: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -32,6 +33,7 @@ const state = {
     crUnlocked: false,
     camrUnlocked: false,
     wrUnlocked: false,
+    loUnlocked: false,
 
     camrDoorOpen: false, //this is the room with the two monitors in the creepy room
     crlDoorOpen: false, //this is the door to the left of the camera room^ in the creepy room. Note: if this door is open, camrDoorOpen = true;
@@ -331,6 +333,44 @@ const roomLeads = {
     'li-nr-tvo-page':       {back: 'li-tv-on-page'},
     'li-read-page':         {back: () => state.isLiTvOn ? 'li-mid-wall-tvo-page' : 'li-mid-wall-page'},
     'li-read-on-page':      {back: () => state.isLiTvOn ? 'li-mid-wall-ro-tvo-page' : 'li-mid-wall-ro-page'},
+
+    //library office pages
+    'li-office-door-closed-page':   { }, //fixme add later
+    'li-office-door-open-page':     { }, //fixme add back later
+    'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
+    'lo-main-left-page':            {back: 'lo-main-page' },
+    'lo-storage-entrance-page':     {back: 'lo-main-left-page', forward: 'ls-in-1-page' },
+    'lo-main-right-page':           {back: 'ls-lo-entrance-page' }, //fixme add right image exiting the office
+    'lo-desk-page':                 {back: 'lo-main-page', forward: 'lo-desk-2-page'},
+    'lo-desk-2-page':               {back: 'lo-desk-page'},
+    'lo-monitor-page':              {back: 'lo-desk-2-page'},
+
+    //library storage pages
+    'ls-lo-entrance-page':          {back: 'ls-out-10-page', forward: 'lo-main-right-page'},
+
+    'ls-in-1-page':  { back: 'lo-storage-entrance-page', forward: 'ls-in-2-page' },
+    'ls-in-2-page':  { back: 'ls-in-1-page', forward: 'ls-in-3-page' },
+    'ls-in-3-page':  { back: 'ls-in-2-page', forward: 'ls-in-4-page' },
+    'ls-in-4-page':  { back: 'ls-in-3-page', forward: 'ls-in-5-page' },
+    'ls-in-5-page':  { back: 'ls-in-4-page', forward: 'ls-in-6-page' },
+    'ls-in-6-page':  { back: 'ls-in-5-page', forward: 'ls-in-7-page' },
+    'ls-in-7-page':  { back: 'ls-in-6-page', forward: 'ls-in-8-page' },
+    'ls-in-8-page':  { back: 'ls-in-7-page', forward: 'ls-in-9-page' },
+    'ls-in-9-page':  { back: 'ls-in-8-page', forward: 'ls-in-10-page' },
+    'ls-in-10-page': { back: 'ls-in-9-page' },
+
+    'ls-out-1-page':  { forward: 'ls-out-2-page' },
+    'ls-out-2-page':  { back: 'ls-out-1-page', forward: 'ls-out-3-page' },
+    'ls-out-3-page':  { back: 'ls-out-2-page', forward: 'ls-out-4-page' },
+    'ls-out-4-page':  { back: 'ls-out-3-page', forward: 'ls-out-5-page' },
+    'ls-out-5-page':  { back: 'ls-out-4-page', forward: 'ls-out-6-page' },
+    'ls-out-6-page':  { back: 'ls-out-5-page', forward: 'ls-out-7-page' },
+    'ls-out-7-page':  { back: 'ls-out-6-page', forward: 'ls-out-8-page' },
+    'ls-out-8-page':  { back: 'ls-out-7-page', forward: 'ls-out-9-page' },
+    'ls-out-9-page':  { back: 'ls-out-8-page', forward: 'ls-out-10-page' },
+    'ls-out-10-page': { back: 'ls-out-9-page', forward: 'ls-lo-entrance-page'}
+
+
 };
 
 // ----- 3. CORE FUNCTIONS ----
@@ -2040,6 +2080,39 @@ function init() {
             //fixme add feedback
         }
     }
+
+
+    // --------- LIBRARY OFFICE SECTION -----------//
+    document.getElementById('li-office-door-closed-hitbox').onclick = async (e) => {
+        if (state.hasLoKey) {
+            state.loUnlocked = true;
+            const keySlot = document.getElementById('inv-lo-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+            showPage('li-office-door-open-page');
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('li-office-door-open-hitbox').onclick = () => showPage('lo-main-page');
+    document.getElementById('lo-main-left-ls-entrance-hitbox').onclick = () => showPage('lo-storage-entrance-page');
+    document.getElementById('lo-storage-entrance-hitbox').onclick = () => showPage('ls-in-1-page');
+    document.getElementById('lo-main-right-desk-hitbox').onclick = () => showPage('lo-desk-page');
+    document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
+    document.getElementById('lo-desk-monitor-hitbox').onclick = () => showPage('lo-monitor-page');
+    //fixme add stuff for the monitor page, and change monitor image
+
+
+
+
+
+    // ---------- LIBRARY STORAGE SECTION -----------//
+    document.getElementById('ls-lo-entrance-hitbox').onclick = () => showPage('lo-main-right-page');
+
+
+
+
 
 
     // ------ INVENTORY INSPECTION -----
