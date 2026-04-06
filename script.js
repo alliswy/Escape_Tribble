@@ -1194,75 +1194,72 @@ function init() {
     };
 
 
-    //Exit button
-    document.getElementById('exit-button').onclick = () => {
+    //Exit button fixme temporarily removed exit button. All it does is close the window, and no websites have this bc its unnecessary
+   /* document.getElementById('exit-button').onclick = () => {
         window.close();
-    };
+    };*/
 
-    // ---- How to Play -----
+    // ---- How to Play ----- fixme remove later
     //how to play button
-    document.getElementById('how-to-play-button').onclick = async (e) => {
-        e.stopPropagation();
-        let tutorialAborted = false; // Track if we hit exit
+//     document.getElementById('how-to-play-button').onclick = async (e) => {
+//         e.stopPropagation();
+//         let tutorialAborted = false; // Track if we hit exit
+//
+//         // 1. SHOW EVERYTHING
+//         menu.classList.add('hidden');
+//         tutorial.classList.remove('hidden');
+//         document.getElementById('tutorial-bd-main-page').classList.remove('hidden');
+//         document.getElementById('tutorial-master-left-arrow').classList.remove('hidden');
+//         document.getElementById('tutorial-master-right-arrow').classList.remove('hidden');
+//         document.getElementById('inventory-drawer').classList.remove('hidden');
+//         const panel = document.getElementById('inventory-panel');
+//         // Use remove to force the closed state
+//         panel.classList.remove('inventory-open');
+//
+//         // 2. THE EXIT BUTTON (Stops the ghost finish)
+//         document.getElementById('tutorial-exit-btn').onclick = () => {
+//             tutorialAborted = true;
+//             hideTutorialUI(); // Clean up function (see below)
+//         };
+//
+//         // 3. THE BOXES (The "Await" chain)
+//         await spawnThemedBox("Click objects or doors to interact with them", "notification-bottom");
+//         if (tutorialAborted) return; // Stop if they hit exit during box 1 //fixme
+//
+//         await spawnThemedBox("Use the arrows to move around the room!", "notification-arrow");
+//         if (tutorialAborted) return; // Stop if they hit exit during box 2
+//
+//         await spawnThemedBox("<- click here to open/close inventory tab", "notification-inventory");
+//         if (tutorialAborted) return; // Stop if they hit exit during box 2
+//         panel.classList.toggle('inventory-open')
+//         document.getElementById('inv-pw-book').classList.remove('hidden');
+//
+//         await spawnThemedBox("<- click on objects in the inventory to inspect them", "notification-invInspection");
+//         panel.classList.toggle('inventory-open')
+//         document.getElementById('inv-pw-book').classList.add('hidden');
+//
+//         await spawnThemedBox("Good luck escaping!", "notification-bottom");
+//         if (tutorialAborted) return; // Stop if they hit exit during box 3
+//
+//         // 4. AUTO-HIDE ONLY IF NOT ABORTED
+//         hideTutorialUI();
+//     };
+//
+// // helper to avoid repeating the hide logic
+//     function hideTutorialUI() {
+//         tutorial.classList.add('hidden');
+//         const panel = document.getElementById('inventory-panel');
+//         // Use remove to force the closed state
+//         panel.classList.remove('inventory-open');
+//         document.getElementById('inventory-drawer').classList.add('hidden');
+//         // Hide the arrows too!
+//         document.getElementById('tutorial-master-left-arrow').classList.add('hidden');
+//         document.getElementById('tutorial-master-right-arrow').classList.add('hidden');
+//
+//         menu.classList.remove('hidden');
+//         runMenuTypewriter();
+//     }
 
-        // 1. SHOW EVERYTHING
-        menu.classList.add('hidden');
-        tutorial.classList.remove('hidden');
-        document.getElementById('tutorial-bd-main-page').classList.remove('hidden');
-        document.getElementById('tutorial-master-left-arrow').classList.remove('hidden');
-        document.getElementById('tutorial-master-right-arrow').classList.remove('hidden');
-        document.getElementById('inventory-drawer').classList.remove('hidden');
-        const panel = document.getElementById('inventory-panel');
-        // Use remove to force the closed state
-        panel.classList.remove('inventory-open');
-
-        // 2. THE EXIT BUTTON (Stops the ghost finish)
-        document.getElementById('tutorial-exit-btn').onclick = () => {
-            tutorialAborted = true;
-            hideTutorialUI(); // Clean up function (see below)
-        };
-
-        // 3. THE BOXES (The "Await" chain)
-        await spawnThemedBox("Click objects or doors to interact with them", "notification-bottom");
-        if (tutorialAborted) return; // Stop if they hit exit during box 1 //fixme
-
-        await spawnThemedBox("Use the arrows to move around the room!", "notification-arrow");
-        if (tutorialAborted) return; // Stop if they hit exit during box 2
-
-        await spawnThemedBox("<- click here to open/close inventory tab", "notification-inventory");
-        if (tutorialAborted) return; // Stop if they hit exit during box 2
-        panel.classList.toggle('inventory-open')
-        document.getElementById('inv-pw-book').classList.remove('hidden');
-
-        await spawnThemedBox("<- click on objects in the inventory to inspect them", "notification-invInspection");
-        panel.classList.toggle('inventory-open')
-        document.getElementById('inv-pw-book').classList.add('hidden');
-
-        await spawnThemedBox("Good luck escaping!", "notification-bottom");
-        if (tutorialAborted) return; // Stop if they hit exit during box 3
-
-        // 4. AUTO-HIDE ONLY IF NOT ABORTED
-        hideTutorialUI();
-    };
-
-// helper to avoid repeating the hide logic
-    function hideTutorialUI() {
-        tutorial.classList.add('hidden');
-        const panel = document.getElementById('inventory-panel');
-        // Use remove to force the closed state
-        panel.classList.remove('inventory-open');
-        document.getElementById('inventory-drawer').classList.add('hidden');
-        // Hide the arrows too!
-        document.getElementById('tutorial-master-left-arrow').classList.add('hidden');
-        document.getElementById('tutorial-master-right-arrow').classList.add('hidden');
-
-        menu.classList.remove('hidden');
-        runMenuTypewriter();
-    }
-
-
-
-    //fixme fix back button from how to play,, currently isn't working
 
 
     // ---- IN-GAME HAMBURGER MENU ----
