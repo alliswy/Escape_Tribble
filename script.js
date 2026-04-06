@@ -366,11 +366,18 @@ const roomLeads = {
 
     //library storage pages
     'ls-lo-entrance-page':          {back: 'ls-out-10-page', forward: 'lo-main-right-page'},
+    'ls-archives-sk-page':           {right: 'ls-out-5-page', left: 'ls-in-5-page'},
+    'ls-archives-note-page':        {back: 'ls-archives-sk-page'},
+    'ls-black-1997-page':           {back: 'ls-archives-sk-page'},
+    'ls-harrell-1993-page':         {back: 'ls-archives-sk-page'},
+    'ls-mcduffie-1993-page':        {back: 'ls-archives-sk-page'},
+    'ls-keser-1994-page':           {back: 'ls-archives-sk-page'},
+    'ls-archives-sk-2-page':        {back: 'ls-archives-sk-page'},
 
     'ls-in-1-page':  { back: 'lo-storage-entrance-page', forward: 'ls-in-2-page' },
     'ls-in-2-page':  { back: 'ls-in-1-page', forward: 'ls-in-3-page' },
     'ls-in-3-page':  { back: 'ls-in-2-page', forward: 'ls-in-4-page' },
-    'ls-in-4-page':  { back: 'ls-in-3-page', forward: 'ls-in-5-page' },
+    'ls-in-4-page':  { back: 'ls-in-3-page', forward: 'ls-in-5-page', right: 'ls-archives-sk-page' }, //fixme add check for if found sk in back
     'ls-in-5-page':  { back: 'ls-in-4-page', forward: 'ls-in-6-page' },
     'ls-in-6-page':  { back: 'ls-in-5-page', forward: 'ls-in-7-page' },
     'ls-in-7-page':  { back: 'ls-in-6-page', forward: 'ls-in-8-page' },
@@ -382,7 +389,7 @@ const roomLeads = {
     'ls-out-2-page':  { back: 'ls-out-1-page', forward: 'ls-out-3-page' },
     'ls-out-3-page':  { back: 'ls-out-2-page', forward: 'ls-out-4-page' },
     'ls-out-4-page':  { back: 'ls-out-3-page', forward: 'ls-out-5-page' },
-    'ls-out-5-page':  { back: 'ls-out-4-page', forward: 'ls-out-6-page' },
+    'ls-out-5-page':  { back: 'ls-out-4-page', forward: 'ls-out-6-page', left: 'ls-archives-sk-page' }, //fixme add check for if found sk in back
     'ls-out-6-page':  { back: 'ls-out-5-page', forward: 'ls-out-7-page' },
     'ls-out-7-page':  { back: 'ls-out-6-page', forward: 'ls-out-8-page' },
     'ls-out-8-page':  { back: 'ls-out-7-page', forward: 'ls-out-9-page' },
@@ -1959,7 +1966,7 @@ function init() {
         await spawnThemedBox('I wonder what happens if I scan this book', 'notification-bottom');
         await spawnThemedBox('I should look around and see if I can find it.', 'notification-bottom');
     }
-    document.getElementById('li-main-lw-mw-books-hitbox').onclick = () => showPage('li-mw-books-page');
+    //fixme problem bc li-mw-books is currently jpg document.getElementById('li-main-lw-mw-books-hitbox').onclick = () => showPage('li-mw-books-page');
     document.getElementById('li-flw-sk-hitbox').onclick = () => showPage('li-lt-sk-paper-page');
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
         state.hasSkPaper = true;
@@ -2167,7 +2174,12 @@ function init() {
 
     // ---------- LIBRARY STORAGE SECTION -----------//
     document.getElementById('ls-lo-entrance-hitbox').onclick = () => showPage('lo-main-right-page');
-
+    document.getElementById('ls-archives-sk-hitbox').onclick = () => showPage('ls-archives-sk-2-page');
+    document.getElementById('ls-archives-note-hitbox').onclick = () => showPage('ls-archives-note-page');
+    document.getElementById('ls-archives-mcduffie-hitbox').onclick = () => showPage('ls-mcduffie-1993-page');
+    document.getElementById('ls-archives-black-hitbox').onclick = () => showPage('ls-black-1997-page');
+    document.getElementById('ls-archives-keser-hitbox').onclick = () => showPage('ls-keser-1994-page');
+    document.getElementById('ls-archives-harrell-hitbox').onclick = () => showPage('ls-harrell-1993-page');
 
 
 
