@@ -25,6 +25,8 @@ const state = {
     hasWr: false, //wr here is white remote
     hasBr: false,
     hasLoKey: false,
+    hasLrBook: false,
+    hasSkPaper: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -72,6 +74,9 @@ const state = {
     savedKey: "", //this variable is the password for the left monitor in the camera room
     enteredCode: "",
     correctCode: "3672",
+
+    //library/misc
+    movedAnimals: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -306,7 +311,7 @@ const roomLeads = {
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
     'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: 'li-entrance-page'},
-    'li-entrance-page':          {back: 'li-door-open-page', right: state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
+    'li-entrance-page':          {back: 'li-door-open-page', forward: state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-page':      {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-tvo-page':     {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
@@ -333,6 +338,20 @@ const roomLeads = {
     'li-nr-tvo-page':       {back: 'li-tv-on-page'},
     'li-read-page':         {back: () => state.isLiTvOn ? 'li-mid-wall-tvo-page' : 'li-mid-wall-page'},
     'li-read-on-page':      {back: () => state.isLiTvOn ? 'li-mid-wall-ro-tvo-page' : 'li-mid-wall-ro-page'},
+
+    //library right wall pages
+    'li-animals-1-page':    {back: 'li-main-rw-page'},
+    'li-animals-2-page':    {back: 'li-animals-1-page'},
+    'li-animals-open-1-page': {back: 'li-main-rw-page'},
+    'li-animals-open-2-page': {back: 'li-animals-open-1-page'},
+    'li-animals-open-key-page': {back: 'li-animals-open-1-page'},
+
+    //library left wall pages
+    'li-left-lt-page':      {back: 'li-main-lw-page'},
+    'li-lt-page':           {back: 'li-left-lt-page'},
+    'li-laptop-page':       {back: 'li-lt-page'},
+    'li-lt-sk-paper-page':  {back: 'li-flw-sk-page'},
+    'li-mw-books-page':     {left: state.hasLrBook ? 'li-flw-sk-page' : 'li-flw-page'}, //fixme add li-flw-page image
 
     //library office pages
     'li-office-door-closed-page':   { }, //fixme add later
@@ -1931,6 +1950,27 @@ function init() {
             await spawnThemedBox('I need to unlock the door first', "notification-bottom");
         }
     }
+    document.getElementById('li-main-lw-lt-hitbox').onclick = () => {
+        showPage('li-left-lt-page'); //fixme later add check for if they did what was needed for this page
+    }
+    document.getElementById('li-left-lt-hitbox').onclick = () => showPage('li-lt-page');
+    document.getElementById('li-lt-hitbox').onclick = () => showPage('li-laptop-page');
+    document.getElementById('li-laptop-hitbox').onclick = async (e) => {
+        await spawnThemedBox('I wonder what happens if I scan this book', 'notification-bottom');
+        await spawnThemedBox('I should look around and see if I can find it.', 'notification-bottom');
+    }
+    document.getElementById('li-main-lw-mw-books-hitbox').onclick = () => showPage('li-mw-books-page');
+    document.getElementById('li-flw-sk-hitbox').onclick = () => showPage('li-lt-sk-paper-page');
+    document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
+        state.hasSkPaper = true;
+        const keySlot = document.getElementById('inv-sk-paper')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-lt-sk-page');
+    }
+
+
 
     //mid wall section
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
@@ -2076,6 +2116,27 @@ function init() {
         } else {
             //fixme add feedback
         }
+    }
+
+    // --------- library right wall section -----------
+    document.getElementById('li-main-rw-animals-hitbox').onclick = () => {
+        state.movedAnimals ? showPage('li-animals-open-1-page') : showPage('li-animals-1-page');
+    }
+    document.getElementById('li-animals-1-hitbox').onclick = () => showPage('li-animals-2-page');
+    document.getElementById('li-animals-2-hitbox').onclick = () => {
+        state.movedAnimals = true;
+        showPage('li-animals-open-key-page');
+    }
+    document.getElementById('li-animals-open-key-hitbox').onclick = () => {
+        state.hasLoKey = true;
+        const keySlot = document.getElementById('inv-lo-key');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-animals-open-2-page');
+    }
+    document.getElementById('li-animals-open-1-hitbox').onclick = () => {
+        state.hasLoKey ? showPage('li-animals-open-2-page') : showPage('li-animals-open-key-page');
     }
 
 
