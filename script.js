@@ -91,7 +91,7 @@ const inventoryTab = document.getElementById('inventory-tab');
 const roomLeads = {
     // Book Drop (BD)
     'mh-bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
-    'mh-bd-door-page':           { back: 'mh-bd-main-page', forward: 'mh-bd-slot-closed-page' },
+    'mh-bd-door-page':           { back: 'mh-bd-main-page' },
     'bd-door-open-page':      { back: 'mh-bd-main-page', forward: 'bd-cart-page' },
     'mh-bd-slot-closed-page':    { back: 'mh-bd-door-page' },
     'mh-bd-door-handle-page':    { back: 'mh-bd-door-page' },
