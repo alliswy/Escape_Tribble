@@ -54,6 +54,7 @@ const state = {
 
     solvedWirePuzzle: false,
     foundPtCode: false,
+    foundWrNote: false,
 
     foundWp: false,
     justFoundWp: false,
@@ -300,12 +301,16 @@ const roomLeads = {
 
 
     //writing room pages
-    'wr-left-page':         {back: 'cw-elevator-wr-do-page'}, //fixme add right and forward (with check_
+    'wr-left-page':         {back: 'cw-elevator-wr-do-page', forward: () => state.hasLiKey ? 'wr-left-desk-page' : 'wr-left-desk-key-page', right: 'wr-mid-page'},
     'wr-left-desk-key-page': {back: 'wr-left-page', forward: 'wr-desk-key-page'},
     'wr-desk-key-page':      {back: 'wr-left-desk-key-page'},
     'wr-left-desk-page':        {back: 'wr-left-page', forward: 'wr-desk-page'},
     'wr-desk-page':             {back:'wr-left-desk-page'},
-
+    'wr-mid-page':              {back: 'cw-elevator-wr-do-page', left: 'wr-left-page', right: () => state.foundWrNote ? 'wr-right-note-page' :'wr-right-page'},
+    'wr-right-page':            {back :'cw-elevator-wr-do-page', left: 'wr-mid-page'},
+    'wr-papers-page':           {back: 'wr-right-note-page' },
+    'wr-right-note-page':       {back :'cw-elevator-wr-do-page', left: 'wr-mid-page' },
+    'wr-note-page':             {back: 'wr-right-note-page'},
 
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
@@ -444,6 +449,7 @@ async function showPage(pageId) {
             await spawnThemedBox("Wait, there's something in the camera feed", "notification-bottom");
             state.justTurnedOnMl = false;
         } break;
+        case 'wr-right-note-page': { state.foundWrNote = true; } break;
 
         //fixme add more as needed
 
@@ -1926,6 +1932,35 @@ function init() {
     };
     document.getElementById('cw-right-print-room-hitbox').onclick = () => {state.isPrinterCalibrated ? showPage('print-main-paper-page') : showPage('print-main-page')};
 
+
+
+    //------ WRITING ROOM SECTION -----
+    document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('wr-mid-page');
+    document.getElementById('wr-left-desk-key-hitbox').onclick = () => showPage('wr-desk-key-page');
+    document.getElementById('wr-desk-key-hitbox').onclick = () => {
+        state.hasLiKey = true;
+        const keySlot = document.getElementById('inv-li-key')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('wr-desk-page');
+    }
+    document.getElementById('wr-desk-hitbox').onclick = async (e) => {
+        //fixme add feedback
+    }
+    document.getElementById('wr-left-desk-hitbox').onclick = () => showPage('wr-desk-page');
+    document.getElementById('wr-right-papers-hitbox').onclick = async (e) => {
+        showPage('wr-papers-page');
+        //fixme add feedback ? up top tho !
+    }
+    document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
+    document.getElementById('wr-papers-tu-hitbox').onclick = () => { openOverlay('wr-tu', "wr-images/wr-tu.png"); }
+    document.getElementById('wr-papers-ogb-hitbox').onclick = () => openOverlay('wr-ogb', 'wr-images/wr-ogb.png');
+    document.getElementById('wr-papers-reddit-hitbox').onclick = () => openOverlay('wr-reddit', 'wr-images/wr-reddit.png');
+    document.getElementById('wr-right-note-note-hitbox').onclick = () => showPage('wr-note-page');
+    document.getElementById('wr-note-hitbox').onclick = () => {
+        //fixme allow them to read wr-note more easily,, do same thing w the tu, ogb, and reddit
+    }
 
 
     // ------ LIBRARY SECTION ------
