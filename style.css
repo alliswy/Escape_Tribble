@@ -3035,6 +3035,71 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#wr-right-papers-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-papers-tu-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-papers-ogb-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-papers-reddit-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wr-right-note-papers-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 27%;
+    width: 45%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #printer-hitbox {
     position: absolute;
     top: 33%;
