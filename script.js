@@ -486,7 +486,7 @@ async function showPage(pageId) {
         } break;
         case 'wr-right-note-page': { state.foundWrNote = true; } break;
         case 'li-main-rw-page': {
-            if (!state.scannedBook) {
+            if (!state.scannedBook || !state.hasSherlockBook) {
                 document.getElementById('li-main-rw-animals-hitbox').classList.add('hidden');
             }
             //fixme add more
@@ -2241,10 +2241,19 @@ function init() {
             keySlot.classList.remove('hidden');
         }
         showPage('li-birb-page');
-        openOverlay('sherlock-book', 'inv-items/sherlock-book.png');
+        openOverlay('sherlock-book', 'inv-images/sherlock-book.png');
         // fixme optionally add this for each item upon collection: openOverlay('')
         //fixme add feedback
         //fixme figure out how to let them interact with this book
+    }
+
+    document.getElementById('li-main-rw-rw-hitbox').onclick = async (e) => {
+        if (state.hasSkPaper && !state.hasSherlockBook) {
+            showPage('li-rw-books-birb-page');
+            await spawnThemedBox('What ? that bird wasn\'t there a second ago', "notification-bottom");
+        } else {
+            showPage('li-rw-books-page');
+        }
     }
 
     document.getElementById('li-main-rw-animals-hitbox').onclick = () => {
@@ -2422,7 +2431,7 @@ function init() {
                 } break;
                 case 'inv-images/sherlock-book.png': {
                     document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
-                }
+                } break;
 
             }
         }
