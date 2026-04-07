@@ -380,12 +380,13 @@ const roomLeads = {
     'ls-mcduffie-1993-page':        {back: 'ls-archives-sk-page'},
     'ls-keser-1994-page':           {back: 'ls-archives-sk-page'},
     'ls-archives-sk-2-page':        {back: 'ls-archives-sk-page'},
+    'ls-archives-page':             {left: 'ls-in-5-page', right: 'ls-out-5-page'},
 
     'ls-in-1-page':  { back: 'lo-storage-entrance-page', forward: 'ls-in-2-page' },
     'ls-in-2-page':  { back: 'ls-in-1-page', forward: 'ls-in-3-page' },
     'ls-in-3-page':  { back: 'ls-in-2-page', forward: 'ls-in-4-page' },
-    'ls-in-4-page':  { back: 'ls-in-3-page', forward: 'ls-in-5-page', right: 'ls-archives-sk-page' }, //fixme add check for if found sk in back
-    'ls-in-5-page':  { back: 'ls-in-4-page', forward: 'ls-in-6-page' },
+    'ls-in-4-page':  { back: 'ls-in-3-page', forward: 'ls-in-5-page' },
+    'ls-in-5-page':  { back: 'ls-in-4-page', forward: 'ls-in-6-page', right: () => (state.hasLs10note && state.hasLs10drive) ? 'ls-archives-sk-page' : 'ls-archives-page' },
     'ls-in-6-page':  { back: 'ls-in-5-page', forward: 'ls-in-7-page' },
     'ls-in-7-page':  { back: 'ls-in-6-page', forward: 'ls-in-8-page' },
     'ls-in-8-page':  { back: 'ls-in-7-page', forward: 'ls-in-9-page' },
@@ -403,7 +404,7 @@ const roomLeads = {
     'ls-out-2-page':  { back: 'ls-out-1-page', forward: 'ls-out-3-page' },
     'ls-out-3-page':  { back: 'ls-out-2-page', forward: 'ls-out-4-page' },
     'ls-out-4-page':  { back: 'ls-out-3-page', forward: 'ls-out-5-page' },
-    'ls-out-5-page':  { back: 'ls-out-4-page', forward: 'ls-out-6-page', left: 'ls-archives-sk-page' }, //fixme add check for if found sk in back
+    'ls-out-5-page':  { back: 'ls-out-4-page', forward: 'ls-out-6-page', left: () => (state.hasLs10note && state.hasLs10drive) ? 'ls-archives-sk-page' : 'ls-archives-page' },
     'ls-out-6-page':  { back: 'ls-out-5-page', forward: 'ls-out-7-page' },
     'ls-out-7-page':  { back: 'ls-out-6-page', forward: 'ls-out-8-page' },
     'ls-out-8-page':  { back: 'ls-out-7-page', forward: 'ls-out-9-page' },
