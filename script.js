@@ -24,11 +24,13 @@ const state = {
     hasWrId: false,
     hasWr: false, //wr here is white remote
     hasBr: false,
+
     hasLoKey: false,
     hasLrBook: false,
     hasSkPaper: false,
     hasLs10note: false,
     hasLs10drive: false,
+    hasLorBook: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -80,6 +82,7 @@ const state = {
 
     //library/misc
     movedAnimals: false,
+    scannedBook: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -355,24 +358,24 @@ const roomLeads = {
 
     //library left wall pages
     'li-left-lt-page':      {back: 'li-main-lw-page'},
-    'li-lt-page':           {back: 'li-left-lt-page'},
+    'li-lt-page':           {back: () => (state.scannedBook && !state.hasSkPaper) ? 'li-lt-sk-paper-page' : 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
-    'li-lt-sk-paper-page':  {back: 'li-flw-sk-page'},
+    'li-lt-sk-paper-page':  {back: 'li-main-lw-sk-page'},
 
     //mw books pages
-    'li-mw-books-page':     { }, //fixme
+    'li-mw-books-page':     {back: 'li-main-lw-page' }, //fixme
     'li-tolkein-page':      {back: 'li-mw-books-page'},
     'li-esme-page':         {back: 'li-mw-books-page'},
     'li-russo-page':        {back: 'li-mw-books-page'},
     'li-ruta-page':         {back: 'li-mw-books-page'},
-    'li-smith-page':        {back: 'li-mw-books-page'},
 
     //lw books page
-    'li-rw-book-page':      {}, //fixme
-    'li-onoseta-page':      {back: 'li-lw-books-page'},
-    'li-barnes-page':         {back: 'li-lw-books-page'},
-    'li-boulley-page':        {back: 'li-lw-books-page'},
-    'li-alston-page':        {back: 'li-lw-books-page'},
+    'li-rw-book-page':      {back: 'li-main-lw-page'}, //fixme
+    'li-onoseta-page':      {back: 'li-rw-books-page'},
+    'li-barnes-page':         {back: 'li-rw-books-page'},
+    'li-boulley-page':        {back: 'li-rw-books-page'},
+    'li-alston-page':        {back: 'li-rw-books-page'},
+    'li-smith-page':        {back: 'li-rw-books-page'},
 
     //library office pages
     'li-office-door-closed-page':   { }, //fixme add later
@@ -474,7 +477,12 @@ async function showPage(pageId) {
             state.justTurnedOnMl = false;
         } break;
         case 'wr-right-note-page': { state.foundWrNote = true; } break;
-
+        case 'li-main-rw-page': {
+            if (!state.scannedBook) {
+                document.getElementById('li-main-rw-animals-hitbox').classList.add('hidden');
+            }
+            //fixme add more
+        }
         //fixme add more as needed
 
     }
@@ -2020,13 +2028,26 @@ function init() {
         showPage('li-left-lt-page'); //fixme later add check for if they did what was needed for this page
     }
     document.getElementById('li-left-lt-hitbox').onclick = () => showPage('li-lt-page');
-    document.getElementById('li-lt-hitbox').onclick = () => showPage('li-laptop-page');
+    document.getElementById('li-lt-laptop-hitbox').onclick = () => showPage('li-laptop-page');
+    document.getElementById('li-lt-scanner-hitbox').onclick = async(e) => {
+        if (state.hasLorBook) {
+            //fixme add stuff that it does
+
+            state.scannedBook = true;
+            const keySlot = document.getElementById('inv-lor-book')
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
+        } else {
+            await spawnThemedBox('I need to find a book to scan', "notification-bottom");
+        }
+    }
+
     document.getElementById('li-laptop-hitbox').onclick = async (e) => {
         await spawnThemedBox('I wonder what happens if I scan this book', 'notification-bottom');
         await spawnThemedBox('I should look around and see if I can find it.', 'notification-bottom');
     }
     document.getElementById('li-main-lw-mw-hitbox').onclick = () => showPage('li-mw-books-page');
-    document.getElementById('li-flw-sk-hitbox').onclick = () => showPage('li-lt-sk-paper-page');
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
         state.hasSkPaper = true;
         const keySlot = document.getElementById('inv-sk-paper')
@@ -2037,6 +2058,21 @@ function init() {
     }
 
 
+
+    //mid wall books section
+    document.getElementById('li-mw-tolkein-hitbox').onclick = () => showPage('li-tolkein-page');
+    document.getElementById('li-mw-esme-hitbox').onclick    = () => showPage('li-esme-page');
+    document.getElementById('li-mw-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
+    document.getElementById('li-mw-russo-hitbox').onclick   = () => showPage('li-russo-page');
+    document.getElementById('li-rw-smith-hitbox').onclick   = () => showPage('li-smith-page');
+    document.getElementById('li-tolkein-hitbox').onclick = () => {
+        state.hasLorBook = true;
+        const keySlot = document.getElementById('inv-lor-book')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        //showPage();
+    } //fixme need to change page so it's no longer on the shelf and whatnot, or hide the book somewhere instead
 
     //mid wall section
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
@@ -2185,6 +2221,11 @@ function init() {
     }
 
     // --------- library right wall section -----------
+    document.getElementById('li-rw-onoseta-hitbox').onclick = () => showPage('li-onoseta-page');
+    document.getElementById('li-rw-alston-hitbox').onclick  = () => showPage('li-alston-page');
+    document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
+    document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');
+
     document.getElementById('li-main-rw-animals-hitbox').onclick = () => {
         state.movedAnimals ? showPage('li-animals-open-1-page') : showPage('li-animals-1-page');
     }
