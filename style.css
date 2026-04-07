@@ -4114,10 +4114,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #ls-in-10-sk-nd-sk-hitbox {
     position: absolute;
-    top: 0%;
-    left: 20%;
-    width: 55%;
-    height: 99%;
+    top: 54%;
+    left: 38%;
+    width: 13%;
+    height: 25%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -4140,10 +4140,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #ls-10-sk-nd-note-hitbox {
     position: absolute;
-    top: 0%;
-    left: 20%;
-    width: 55%;
-    height: 99%;
+    top: 59%;
+    left: 34%;
+    width: 20%;
+    height: 15%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -4153,10 +4153,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #ls-10-sk-nd-drive-hitbox {
     position: absolute;
-    top: 0%;
-    left: 20%;
-    width: 55%;
-    height: 99%;
+    top: 68%;
+    left: 61%;
+    width: 8%;
+    height: 10%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -4166,10 +4166,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #ls-10-sk-note-hitbox {
     position: absolute;
-    top: 0%;
-    left: 20%;
-    width: 55%;
-    height: 99%;
+    top: 56%;
+    left: 36%;
+    width: 19%;
+    height: 16%;
 
     background-color: transparent;
     border: 2px solid transparent;

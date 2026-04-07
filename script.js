@@ -27,6 +27,8 @@ const state = {
     hasLoKey: false,
     hasLrBook: false,
     hasSkPaper: false,
+    hasLs10note: false,
+    hasLs10drive: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -387,8 +389,15 @@ const roomLeads = {
     'ls-in-6-page':  { back: 'ls-in-5-page', forward: 'ls-in-7-page' },
     'ls-in-7-page':  { back: 'ls-in-6-page', forward: 'ls-in-8-page' },
     'ls-in-8-page':  { back: 'ls-in-7-page', forward: 'ls-in-9-page' },
-    'ls-in-9-page':  { back: 'ls-in-8-page', forward: 'ls-in-10-page' },
-    'ls-in-10-page': { back: 'ls-in-9-page' },
+    'ls-in-9-page':  { back: 'ls-in-8-page', forward: () => state.hasLs10note ? state.hasLs10drive ? 'ls-in-10-page' : 'ls-in-10-sk-nd-page' : 'ls-in-10-sk-nd-page' },
+    'ls-in-10-page': { right: 'ls-10-right-page' },
+
+    'ls-in-10-sk-page':     {back: 'ls-in-9-page', right: 'ls-10-right-page'},
+    'ls-in-10-sk-nd-page':  {back: 'ls-in-9-page', right: 'ls-10-right-page'},
+    'ls-10-sk-page':        {back: 'ls-in-10-sk-page'},
+    'ls-10-sk-nd-page':     {back: 'ls-in-10-sk-nd-page'},
+
+    'ls-10-right-page':     {left: () => state.hasLs10note ? state.hasLs10drive ? 'ls-in-10-page' : 'ls-in-10-sk-nd-page' : 'ls-in-10-sk-nd-page', right: 'ls-out-1-page'},
 
     'ls-out-1-page':  { forward: 'ls-out-2-page' },
     'ls-out-2-page':  { back: 'ls-out-1-page', forward: 'ls-out-3-page' },
@@ -2216,7 +2225,38 @@ function init() {
     document.getElementById('ls-archives-keser-hitbox').onclick = () => showPage('ls-keser-1994-page');
     document.getElementById('ls-archives-harrell-hitbox').onclick = () => showPage('ls-harrell-1993-page');
 
-
+    document.getElementById('ls-in-10-sk-nd-sk-hitbox').onclick = () => showPage('ls-10-sk-nd-page');
+    document.getElementById('ls-in-10-sk-page').onclick = () => showPage('ls-10-sk-page');
+    // document.getElementById('ls-10-sk-nd-note-hitbox').onclick = () => {
+    //     openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
+    //     state.hasLs10note = true;
+    // }//fixme (?) now if they clcik off they can't re-access it
+    // document.getElementById('ls-10-sk-note-hitbox').onclick = () => {
+    //     openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
+    //     state.hasLs10note = true;
+    // } //fixme (?) now if they click off they can't re-access it
+    document.getElementById('ls-10-sk-nd-drive-hitbox').onclick = () => {
+        //openOverlay ('ls-10-drive', 'ls-images/ls-10-drive.png');
+        state.hasLs10drive = true;
+        const keySlot = document.getElementById('inv-ls-drive')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('ls-10-sk-note-page');
+        openOverlay('ls-10-drive', 'ls-images/ls-10-drive.png'); //I want it to overlay immediately and the character to comment on it
+        //fixme add feedback
+    }
+    document.getElementById('ls-10-sk-drive-hitbox').onclick = () => {
+        //openOverlay ('ls-10-drive', 'ls-images/ls-10-drive.png');
+        state.hasLs10drive = true;
+        const keySlot = document.getElementById('inv-ls-drive')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('ls-10-sk-page');
+        openOverlay('ls-10-drive', 'ls-images/ls-10-drive.png');
+        //fixme add feedback
+    }
 
 
 
