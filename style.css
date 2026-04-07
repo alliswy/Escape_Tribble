@@ -4099,4 +4099,95 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#ls-in-10-sk-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#ls-in-10-sk-nd-sk-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#ls-10-sk-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#ls-10-sk-nd-note-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#ls-10-sk-nd-drive-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#ls-10-sk-note-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#ls-10-sk-drive-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 20%;
+    width: 55%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 
