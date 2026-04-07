@@ -99,6 +99,18 @@ const leftArrow = document.getElementById('master-left-arrow');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
 
+
+// ------------ audio -------------
+const sfx = {
+    movingPaper: new Audio('sounds/page-flip.m4a'),
+    printerClicking: new Audio('sounds/click.m4a'),
+}; //fixme need to actually add these sounds
+
+function playSound(audio) {
+    audio.currentTime = 0; // Rewind to start
+    audio.play();
+}
+
 // ----- NAVIGATION MAP -----
 const roomLeads = {
     // Book Drop (BD)
