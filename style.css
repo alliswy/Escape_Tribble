@@ -3260,10 +3260,230 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-main-lw-mw-hitbox {
     position: absolute;
-    top: 39%;
-    left: 50%;
-    width: 26%;
-    height: 32%;
+    top: 10%;
+    left: 69%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-lw-lw-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-tolkein-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-esme-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-ruta-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-mw-russo-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-tokein-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-esme-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-russo-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-ruta-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-rw-onoseta-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+#li-mw-smith-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-rw-barnes-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-rw-boulley-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-onoseta-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-smith-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-barnes-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-boulley-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 49%;
+    width: 29%;
+    height: 45%;
 
     background-color: transparent;
     border: 2px solid transparent;

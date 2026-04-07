@@ -358,7 +358,21 @@ const roomLeads = {
     'li-lt-page':           {back: 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
     'li-lt-sk-paper-page':  {back: 'li-flw-sk-page'},
-    'li-mw-books-page':     {left: state.hasLrBook ? 'li-flw-sk-page' : 'li-flw-page'}, //fixme add li-flw-page image
+
+    //mw books pages
+    'li-mw-books-page':     { }, //fixme
+    'li-tolkein-page':      {back: 'li-mw-books-page'},
+    'li-esme-page':         {back: 'li-mw-books-page'},
+    'li-russo-page':        {back: 'li-mw-books-page'},
+    'li-ruta-page':         {back: 'li-mw-books-page'},
+    'li-smith-page':        {back: 'li-mw-books-page'},
+
+    //lw books page
+    'li-rw-book-page':      {}, //fixme
+    'li-onoseta-page':      {back: 'li-lw-books-page'},
+    'li-barnes-page':         {back: 'li-lw-books-page'},
+    'li-boulley-page':        {back: 'li-lw-books-page'},
+    'li-alston-page':        {back: 'li-lw-books-page'},
 
     //library office pages
     'li-office-door-closed-page':   { }, //fixme add later
@@ -2011,7 +2025,7 @@ function init() {
         await spawnThemedBox('I wonder what happens if I scan this book', 'notification-bottom');
         await spawnThemedBox('I should look around and see if I can find it.', 'notification-bottom');
     }
-    //fixme problem bc li-mw-books is currently jpg document.getElementById('li-main-lw-mw-books-hitbox').onclick = () => showPage('li-mw-books-page');
+    document.getElementById('li-main-lw-mw-hitbox').onclick = () => showPage('li-mw-books-page');
     document.getElementById('li-flw-sk-hitbox').onclick = () => showPage('li-lt-sk-paper-page');
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
         state.hasSkPaper = true;
