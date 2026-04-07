@@ -2241,6 +2241,7 @@ function init() {
             keySlot.classList.remove('hidden');
         }
         showPage('li-birb-page');
+        openOverlay('sherlock-book', 'inv-items/sherlock-book.png');
         // fixme optionally add this for each item upon collection: openOverlay('')
         //fixme add feedback
         //fixme figure out how to let them interact with this book
@@ -2418,6 +2419,9 @@ function init() {
                 } break;
                 case 'inv-images/pw-book-open.png': {
                     document.getElementById('pw-book-open-hitbox').classList.remove('hidden');
+                } break;
+                case 'inv-images/sherlock-book.png': {
+                    document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
                 }
 
             }

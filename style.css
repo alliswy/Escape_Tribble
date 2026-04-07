@@ -1868,6 +1868,32 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#sherlock-book-hitbox {
+    position: absolute;
+    top: 16%;
+    left: 10%;
+    width: 66%;
+    height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#sherlock-book-open-hitbox {
+    position: absolute;
+    top: 16%;
+    left: 10%;
+    width: 66%;
+    height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 /* KITCHEN HITBOXES */
 #ki-main-pt-code-hitbox {
     position: absolute;
