@@ -31,6 +31,7 @@ const state = {
     hasLs10note: false,
     hasLs10drive: false,
     hasLorBook: false,
+    hasSherlockBook: false,
 
     bdUnlocked: false,
     bdBackDoorUnlocked: false,
@@ -326,8 +327,8 @@ const roomLeads = {
     'li-main-2dc-ro-page':      {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-tvo-page':     {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-tvo-page':  {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
-    'li-main-rw-page':           {left: 'li-main-2dc-page'}, //fixme add do check
-    'li-main-lw-page':          {right: 'li-main-2dc-page'}, //fixme add do check
+    'li-main-rw-page':           {left:  () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'},
+    'li-main-lw-page':          {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add do check
 
     //library mid-wall pages
     'li-mid-wall-page':     {back: 'li-main-2dc-page'}, //fixme check for do
@@ -360,7 +361,9 @@ const roomLeads = {
     'li-left-lt-page':      {back: 'li-main-lw-page'},
     'li-lt-page':           {back: () => (state.scannedBook && !state.hasSkPaper) ? 'li-lt-sk-paper-page' : 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
-    'li-lt-sk-paper-page':  {back: 'li-main-lw-sk-page'},
+    'li-lt-sk-paper-page':  {}, //they're forced to take the paper
+    'li-lt-sk-page':        {back: 'li-main-lw-sk-page'},
+    'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add check for doors open
 
     //mw books pages
     'li-mw-books-page':     {back: 'li-main-lw-page' }, //fixme
@@ -376,6 +379,11 @@ const roomLeads = {
     'li-boulley-page':        {back: 'li-rw-books-page'},
     'li-alston-page':        {back: 'li-rw-books-page'},
     'li-smith-page':        {back: 'li-rw-books-page'},
+
+    'li-rw-books-birb-page':   {back: 'li-main-rw-page'}, //fixme fix back
+    'li-rw-books-birb-nb-page': {back: 'li-main-rw-page'}, //fixme is that the page I want back ?
+    'li-birb-book-page':        {back: 'li-rw-books-birb-page'},
+    'li-birb-page':             {back: 'li-rw-books-birb-nb-page'},
 
     //library office pages
     'li-office-door-closed-page':   { }, //fixme add later
@@ -2225,6 +2233,18 @@ function init() {
     document.getElementById('li-rw-alston-hitbox').onclick  = () => showPage('li-alston-page');
     document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
     document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');
+    document.getElementById('li-rw-books-birb-hitbox').onclick = () => showPage('li-birb-book-page');
+    document.getElementById('li-birb-book-hitbox').onclick = async (e) => {
+        state.hasSherlockBook = true;
+        const keySlot = document.getElementById('inv-sh-book');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('li-birb-page');
+        // fixme optionally add this for each item upon collection: openOverlay('')
+        //fixme add feedback
+        //fixme figure out how to let them interact with this book
+    }
 
     document.getElementById('li-main-rw-animals-hitbox').onclick = () => {
         state.movedAnimals ? showPage('li-animals-open-1-page') : showPage('li-animals-1-page');
