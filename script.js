@@ -392,8 +392,8 @@ const roomLeads = {
     'ls-in-9-page':  { back: 'ls-in-8-page', forward: () => state.hasLs10note ? state.hasLs10drive ? 'ls-in-10-page' : 'ls-in-10-sk-nd-page' : 'ls-in-10-sk-nd-page' },
     'ls-in-10-page': { right: 'ls-10-right-page' },
 
-    'ls-in-10-sk-page':     {back: 'ls-in-9-page', right: 'ls-10-right-page'},
-    'ls-in-10-sk-nd-page':  {back: 'ls-in-9-page', right: 'ls-10-right-page'},
+    'ls-in-10-sk-page':     {right: 'ls-10-right-page'},
+    'ls-in-10-sk-nd-page':  {right: 'ls-10-right-page'},
     'ls-10-sk-page':        {back: 'ls-in-10-sk-page'},
     'ls-10-sk-nd-page':     {back: 'ls-in-10-sk-nd-page'},
 
@@ -2227,16 +2227,25 @@ function init() {
 
     document.getElementById('ls-in-10-sk-nd-sk-hitbox').onclick = () => showPage('ls-10-sk-nd-page');
     document.getElementById('ls-in-10-sk-page').onclick = () => showPage('ls-10-sk-page');
-    // document.getElementById('ls-10-sk-nd-note-hitbox').onclick = () => {
-    //     openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
-    //     state.hasLs10note = true;
-    // }//fixme (?) now if they clcik off they can't re-access it
-    // document.getElementById('ls-10-sk-note-hitbox').onclick = () => {
-    //     openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
-    //     state.hasLs10note = true;
-    // } //fixme (?) now if they click off they can't re-access it
+    document.getElementById('ls-10-sk-nd-note-hitbox').onclick = () => {
+        state.hasLs10note = true;
+        const keySlot = document.getElementById('inv-ls-note')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('ls-10-sk-drive-page');
+        openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
+    }
+    document.getElementById('ls-10-sk-note-hitbox').onclick = () => {
+        state.hasLs10note = true;
+        const keySlot = document.getElementById('inv-ls-note')
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
+        showPage('ls-10-sk-page');
+        openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
+    }
     document.getElementById('ls-10-sk-nd-drive-hitbox').onclick = () => {
-        //openOverlay ('ls-10-drive', 'ls-images/ls-10-drive.png');
         state.hasLs10drive = true;
         const keySlot = document.getElementById('inv-ls-drive')
         if (keySlot) {
@@ -2247,7 +2256,6 @@ function init() {
         //fixme add feedback
     }
     document.getElementById('ls-10-sk-drive-hitbox').onclick = () => {
-        //openOverlay ('ls-10-drive', 'ls-images/ls-10-drive.png');
         state.hasLs10drive = true;
         const keySlot = document.getElementById('inv-ls-drive')
         if (keySlot) {
