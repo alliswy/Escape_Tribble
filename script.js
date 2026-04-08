@@ -333,7 +333,7 @@ const roomLeads = {
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
-    'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: 'li-entrance-page'},
+    'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: () => state.isLiTvOn ? 'li-entrance-tvo-page' :'li-entrance-page'},
     'li-entrance-page':          {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-nb-page':       {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-tvo-page':      {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
