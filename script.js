@@ -208,7 +208,6 @@ const roomLeads = {
     'clr-cloth-octagon-page': {back: 'clr-cloth-page'},
 
     //camera room
-    //fixme add the person on the camera appearing and diseappearing between clicks
     'cr-camr-door-closed-page': {back: 'cr-doors-2dc-page'},
     'camr-main-page':           {back: () => state.crlDoorOpen ? 'cr-doors-page' :'cr-doors-1dc-page'},
     'camr-main-ml-on-page':     {back: () => state.crlDoorOpen ? 'cr-doors-cam-page' : 'cr-doors-1dc-cam-page'},
@@ -260,16 +259,15 @@ const roomLeads = {
     'cw-stairs-door-page':       {back: 'cw-stairs-entrance-page'},
     'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: 'cw-left-bath-page', left: 'cw-right-aw-page'},
     'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
-    'cw-entrance-2-page':       {back: 'cw-entrance-page', forward: 'cw-entrance-3-page'}, //fixme add left/right
+    'cw-entrance-2-page':       {back: 'cw-entrance-page', forward: 'cw-entrance-3-page'},
     'cw-entrance-3-page':       {back: 'cw-entrance-2-page', left: 'cw-left-bath-page', right: 'cw-right-eh-page'},
     'cw-left-bath-page':    {back: 'cw-left-eh-page', left: 'cw-bath-door-page', forward: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page'},
-    'cw-left-snh-wrc-page':     {back:'cw-left-bath-page', forward: 'cw-wr-dc-page', right: 'snh-entrance-page'}, //fixme add right
-    'cw-left-snh-wro-page':     {back: 'cw-bath-wrc-page', forward: 'cw-elevator-wr-do-page', right: 'snh-entrance-page'}, //fixme add back
+    'cw-left-snh-wrc-page':     {back:'cw-left-bath-page', forward: 'cw-wr-dc-page', right: 'snh-entrance-page'},
+    'cw-left-snh-wro-page':     {back: 'cw-left-bath-page', forward: 'cw-elevator-wr-do-page', right: 'snh-entrance-page'},
     'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
     'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
     'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: 'cw-right-snh-page'},
     'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page', left: 'cw-stairs-entrance-page'},
-    //fixme add cw-left-eh-page
     'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page', left: 'cw-oh2-exit-page'},
     'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', left: 'cw-oh1-entrance-page'},
 
@@ -308,7 +306,7 @@ const roomLeads = {
     'oh2-entrance-page':        {back: 'cw-oh2-entrance-page', right: 'oh2-oh3-entrance-page'},
     'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page', right: 'oh2-exit-page'},
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
-    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page', forward: 'cw-oh2-exit-page'}, //fixme add forward
+    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page', forward: 'cw-oh2-exit-page'},
 
 
     //c-wing inspections/doors
@@ -400,7 +398,7 @@ const roomLeads = {
     'li-birb-page':             {back: 'li-rw-books-birb-nb-page'},
 
     //library office pages
-    'li-office-door-closed-page':   { }, //fixme add later
+    'li-office-door-closed-page':   { }, //fixme add stuff for this later
     'li-office-door-open-page':     { }, //fixme add back later
     'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
     'lo-main-left-page':            {back: 'lo-main-page' },
