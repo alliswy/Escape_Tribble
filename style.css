@@ -3374,6 +3374,45 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#li-entrance-nb-lw-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 21%;
+    width: 26%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-entrance-tvo-nb-lw-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 21%;
+    width: 26%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-entrance-tvo-lw-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 21%;
+    width: 26%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #li-main-lw-lw-hitbox {
     position: absolute;
     top: 10%;
