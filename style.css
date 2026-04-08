@@ -3351,8 +3351,21 @@ input[type="range"]::-webkit-slider-thumb {
 #li-main-lw-mw-hitbox {
     position: absolute;
     top: 10%;
-    left: 69%;
-    width: 29%;
+    left: 68%;
+    width: 26%;
+    height: 45%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-entrance-lw-hitbox {
+    position: absolute;
+    top: 22%;
+    left: 21%;
+    width: 26%;
     height: 45%;
 
     background-color: transparent;
@@ -3364,8 +3377,8 @@ input[type="range"]::-webkit-slider-thumb {
 #li-main-lw-lw-hitbox {
     position: absolute;
     top: 10%;
-    left: 49%;
-    width: 29%;
+    left: 38%;
+    width: 25%;
     height: 45%;
 
     background-color: transparent;
@@ -3937,7 +3950,7 @@ input[type="range"]::-webkit-slider-thumb {
 #li-main-mw-hitbox {
     position: absolute;
     top: 17%;
-    left: 7%;
+    left: 6%;
     width: 43%;
     height: 55%;
 
