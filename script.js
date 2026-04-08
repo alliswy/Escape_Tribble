@@ -270,7 +270,7 @@ const roomLeads = {
     'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: 'cw-right-snh-page'},
     'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page', left: 'cw-stairs-entrance-page'},
     //fixme add cw-left-eh-page
-    'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page'}, //fixme add left
+    'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page', left: 'cw-oh2-exit-page'},
     'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', left: 'cw-oh1-entrance-page'},
 
     //c-wing right progression/hallways
@@ -279,7 +279,7 @@ const roomLeads = {
     'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page', right: 'cw-stairs-entrance-page'}, //fixme add right
     'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
-    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page', right: 'cw-oh1-exit-page'},
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page', right: 'cw-oh2-exit-page'},
 
     //c-wing side halls
     'print-main-page':          {back: 'cw-right-print-page'},
