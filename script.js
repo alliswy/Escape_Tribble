@@ -381,11 +381,12 @@ const roomLeads = {
 
     //mw books pages
     'li-mw-books-page':     {back: 'li-main-lw-page' }, //fixme
-    'li-tolkein-page':      {back: 'li-mw-books-page'},
-    'li-esme-page':         {back: 'li-mw-books-page'},
-    'li-russo-page':        {back: 'li-mw-books-page'},
-    'li-ruta-page':         {back: 'li-mw-books-page'},
-    'li-tolkein-nb-page':   {back: 'li-mw-books-page'}, //fixme add page without the lor book on shelf
+    'li-mw-books-nb-page':  {back: 'li-main-lw-nb-page'},
+    'li-tolkein-page':      {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
+    'li-esme-page':         {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
+    'li-russo-page':        {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
+    'li-ruta-page':         {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
+    'li-tolkein-nb-page':   {back: 'li-mw-books-nb-page'},
 
     //lw books page
     'li-rw-books-page':     {back: 'li-main-rw-page'},
@@ -2041,6 +2042,9 @@ function init() {
     document.getElementById('li-mw-esme-hitbox').onclick    = () => showPage('li-esme-page');
     document.getElementById('li-mw-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
     document.getElementById('li-mw-russo-hitbox').onclick   = () => showPage('li-russo-page');
+    document.getElementById('li-mw-nb-esme-hitbox').onclick    = () => showPage('li-esme-page');
+    document.getElementById('li-mw-nb-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
+    document.getElementById('li-mw-nb-russo-hitbox').onclick   = () => showPage('li-russo-page');
     //fixme document.getElementById('li-rw-smith-hitbox').onclick   = () => showPage('li-smith-page');
     document.getElementById('li-tolkein-hitbox').onclick = () => {
         state.hasLorBook = true;
