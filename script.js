@@ -84,6 +84,7 @@ const state = {
     //library/misc
     movedAnimals: false,
     scannedBook: false,
+    loMonitorUnlocked: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -98,7 +99,6 @@ const rightArrow = document.getElementById('master-right-arrow');
 const leftArrow = document.getElementById('master-left-arrow');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
-
 
 // ------------ audio -------------
 const sfx = {
@@ -1026,6 +1026,80 @@ function closeWordle() {
         hitbox.style.display = 'block';
     }
 }
+
+// ------ FINAL PUZZLE INITIAL LOGIN PIN SECTION ----
+
+const termPage = document.getElementById('terminal-login-page');
+const termInput = document.getElementById('terminal-input');
+const termFeedback = document.getElementById('terminal-feedback');
+const loginHeader = document.querySelector('#terminal-window .terminal-content div:first-child');
+
+// Called when clicking the monitor hitbox
+function openTerminal() {
+    termPage.classList.remove('hidden');
+
+    document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+
+    if (state.loMonitorUnlocked) {
+        // State: Already solved
+        termInput.style.display = "none";
+        if (loginHeader) loginHeader.style.display = "none"; // Hide "Authentication Required"
+        termFeedback.style.color = "#00ff41";
+        termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+    } else {
+        // State: Need password
+        termInput.style.display = "block";
+        if (loginHeader) loginHeader.style.display = "block";
+        termInput.value = "";
+        termFeedback.innerText = "";
+        setTimeout(() => termInput.focus(), 10);
+    }
+}
+
+function closeTerminal() {
+    // 1. Hide the terminal
+    termPage.classList.add('hidden');
+
+    // 2. Re-enable the monitor hitbox
+    document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
+}
+
+termInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+        if (termInput.value === "8450") {
+            termFeedback.innerText = "> ACCESS GRANTED";
+            termFeedback.style.color = "#00ff41";
+        } else {
+            termFeedback.innerText = "> ACCESS DENIED";
+            termFeedback.style.color = "#ff4444";
+            termInput.value = "";
+        }
+    }
+});
+
+termInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+        if (termInput.value === "8450") {
+            loMonitorUnlocked = true; // Variable updated here
+
+            termInput.style.display = "none";
+            if (loginHeader) loginHeader.style.display = "none";
+            termFeedback.style.color = "#00ff41";
+            termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+        } else {
+            termFeedback.innerText = "> ACCESS DENIED";
+            termFeedback.style.color = "#ff4444";
+            termInput.value = "";
+        }
+    }
+});
+
+// Ensure typing is always active while the overlay is up
+termPage.addEventListener('click', (e) => {
+    if (e.target.id !== 'terminal-close-btn') {
+        termInput.focus();
+    }
+});
 
 
 // ---- PRINTER SYNC MINIMGAME ----
@@ -2281,7 +2355,6 @@ function init() {
     document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
     document.getElementById('lo-desk-monitor-hitbox').onclick = () => showPage('lo-monitor-page');
     //fixme add stuff for the monitor page
-
 
 
 

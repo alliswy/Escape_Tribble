@@ -965,6 +965,10 @@ input[type="range"]::-webkit-slider-thumb {
     animation: pulse 0.5s infinite;
 }
 
+@keyframes scan {
+    0% { top: 0%; }
+    100% { top: 100%; }
+}
 
 
 /* Ensure 'hidden' works correctly */
