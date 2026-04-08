@@ -338,6 +338,7 @@ const roomLeads = {
     'li-entrance-nb-page':       {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-tvo-page':      {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-tvo-nb-page':   {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
+    'li-2dc-page':               {back: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page': 'li-main-2dc-page'},
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-page':       {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-tvo-page':      {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
@@ -406,8 +407,8 @@ const roomLeads = {
     'li-birb-page':             {back: 'li-rw-books-birb-nb-page'},
 
     //library office pages
-    'li-office-door-closed-page':   { }, //fixme add stuff for this later
-    'li-office-door-open-page':     { }, //fixme add back later
+    'li-office-door-closed-page':   {back: 'li-2dc-page'}, //fixme add stuff for this later
+    'li-office-door-open-page':     {back: 'li-office-door-closed-page'}, //fixme add back later
     'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
     'lo-main-left-page':            {back: 'lo-main-page' },
     'lo-storage-entrance-page':     {back: 'lo-main-left-page', forward: 'ls-in-1-page' },
@@ -2061,6 +2062,12 @@ function init() {
     }
 
     //mid wall section
+    document.getElementById('li-main-doors-hitbox').onclick = () => showPage('li-2dc-page');
+    document.getElementById('li-main-ro-doors-hitbox').onclick = () => showPage('li-2dc-page');
+    document.getElementById('li-main-tvo-doors-hitbox').onclick = () => showPage('li-2dc-page');
+    document.getElementById('li-main-ro-tvo-doors-hitbox').onclick = () => showPage('li-2dc-page');
+    document.getElementById('li-2dc-door-hitbox').onclick = () => showPage('li-office-door-closed-page');
+
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
     document.getElementById('li-main-ro-mw-hitbox').onclick = () => showPage('li-mid-wall-ro-page');
     document.getElementById('li-main-ro-tvo-mw-hitbox').onclick = () => showPage('li-mid-wall-ro-tvo-page');

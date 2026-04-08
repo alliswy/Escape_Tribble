@@ -4027,6 +4027,71 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#li-main-doors-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    width: 20%;
+    height: 28%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-ro-doors-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    width: 20%;
+    height: 28%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-tvo-doors-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    width: 20%;
+    height: 28%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-main-ro-tvo-doors-hitbox {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    width: 20%;
+    height: 28%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-2dc-door-hitbox {
+    position: absolute;
+    top: 13%;
+    left: 26%;
+    width: 16%;
+    height: 81%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #li-main-ro-mw-hitbox {
     position: absolute;
     top: 17%;
@@ -4280,10 +4345,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-office-door-closed-hitbox {
     position: absolute;
-    top: 22%;
-    left: 14%;
-    width: 72%;
-    height: 55%;
+    top: 0%;
+    left: 29%;
+    width: 42%;
+    height: 95%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -4293,10 +4358,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-office-door-open-hitbox {
     position: absolute;
-    top: 6%;
-    left: 34%;
-    width: 34%;
-    height: 94%;
+    top: 0%;
+    left: 29%;
+    width: 42%;
+    height: 95%;
 
     background-color: transparent;
     border: 2px solid transparent;
