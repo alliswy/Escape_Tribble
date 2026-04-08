@@ -202,7 +202,8 @@ const roomLeads = {
     'cr-couches-page':        {back: () => state.camrDoorOpen ? state.crlDoorOpen ? 'cr-main-page' : 'cr-main-1dc-page': 'cr-main-2dc-page'},
     'cr-couch-page':         {back: 'cr-couches-page'},
     'cr-couch-zoom-page':    {back: 'cr-couch-page'},
-    'clr-main-page':        {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'}, //fixme add cr-doors-page
+    'clr-main-page':        {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'},
+    'clr-main-id-page':     {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'},
     'clr-cloth-page':       {back: 'clr-main-page'},
     'clr-cloth-octagon-page': {back: 'clr-cloth-page'},
 
