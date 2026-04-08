@@ -61,6 +61,46 @@ body {
     display: none !important;
 }
 
+/* ---- UI POLISH: ELIMINATE BLUE HIGHLIGHT ON FAST CLICKING ---- */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hitbox,
+.back-arrow,
+.forward-arrow,
+.left-arrow,
+.right-arrow,
+.menu-btn,
+.dropdown-item,
+.inv-item,
+#inventory-tab,
+#hamburger-icon,
+#hint-btn,
+#map-close-btn,
+#wire-exit-btn,
+#wire-popup-close,
+#ingame-settings-close-btn,
+#item-close-btn {
+    user-select: none;
+    -webkit-user-select: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hitbox:focus,
+.back-arrow:focus,
+.forward-arrow:focus,
+.left-arrow:focus,
+.right-arrow:focus,
+.menu-btn:focus,
+.dropdown-item:focus,
+#inventory-tab:focus,
+#hamburger-icon:focus,
+#hint-btn:focus {
+    outline: none;
+}
+
 .fit {
     position: relative;
     display: flex;
