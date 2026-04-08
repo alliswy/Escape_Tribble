@@ -462,6 +462,10 @@ function getDestination(direction, pageId) {
 // Replace your old showPage with this:
 async function showPage(pageId) {
     allPages.forEach(p => p.classList.add('hidden'));
+    // Autosave on every navigation
+    if (pageId !== 'mh-bd-main-page') {
+        saveGame(pageId);
+    }
     const target = document.getElementById(pageId);
     if (target) {
         target.classList.remove('hidden');
@@ -1236,11 +1240,20 @@ function init() {
     startButton.onclick = () => {
         menu.classList.add('hidden');
         play.classList.remove('hidden');
-        showPage('mh-bd-main-page');
         document.getElementById('inventory-drawer').classList.remove('hidden');
         document.getElementById('hamburger-menu').classList.remove('hidden');
         document.getElementById('hint-btn').classList.remove('hidden');
         document.getElementById('hint-box').classList.remove('hidden');
+
+        if(hasSaveFile()) {
+            const saveData = loadGame();
+            if(saveData) {
+                showPage(saveData.currentPage);
+                return;
+            }
+        }
+
+        showPage('mh-bd-main-page');
     };
 
     //Settings button
@@ -1375,12 +1388,15 @@ function init() {
         // Close hint box if open
         document.getElementById('hint-box').classList.remove('hint-open');
 
-        // Return to start of game
-        showPage('mh-bd-main-page');
-
         // Reset wire puzzle
         wirePuzzleInitialized = false;
         document.getElementById('wire-solved-popup').classList.add('hidden');
+
+        // Clear save so a fresh game starts next time
+        clearSave();
+
+        // Return to start of game
+        showPage('mh-bd-main-page');
     };
 
     //Quit to main menu button
@@ -2786,6 +2802,101 @@ function setupWireCanvasEvents() {
             drawWireCanvas();
         }
     };
+}
+
+// ---- SAVE SYSTEM ----
+const SAVE_KEY = 'escapeTribble_save';
+
+function saveGame(currentPageId) {
+    const inventoryState = {};
+    document.querySelectorAll('.inv-item').forEach(item => {
+        if (item.id) {
+            inventoryState[item.id] = !item.classList.contains('hidden');
+        }
+    });
+
+    const wireSave = {
+        initialized: wirePuzzleInitialized,
+        solved: state.solvedWirePuzzle,
+        connections: wirePuzzleInitialized ? { ...wireConnections } : {},
+        leftNodes: wirePuzzleInitialized ? wireLeftNodes.map(n => ({ ...n })) : [],
+        rightNodes: wirePuzzleInitialized ? wireRightNodes.map(n => ({ ...n })) : [],
+    };
+
+    const saveData = {
+        state: { ...state },
+        currentPage: currentPageId,
+        inventory: inventoryState,
+        wire: wireSave,
+    };
+
+    try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+    } catch (e) {
+        console.error('Autosave failed:', e);
+    }
+}
+
+function loadGame() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+
+        const saveData = JSON.parse(raw);
+
+        // Restore state
+        Object.keys(saveData.state).forEach(key => {
+            state[key] = saveData.state[key];
+        });
+
+        // Restore inventory UI
+        Object.entries(saveData.inventory).forEach(([id, visible]) => {
+            const el = document.getElementById(id);
+            if (el) {
+                visible ? el.classList.remove('hidden') : el.classList.add('hidden');
+            }
+        });
+
+        // Restore wire puzzle
+        if (saveData.wire.initialized) {
+            wirePuzzleInitialized = true;
+            wireCanvas = document.getElementById('wire-canvas');
+            wireCtx = wireCanvas.getContext('2d');
+            wireCanvas.width = 500;
+            wireCanvas.height = 350;
+            wireColors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
+            wireColorNames = ['red', 'blue', 'green', 'yellow', 'purple'];
+            wireNumWires = 5;
+            wireNodeRadius = 14;
+            wireLeftX = 80;
+            wireRightX = 420;
+            wireLeftNodes = saveData.wire.leftNodes;
+            wireRightNodes = saveData.wire.rightNodes;
+            wireConnections = saveData.wire.connections;
+            wireDragging = false;
+            wireDragStart = null;
+            wireDragCurrent = null;
+            wireErrorFlash = false;
+            setupWireCanvasEvents();
+        }
+
+        if (saveData.wire.solved) {
+            document.getElementById('wire-solved-popup').classList.add('hidden');
+        }
+
+        return saveData;
+    } catch (e) {
+        console.error('Load failed:', e);
+        return false;
+    }
+}
+
+function hasSaveFile() {
+    return localStorage.getItem(SAVE_KEY) !== null;
+}
+
+function clearSave() {
+    localStorage.removeItem(SAVE_KEY);
 }
 
 init();
