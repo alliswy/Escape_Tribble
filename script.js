@@ -1756,8 +1756,7 @@ function init() {
 
     //----- CAMERA ROOM SECTION -----
     document.getElementById('cr-doors-1dc-rd-hitbox').onclick = () => {
-        showPage('camr-main-page');
-        //fixme add checks for if mr on or ml on or whatnot
+        state.isLeftMonitorOn ? showPage('camr-main-ml-on-page') : showPage('camr-main-page');
     }
     document.getElementById('camr-main-window-hitbox').onclick = () => {
         showPage('camr-we-page');
@@ -1800,7 +1799,7 @@ function init() {
     }
 
     document.getElementById('camr-mr-off-hitbox').onclick = async (e) => {
-        state.foundWordle = true;  //fixme bug check this
+        state.foundWordle = true;
         const container = document.getElementById('wordle-minigame');
         const backArrow = document.getElementById('master-back-arrow');
         const hitbox = document.getElementById('camr-mr-off-hitbox');
@@ -1872,14 +1871,16 @@ function init() {
     document.getElementById('cw-wr-scanner-hitbox').onclick = async (e) => {
         if (state.hasWrId) {
         state.wrUnlocked = true;
+        const keySlot = document.getElementById('inv-wr-od');
+        if (keySlot) {
+                keySlot.classList.add('hidden');
+        }
         showPage('cw-wr-handle-unlocked-page');
-        //fixme currently keeps id in inventory -- do I want it this way ?
         //fixme add feedback
         } else {
             //fixme add feedback
         }
     }
-    //fixme add the other wr interactions/door opening
     document.getElementById('cw-elevator-hitbox').onclick = async (e) => {
         //fixme add feedback
     }
@@ -1940,7 +1941,7 @@ function init() {
     document.getElementById('wr-left-desk-hitbox').onclick = () => showPage('wr-desk-page');
     document.getElementById('wr-right-papers-hitbox').onclick = async (e) => {
         showPage('wr-papers-page');
-        //fixme add feedback ? up top tho !
+        //fixme add feedback
     }
     document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
     document.getElementById('wr-papers-tu-hitbox').onclick = () => { openOverlay('wr-tu', "wr-images/wr-tu.png"); }
@@ -1988,8 +1989,6 @@ function init() {
     document.getElementById('li-lt-laptop-hitbox').onclick = () => showPage('li-laptop-page');
     document.getElementById('li-lt-scanner-hitbox').onclick = async(e) => {
         if (state.hasLorBook) {
-            //fixme add stuff that it does
-
             state.scannedBook = true;
             const keySlot = document.getElementById('inv-lor-book')
             if (keySlot) {
@@ -2029,7 +2028,7 @@ function init() {
             keySlot.classList.remove('hidden');
         }
         //showPage();
-    } //fixme need to change page so it's no longer on the shelf and whatnot, or hide the book somewhere instead
+    } //fixme need to change page so it's no longer on the shelf and whatnot
 
     //mid wall section
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
@@ -2191,9 +2190,8 @@ function init() {
         }
         showPage('li-birb-page');
         openOverlay('sherlock-book', 'inv-images/sherlock-book.png');
-        // fixme optionally add this for each item upon collection: openOverlay('')
         //fixme add feedback
-        //fixme figure out how to let them interact with this book
+        //fixme finish adding interaction with this book, currently non-functional
     }
 
     document.getElementById('li-main-rw-rw-hitbox').onclick = async (e) => {
@@ -2245,7 +2243,7 @@ function init() {
     document.getElementById('lo-main-right-desk-hitbox').onclick = () => showPage('lo-desk-page');
     document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
     document.getElementById('lo-desk-monitor-hitbox').onclick = () => showPage('lo-monitor-page');
-    //fixme add stuff for the monitor page, and change monitor image
+    //fixme add stuff for the monitor page
 
 
 
