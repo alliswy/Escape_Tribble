@@ -381,7 +381,7 @@ const roomLeads = {
 
     //mw books pages
     'li-mw-books-page':     {back: 'li-main-lw-page' }, //fixme
-    'li-mw-books-nb-page':  {back: 'li-main-lw-nb-page'},
+    //'li-mw-books-nb-page':  {back: 'li-main-lw-nb-page'},
     'li-tolkein-page':      {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
     'li-esme-page':         {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
     'li-russo-page':        {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
