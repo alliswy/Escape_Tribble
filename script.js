@@ -385,6 +385,7 @@ const roomLeads = {
     'li-esme-page':         {back: 'li-mw-books-page'},
     'li-russo-page':        {back: 'li-mw-books-page'},
     'li-ruta-page':         {back: 'li-mw-books-page'},
+    'li-tolkein-nb-page':   {back: 'li-mw-books-page'}, //fixme add page without the lor book on shelf
 
     //lw books page
     'li-rw-books-page':     {back: 'li-main-rw-page'},
@@ -2047,8 +2048,8 @@ function init() {
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
-        //showPage();
-    } //fixme need to change page so it's no longer on the shelf and whatnot
+        showPage('li-tolkein-nb-page');
+    }
 
     //mid wall section
     document.getElementById('li-main-mw-hitbox').onclick = () => showPage('li-mid-wall-page');
