@@ -258,7 +258,7 @@ const roomLeads = {
     'mh-cw-door-page':          {back: 'stairs-page'},
     'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
     'cw-stairs-door-page':       {back: 'cw-stairs-entrance-page'},
-    'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: 'cw-left-bath-page', left: 'cw-right-eh-page'},
+    'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: 'cw-left-bath-page', left: 'cw-right-aw-page'},
     'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
     'cw-entrance-2-page':       {back: 'cw-entrance-page', forward: 'cw-entrance-3-page'}, //fixme add left/right
     'cw-entrance-3-page':       {back: 'cw-entrance-2-page', left: 'cw-left-bath-page', right: 'cw-right-eh-page'},
@@ -268,7 +268,7 @@ const roomLeads = {
     'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
     'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
     'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: 'cw-right-snh-page'},
-    'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page'},
+    'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page', left: 'cw-stairs-entrance-page'},
     //fixme add cw-left-eh-page
     'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page'}, //fixme add left
     'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', left: 'cw-oh1-entrance-page'},
@@ -276,10 +276,10 @@ const roomLeads = {
     //c-wing right progression/hallways
     'cw-right-snh-page':        {forward: 'cw-right-bath-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
     'cw-right-bath-page':       {back: 'cw-right-snh-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
-    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page'}, //fixme add right
-    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page', right: 'cw-stairs-entrance-page'},
+    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page', right: 'cw-stairs-entrance-page'}, //fixme add right
+    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
-    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page'}, //fixme add right
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page', right: 'cw-oh1-exit-page'},
 
     //c-wing side halls
     'print-main-page':          {back: 'cw-right-print-page'},
@@ -290,7 +290,8 @@ const roomLeads = {
     'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page', left: 'cw-left-eh-page'},
     'eh-door-page':             {back: 'cw-eh-entrance-page'},
     'eh-door-plate-page':       {back: 'eh-door-page'},
-    'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', forward: 'oh1-left-1-page'}, //fixme add right
+    'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', right: 'cw-left-2-page', forward: 'oh1-left-1-page'},
+    'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page'}, //fixme add forward (?)
     'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left or back
     'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
     'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'}, //fixme is this really Li key or should it be Clr key ?
@@ -300,14 +301,14 @@ const roomLeads = {
     'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page', right: 'oh1-exit-2-page'},
     'oh1-right-3-page':         {back: 'oh1-right-2-page'}, //fixme add right: oh1-exit-1-page
     'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page', forward: 'cw-oh2-entrance-page'},
-    'oh1-books-page':           {back: 'oh1-left-4-page'}, //fixme add right
-    'oh1-books-key-page':       {back: 'oh1-left-4-key-page'}, //fixme add right
+    'oh1-books-page':           {back: 'oh1-left-4-page'},
+    'oh1-books-key-page':       {back: 'oh1-left-4-key-page'},
 
     'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page', right: 'cw-right-print-page', left: 'cw-left-1-page'},
     'oh2-entrance-page':        {back: 'cw-oh2-entrance-page', right: 'oh2-oh3-entrance-page'},
     'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page', right: 'oh2-exit-page'},
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
-    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page'}, //fixme add forward
+    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page', forward: 'cw-oh2-exit-page'}, //fixme add forward
 
 
     //c-wing inspections/doors
