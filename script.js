@@ -371,8 +371,10 @@ const roomLeads = {
 
     //library left wall pages
     'li-left-lt-page':      {back: 'li-main-lw-page'},
-    'li-lt-page':           {back: () => (state.scannedBook && !state.hasSkPaper) ? 'li-lt-sk-paper-page' : 'li-left-lt-page'},
+    'li-lt-page':           {back: 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
+    'li-laptop-star-page':  {back: 'li-lt-star-page'},
+    'li-lt-star-page':      {back: () => (state.scannedBook && !state.hasSkPaper) ? 'li-lt-sk-paper-page' : 'li-left-lt-page'},
     'li-lt-sk-paper-page':  {}, //they're forced to take the paper
     'li-lt-sk-page':        {back: 'li-main-lw-sk-page'},
     'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add check for doors open

@@ -3593,7 +3593,33 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#li-lt-star-laptop-hitbox {
+    position: absolute;
+    top: 28%;
+    left: 37%;
+    width: 28%;
+    height: 34%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #li-laptop-hitbox {
+    position: absolute;
+    top: 24%;
+    left: 20%;
+    width: 54%;
+    height: 58%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-laptop-star-hitbox {
     position: absolute;
     top: 24%;
     left: 20%;
