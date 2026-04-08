@@ -257,28 +257,25 @@ const roomLeads = {
     'mh-cw-door-page':          {back: 'stairs-page'},
     'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
     'cw-stairs-door-page':       {back: 'cw-stairs-entrance-page'},
-    'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: () => state.hasWrId ? 'cw-left-bath-page': 'cw-left-bath-id-page', left: 'cw-right-eh-page'},
+    'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: 'cw-left-bath-page', left: 'cw-right-eh-page'},
     'cw-entrance-page':         {back: 'mh-cw-door-page', forward: 'cw-entrance-2-page'},
     'cw-entrance-2-page':       {back: 'cw-entrance-page', forward: 'cw-entrance-3-page'}, //fixme add left/right
-    'cw-entrance-3-page':       {back: 'cw-entrance-2-page', left: () => state.hasWrId ? 'cw-left-bath-page': 'cw-left-bath-id-page', right: 'cw-right-eh-page'},
-    'cw-left-bath-id-page':     {back: 'cw-entrance-2-page', left: 'cw-bath-door-page', forward: 'cw-left-snh-wrc-page'}, //fixme back is not correct, also add forward
+    'cw-entrance-3-page':       {back: 'cw-entrance-2-page', left: 'cw-left-bath-page', right: 'cw-right-eh-page'},
     'cw-left-bath-page':    {back: 'cw-left-eh-page', left: 'cw-bath-door-page', forward: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page'},
-    'cw-left-snh-wrc-page':     {back: () => state.hasWrId ? 'cw-left-bath-page': 'cw-left-bath-id-page', forward: 'cw-wr-dc-page', right: 'snh-entrance-page'}, //fixme add right
+    'cw-left-snh-wrc-page':     {back:'cw-left-bath-page', forward: 'cw-wr-dc-page', right: 'snh-entrance-page'}, //fixme add right
     'cw-left-snh-wro-page':     {back: 'cw-bath-wrc-page', forward: 'cw-elevator-wr-do-page', right: 'snh-entrance-page'}, //fixme add back
     'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
     'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
-    'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: () => state.hasWrId ? 'cw-right-snh-page': 'cw-right-snh-id-page'},
+    'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: 'cw-right-snh-page'},
     'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page'},
     //fixme add cw-left-eh-page
     'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page'}, //fixme add left
     'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', left: 'cw-oh1-entrance-page'},
 
     //c-wing right progression/hallways
-    'cw-right-snh-id-page':     {forward: 'cw-right-bath-id-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
     'cw-right-snh-page':        {forward: 'cw-right-bath-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
-    'cw-right-bath-id-page':    {back: 'cw-right-snh-id-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
     'cw-right-bath-page':       {back: 'cw-right-snh-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
-    'cw-right-aw-page':         {back: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page', forward: 'cw-right-eh-page'}, //fixme add right
+    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page'}, //fixme add right
     'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
     'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page'}, //fixme add right
@@ -313,12 +310,10 @@ const roomLeads = {
 
 
     //c-wing inspections/doors
-    'cw-chair-id-page':         {back: 'cw-left-bath-id-page'},
-    'cw-chair-page':            {back: 'cw-left-bath-page'},
-    'cw-bath-door-page':        {right: () => state.hasWrId ? 'cw-left-bath-page':'cw-left-bath-id-page', left: () => state.hasWrId ? 'cw-right-bath-page': 'cw-right-bath-id-page'},
+    'cw-bath-door-page':        {right: 'cw-left-bath-page', left: 'cw-right-bath-page'},
     'bath-page':             {back: 'cw-bath-door-page'},
     'bath-sink-page':        {back: 'bath-page'},
-    'cw-elevator-page':         {left: () => state.hasWrId ? 'cw-right-snh-page': 'cw-right-snh-id-page', right: () => state.wrUnlocked ? 'cw-elevator-wr-do-page': 'cw-wr-dc-page'},
+    'cw-elevator-page':         {left: 'cw-right-snh-page', right: () => state.wrUnlocked ? 'cw-elevator-wr-do-page': 'cw-wr-dc-page'},
     'cw-wr-handle-unlocked-page': {back: 'cw-elevator-wr-do-page'},
     'cw-wr-handle-locked-page': {back: 'cw-wr-dc-page'},
 
@@ -1918,17 +1913,8 @@ function init() {
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
     //^fixme add some stuff on the plate page
     document.getElementById('mh-cw-door-hitbox').onclick = () => showPage('cw-entrance-page');
-    document.getElementById('cw-left-bath-id-chair-hitbox').onclick = () => showPage('cw-chair-id-page');
     document.getElementById('cw-stairs-door-hitbox').onclick = () => {} //fixme add page to show here goign up the stairs,
     //fixme then add a page going through the door into the hallway
-    document.getElementById('cw-id-hitbox').onclick = () => {
-        state.hasWrId = true;
-        const keySlot = document.getElementById('inv-wr-id')
-        if (keySlot) {
-            keySlot.classList.remove('hidden');
-        }
-        showPage('cw-chair-page');
-    }
     document.getElementById('cw-bath-door-hitbox').onclick = async (e) => {
         showPage('bath-page');
         await spawnThemedBox('temp message', "notification-bottom");// fixme

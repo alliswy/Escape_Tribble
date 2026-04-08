@@ -2762,45 +2762,6 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
-#cw-left-bath-id-chair-hitbox {
-    position: absolute;
-    top: 65%;
-    left: 68%;
-    width: 27%;
-    height: 32%;
-
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
-#cw-right-bath-id-chair-hitbox {
-    position: absolute;
-    top: 60%;
-    left: 15%;
-    width: 19%;
-    height: 28%;
-
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
-#cw-id-hitbox {
-    position: absolute;
-    top: 52%;
-    left: 43%;
-    width: 11%;
-    height: 15%;
-
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
 #cw-bath-door-hitbox {
     position: absolute;
     top: 4%;
