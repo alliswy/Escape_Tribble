@@ -276,7 +276,7 @@ const roomLeads = {
     'cw-right-snh-page':        {forward: 'cw-right-bath-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
     'cw-right-bath-page':       {back: 'cw-right-snh-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
     'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page'}, //fixme add right
-    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
+    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page', right: 'cw-stairs-entrance-page'},
     'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
     'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page'}, //fixme add right
 
@@ -1792,7 +1792,10 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            showPage('cr-doors-cam-page');
+            showPage('clr-main-id-page');
+            await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-bottom');
+            await spawnThemedBox('Also, it wasn\'t in the camera', 'notification-bottom');
+            await spawnThemedBox('But then again, there was a person on the floor in the camera feed', 'notification-bottom');
         } else {
             await spawnThemedBox('I need to find a key for this door', "notification-bottom");
         }
@@ -1805,9 +1808,14 @@ function init() {
     document.getElementById('clr-cloth-octagon-hitbox').onclick = async (e) => {
         //fixme add feedback
     }
-    document.getElementById('cr-doors-cam-ld-hitbox').onclick = () => {
+    document.getElementById('clr-main-id-id-hitbox').onclick = async (e) => {
+        state.hasWrId = true;
+        const keySlot = document.getElementById('inv-wr-id');
+        if (keySlot) {
+            keySlot.classList.remove('hidden');
+        }
         showPage('clr-main-page');
-        //fixme add feedback
+        openOverlay('wr-id', 'inv-items/wr-id.png');
     }
 
     //----- CAMERA ROOM SECTION -----
