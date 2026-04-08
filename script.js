@@ -387,6 +387,7 @@ const roomLeads = {
     'li-ruta-page':         {back: 'li-mw-books-page'},
 
     //lw books page
+    'li-rw-books-page':     {back: 'li-main-rw-page'},
     'li-rw-book-page':      {back: 'li-main-lw-page'}, //fixme
     'li-onoseta-page':      {back: 'li-rw-books-page'},
     'li-barnes-page':         {back: 'li-rw-books-page'},
@@ -2039,7 +2040,7 @@ function init() {
     document.getElementById('li-mw-esme-hitbox').onclick    = () => showPage('li-esme-page');
     document.getElementById('li-mw-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
     document.getElementById('li-mw-russo-hitbox').onclick   = () => showPage('li-russo-page');
-    document.getElementById('li-rw-smith-hitbox').onclick   = () => showPage('li-smith-page');
+    //fixme document.getElementById('li-rw-smith-hitbox').onclick   = () => showPage('li-smith-page');
     document.getElementById('li-tolkein-hitbox').onclick = () => {
         state.hasLorBook = true;
         const keySlot = document.getElementById('inv-lor-book')
@@ -2196,7 +2197,7 @@ function init() {
     }
 
     // --------- library right wall section -----------
-    document.getElementById('li-rw-onoseta-hitbox').onclick = () => showPage('li-onoseta-page');
+    //document.getElementById('li-rw-onoseta-hitbox').onclick = () => showPage('li-onoseta-page');
     document.getElementById('li-rw-alston-hitbox').onclick  = () => showPage('li-alston-page');
     document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
     document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');

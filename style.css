@@ -3517,35 +3517,10 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
-#li-rw-onoseta-hitbox {
-    position: absolute;
-    top: 22%;
-    left: 31%;
-    width: 7%;
-    height: 11%;
-
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-#li-rw-smith-hitbox {
-    position: absolute;
-    top: 49%;
-    left: 68%;
-    width: 7%;
-    height: 11%;
-
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
 #li-rw-barnes-hitbox {
     position: absolute;
-    top: 22%;
-    left: 31%;
+    top: 58%;
+    left: 74%;
     width: 7%;
     height: 11%;
 
@@ -3557,16 +3532,30 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-rw-boulley-hitbox {
     position: absolute;
-    top: 22%;
-    left: 31%;
-    width: 7%;
-    height: 11%;
+    top: 28%;
+    left: 76%;
+    width: 9%;
+    height: 13%;
 
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
     z-index: 10;
 }
+
+#li-rw-alston-hitbox {
+    position: absolute;
+    top: 43%;
+    left: 67%;
+    width: 9%;
+    height: 13%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 
 #li-onoseta-hitbox {
     position: absolute;
