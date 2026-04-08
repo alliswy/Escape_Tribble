@@ -1037,19 +1037,21 @@ const loginHeader = document.querySelector('#terminal-window .terminal-content d
 // Called when clicking the monitor hitbox
 function openTerminal() {
     termPage.classList.remove('hidden');
-
     document.getElementById('lo-monitor-hitbox').classList.add('hidden');
 
     if (state.loMonitorUnlocked) {
-        // State: Already solved
         termInput.style.display = "none";
-        if (loginHeader) loginHeader.style.display = "none"; // Hide "Authentication Required"
+        if (loginHeader) loginHeader.style.display = "none";
+
+        // Match the large font size here too
+        termFeedback.style.fontSize = "1.8rem";
         termFeedback.style.color = "#00ff41";
         termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
     } else {
-        // State: Need password
         termInput.style.display = "block";
         if (loginHeader) loginHeader.style.display = "block";
+        // Reset font size for typing mode
+        termFeedback.style.fontSize = "1.2rem";
         termInput.value = "";
         termFeedback.innerText = "";
         setTimeout(() => termInput.focus(), 10);
@@ -1066,12 +1068,26 @@ function closeTerminal() {
 
 termInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
+        // Define the elements inside the function so JS knows what they are
+        const feedback = document.getElementById('terminal-feedback');
+        const header = document.getElementById('auth-header');
+        const prompt = document.getElementById('pin-prompt');
+
         if (termInput.value === "8450") {
-            termFeedback.innerText = "> ACCESS GRANTED";
-            termFeedback.style.color = "#00ff41";
+            state.loMonitorUnlocked = true;
+
+            // 1. Update the feedback text
+            feedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+            feedback.style.color = "#00ff41";
+
+            // 2. Hide the elements using the variables we just defined
+            termInput.style.display = "none";
+            if (header) header.style.display = "none";
+            if (prompt) prompt.style.display = "none";
+
         } else {
-            termFeedback.innerText = "> ACCESS DENIED";
-            termFeedback.style.color = "#ff4444";
+            feedback.innerText = "> ACCESS DENIED";
+            feedback.style.color = "#ff4444";
             termInput.value = "";
         }
     }
@@ -1079,16 +1095,29 @@ termInput.addEventListener('keyup', (e) => {
 
 termInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
-        if (termInput.value === "8450") {
-            loMonitorUnlocked = true; // Variable updated here
+        const feedback = document.getElementById('terminal-feedback');
+        const header = document.getElementById('auth-header');
+        const prompt = document.getElementById('pin-prompt');
 
+        if (termInput.value === "8450") {
+            state.loMonitorUnlocked = true;
+
+            // 1. Make the success text significantly larger
+            feedback.style.fontSize = "1.8rem";
+            feedback.style.color = "#00ff41";
+            feedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+
+            // 2. Hide everything else
             termInput.style.display = "none";
+            if (header) header.style.display = "none";
+            if (prompt) prompt.style.display = "none";
             if (loginHeader) loginHeader.style.display = "none";
-            termFeedback.style.color = "#00ff41";
-            termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+
         } else {
-            termFeedback.innerText = "> ACCESS DENIED";
-            termFeedback.style.color = "#ff4444";
+            // Keep "Denied" text at a standard size
+            feedback.style.fontSize = "1.2rem";
+            feedback.innerText = "> ACCESS DENIED";
+            feedback.style.color = "#ff4444";
             termInput.value = "";
         }
     }
