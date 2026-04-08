@@ -85,6 +85,7 @@ const state = {
     movedAnimals: false,
     scannedBook: false,
     loMonitorUnlocked: false,
+    usedUsb: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -456,7 +457,6 @@ const roomLeads = {
     'ls-out-8-page':  { back: 'ls-out-7-page', forward: 'ls-out-9-page' },
     'ls-out-9-page':  { back: 'ls-out-8-page', forward: 'ls-out-10-page' },
     'ls-out-10-page': { back: 'ls-out-9-page', forward: 'ls-lo-entrance-page'}
-
 
 };
 
