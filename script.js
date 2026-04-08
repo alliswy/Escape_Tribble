@@ -1795,8 +1795,6 @@ function init() {
             }
             showPage('clr-main-id-page');
             await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-bottom');
-            await spawnThemedBox('Also, it wasn\'t in the camera', 'notification-bottom');
-            await spawnThemedBox('But then again, there was a person on the floor in the camera feed', 'notification-bottom');
         } else {
             await spawnThemedBox('I need to find a key for this door', "notification-bottom");
         }
