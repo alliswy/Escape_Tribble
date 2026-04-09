@@ -1457,7 +1457,7 @@ function init() {
     runMenuTypewriter();
     window.addEventListener('load', () => {
         setTimeout(() => {
-            warmUpGameImmediate();
+            warmUpGame();
         }, 1000); // Wait 1 second after the page is visible to start background loading
     });
     startButton.onclick = () => {
