@@ -102,17 +102,47 @@ const state = {
 }
 
 // ----- 2. SELECTORS -----
+const arrows = {
+    back: document.getElementById('master-back-arrow'),
+    forward: document.getElementById('master-forward-arrow'),
+    left: document.getElementById('master-left-arrow'),
+    right: document.getElementById('master-right-arrow')
+};
+
+// Check if they exist and then assign
+if (arrows.back)    arrows.back.onclick = goBack;
+if (arrows.forward) arrows.forward.onclick = goForward;
+if (arrows.left)    arrows.left.onclick = goLeft;
+if (arrows.right)   arrows.right.onclick = goRight;
+
+const backArrow = document.getElementById('master-back-arrow');
+const forwardArrow = document.getElementById('master-forward-arrow');
+const leftArrow = document.getElementById('master-left-arrow');
+const rightArrow = document.getElementById('master-right-arrow');
 const menu = document.getElementById('menu-screen');
 const tutorial = document.getElementById('tutorial');
 
 const startButton = document.getElementById('start-button');
 const play = document.getElementById('play');
-const backArrow = document.getElementById('master-back-arrow');
-const forwardArrow = document.getElementById('master-forward-arrow');
-const rightArrow = document.getElementById('master-right-arrow');
-const leftArrow = document.getElementById('master-left-arrow');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
+const entryPages = [
+    'mh-bd-main-page',    // Starting area
+    'bd-door-open-page',  //entrance to bd
+    'pr-steps-page',      //entrance to pr
+    'ki-door-open-page',  // Kitchen
+    'cr-main-2dc-page',   //cr entrance
+    'camr-main-page',     //camr
+    'clr-main-id-page',   //clr
+    'bh-entrance-page',   //back hall
+    'sh-cr-door-open',    //side hall
+    'li-door-open-page',   // Library
+    'cw-entrance-page',   // C-Wing
+    'bath-page',
+    'wr-main-page',
+    'ls-in-1-page',       //library storage
+    'lo-main-page',       //library office
+]; //fixme, double check these are starting pages, and add inv images
 
 // ------------ audio -------------
 const sfx = {
@@ -479,28 +509,72 @@ function getDestination(direction, pageId) {
     return roomLeads[pageId]?.[direction] || null;
 }
 
-// Replace your old showPage with this:
+let lastPage = null; //tracks prev page
+
 async function showPage(pageId) {
-    allPages.forEach(p => p.classList.add('hidden'));
-    // Autosave on every navigation
-    if (pageId !== 'mh-bd-main-page') {
-        saveGame(pageId);
-    }
     const target = document.getElementById(pageId);
-    if (target) {
-        target.classList.remove('hidden');
+    if (!target) return;
+
+    // ONLY hide the last page we were on
+    if (lastPage) {
+        lastPage.classList.add('hidden');
+    } else {
+        allPages.forEach(p => p.classList.add('hidden'));
     }
+    target.classList.remove('hidden');
+    lastPage = target;
 
     // AUTO-HIDE ARROWS: If the roomLeads data doesn't have a path, hide the arrow
-    const currentPaths = roomLeads[pageId] || {};
-    backArrow.classList.toggle('hidden', !currentPaths.back);
-    forwardArrow.classList.toggle('hidden', !currentPaths.forward);
-    leftArrow.classList.toggle('hidden', !currentPaths.left);
-    rightArrow.classList.toggle('hidden', !currentPaths.right);
+    // This 0ms timeout breaks the "Long Task" and lowers INP
+    setTimeout(() => {
+        const currentPaths = roomLeads[pageId] || {};
 
-    updateMap(pageId);
+        // Toggle ALL arrows based on the new room's paths
+        arrows.back.classList.toggle('hidden', !currentPaths.back);
+        arrows.forward.classList.toggle('hidden', !currentPaths.forward);
+        arrows.left.classList.toggle('hidden', !currentPaths.left);
+        arrows.right.classList.toggle('hidden', !currentPaths.right);
 
-    triggerNotification(pageId);
+        updateMap(pageId);
+        preloadWholeRoom(pageId);
+
+        // Run the notification without 'await' to keep the frame rate high
+        triggerNotification(pageId);
+    }, 0);
+}
+
+function preloadWholeRoom(pageId) {
+    // 1. Figure out the "prefix" (e.g., 'camr', 'li', 'mh-bd')
+    // This splits the ID at the first dash and takes the first part
+    const prefix = pageId.split('-')[0];
+
+    // 2. Find all images that belong to this room
+    // This looks for any ID that starts with your prefix (e.g., id^="camr")
+    const roomImages = document.querySelectorAll(`[id^="${prefix}-"] img, img[id^="${prefix}-"]`);
+
+    roomImages.forEach(img => {
+        if (img.getAttribute('loading') === 'lazy') {
+            img.removeAttribute('loading');
+            // Setting the src to itself tells the browser: "Download this NOW."
+            img.src = img.src;
+        }
+    });
+}
+
+function warmUpGame() {
+    console.log("Warming up entry pages...");
+    entryPages.forEach(pageId => {
+        const container = document.getElementById(pageId);
+        if (container) {
+            const img = container.tagName === 'IMG' ? container : container.querySelector('img');
+            if (img) {
+                img.removeAttribute('loading');
+                img.fetchPriority = "high";
+                // Setting src to itself forces the "lazy" status to break
+                img.src = img.src;
+            }
+        }
+    });
 }
 
 async function triggerNotification(pageId) {
@@ -1381,23 +1455,39 @@ function closeSecurityTerminal() {
 function init() {
     //Menu System
     runMenuTypewriter();
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            warmUpGameImmediate();
+        }, 1000); // Wait 1 second after the page is visible to start background loading
+    });
     startButton.onclick = () => {
+        // 1. IMMEDIATE ACTION (This fixes the "Input Delay")
         menu.classList.add('hidden');
-        play.classList.remove('hidden');
-        document.getElementById('inventory-drawer').classList.remove('hidden');
-        document.getElementById('hamburger-menu').classList.remove('hidden');
-        document.getElementById('hint-btn').classList.remove('hidden');
-        document.getElementById('hint-box').classList.remove('hidden');
 
-        if(hasSaveFile()) {
-            const saveData = loadGame();
-            if(saveData) {
-                showPage(saveData.currentPage);
-                return;
-            }
-        }
+        // 2. WAIT ONE FRAME (Let the menu disappear first)
+        requestAnimationFrame(() => {
+            // 3. SHOW THE BASE UI (The "Skeleton" of the game)
+            play.classList.remove('hidden');
+            document.getElementById('inventory-drawer').classList.remove('hidden');
+            document.getElementById('hamburger-menu').classList.remove('hidden');
 
-        showPage('mh-bd-main-page');
+            // 4. WAIT ANOTHER FRAME (Let the UI settle)
+            requestAnimationFrame(() => {
+                // 5. SHOW THE INTERACTIVE TOOLS
+                document.getElementById('hint-btn').classList.remove('hidden');
+                document.getElementById('hint-box').classList.remove('hidden');
+
+                // 6. FINAL STEP: Load the content
+                if (hasSaveFile()) {
+                    const saveData = loadGame();
+                    if (saveData) {
+                        showPage(saveData.currentPage);
+                        return;
+                    }
+                }
+                showPage('mh-bd-main-page');
+            });
+        });
     };
 
     //Settings button
