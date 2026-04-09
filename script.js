@@ -73,8 +73,6 @@ const state = {
     foundWrNote: false,
 
     foundWp: false,
-    justFoundWp: false,
-    justTurnedOnMl: false,
 
     isProjectorOn: false,
     isLeftMonitorOn: false,
@@ -97,6 +95,10 @@ const state = {
     scannedBook: false,
     loMonitorUnlocked: false,
     usedUsb: false,
+
+    //stuff for feedback checks
+    visitedPages: {},
+    notificationsSeen: {},
 }
 
 // ----- 2. SELECTORS -----
@@ -498,37 +500,58 @@ async function showPage(pageId) {
 
     updateMap(pageId);
 
+    triggerNotification(pageId);
+}
+
+async function triggerNotification(pageId) {
     //spawn textbox when certain page is shown !
     switch (pageId) {
         case 'camr-main-wp-page': {
-            // Wait 20ms for the browser to draw the new image
             await delay(20);
             document.getElementById('camr-main-wp-ml-hitbox').classList.add('hidden');
             document.getElementById('camr-main-wp-mr-hitbox').classList.add('hidden');
             document.getElementById('master-back-arrow').classList.add('hidden');
-            // Now fire the typewriter
-            await spawnThemedBox("What's that in the window ??", "notification-bottom");
+
+            // Trigger the initial window notification once
+            if (!state.notificationsSeen['wp-init']) {
+                await spawnThemedBox("What's that in the window ??", "notification-bottom");
+                state.notificationsSeen['wp-init'] = true;
+            }
+
             state.foundWp = true;
         } break;
+
         case 'camr-main-page': {
-            if (state.justFoundWp) {
-                state.justFoundWp = false;
+            // Triggered only if you've found the WP, but haven't seen this specific text
+            if (state.foundWp && !state.notificationsSeen['wp-gone']) {
                 await spawnThemedBox("They're gone!", "notification-bottom");
+                state.notificationsSeen['wp-gone'] = true;
             }
         } break;
+
         case 'camr-main-ml-on-person-page': {
-            await spawnThemedBox("Wait, there's something in the camera feed", "notification-bottom");
-            state.justTurnedOnMl = false;
+            // Using the pageId itself as the label for the first-time visit
+            if (!state.notificationsSeen['ml-person-init']) {
+                await spawnThemedBox("Wait, there's something in the camera feed", "notification-bottom");
+                state.notificationsSeen['ml-person-init'] = true;
+            }
         } break;
-        case 'wr-right-note-page': { state.foundWrNote = true; } break;
+
+        ///this is not a notification but needed this logic for it
         case 'li-main-rw-page': {
+            // Functional logic for the hitbox remains the same
             if (!state.scannedBook || !state.hasSherlockBook) {
                 document.getElementById('li-main-rw-animals-hitbox').classList.add('hidden');
             }
-            //fixme add more
-        }
-        //fixme add more as needed
+        } break;
 
+        case 'mh-bd-main-page': {
+            await delay(20);
+            if (!state.notificationsSeen['bd-main-init']) {
+                await spawnThemedBox("Wait, what? Where am I ?", "notification-bottom");
+                state.notificationsSeen['bd-main-init'] = true;
+            }
+        } break;
     }
 }
 
