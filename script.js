@@ -588,7 +588,7 @@ async function triggerNotification(pageId) {
 
             // Trigger the initial window notification once
             if (!state.notificationsSeen['wp-init']) {
-                await spawnThemedBox("What's that in the window ??", "notification-bottom");
+                await spawnThemedBox("What's that in the window ??", "notification-top");
                 state.notificationsSeen['wp-init'] = true;
             }
 
@@ -598,16 +598,16 @@ async function triggerNotification(pageId) {
         case 'camr-main-page': {
             // Triggered only if you've found the WP, but haven't seen this specific text
             if (state.foundWp && !state.notificationsSeen['wp-gone']) {
-                await spawnThemedBox("They're gone!", "notification-bottom");
+                await spawnThemedBox("They're gone!", "notification-top");
                 state.notificationsSeen['wp-gone'] = true;
             }
         } break;
 
         case 'camr-main-ml-on-person-page': {
             // Using the pageId itself as the label for the first-time visit
-            if (!state.notificationsSeen['ml-person-init']) {
-                await spawnThemedBox("Wait, there's something in the camera feed", "notification-bottom");
-                state.notificationsSeen['ml-person-init'] = true;
+            if (!state.notificationsSeen['camr-main-ml-on-person-init']) {
+                await spawnThemedBox("Wait, there's something in the camera feed", "notification-top");
+                state.notificationsSeen['camr-main-ml-on-person-init'] = true;
             }
         } break;
 
@@ -621,11 +621,33 @@ async function triggerNotification(pageId) {
 
         case 'mh-bd-main-page': {
             await delay(20);
-            if (!state.notificationsSeen['bd-main-init']) {
-                await spawnThemedBox("Wait, what? Where am I ?", "notification-bottom");
-                state.notificationsSeen['bd-main-init'] = true;
+            if (!state.notificationsSeen['mh-bd-main-init']) {
+                await spawnThemedBox("Wait, what? Where am I ?", "notification-top");
+                state.notificationsSeen['mh-bd-main-init'] = true;
             }
         } break;
+        case 'bd-door-open-page': {
+            await delay(20);
+            if (!state.notificationsSeen['bd-door-open-init']) {
+                await spawnThemedBox('Another room.... I wonder what\'s behind that back door', "notification-top");
+                state.notificationsSeen['bd-door-open-init'] = true;
+            }
+        } break;
+        case 'pr-wr-box-page': {
+            await delay(20);
+            if (!state.notificationsSeen['pr-wr-box-init']) {
+                await spawnThemedBox("These wires aren't in the right places.", "notification-top");
+                state.notificationsSeen['pr-wr-box-init'] = true;
+            }
+        } break;
+        case 'li-lt-sk-paper-page': {
+            await delay(20);
+            if (!state.notificationsSeen['li-lt-sk-paper-init']) {
+                await spawnThemedBox('AH ! Where did that skeleton come from ?!?', "notification-top");
+                state.notificationsSeen['li-lt-sk-paper-init'] = true;
+            }
+        }
+
     }
 }
 
@@ -994,7 +1016,8 @@ function startWordle(onWinCallback) {
             // 2. THE WORD LIST CHECK:
             // This checks if the typed word exists anywhere in your WORD_BANK array
             if (!WORD_BANK.includes(currentGuess)) {
-                spawnThemedBox("NOT IN WORD LIST", "notification-bottom"); // Use your existing notification system
+                //fixme idk something was wrong here w the second line, bug check this shouldn't be themed box for that feedback
+                //spawnThemedBox("NOT IN WORD LIST", "notification-top"); // Use your existing notification system
                 triggerInputError(input);
                 return;
             }
@@ -1377,10 +1400,10 @@ async function inputKey(num) {
     if (enteredCode.length === 4) {
         if (enteredCode === "3672") {
             state.crUnlocked = true;
-            await spawnThemedBox('It worked ! I should be able to open the door now', 'notification-bottom');
+            await spawnThemedBox('It worked ! I should be able to open the door now', 'notification-top');
             // Go to the next room
         } else {
-            await spawnThemedBox('It didn\'t work', 'notification-bottom'); //fixme feedback
+            await spawnThemedBox('It didn\'t work', 'notification-top'); //fixme feedback
             enteredCode = ""; // Reset to try again
         }
     }
@@ -1680,7 +1703,8 @@ function init() {
             keySlot.classList.remove('hidden');
         }
         showPage('mh-bd-slot-open-page');
-        await spawnThemedBox('A key!', "notification-bottom");
+        await delay(20);
+        await spawnThemedBox('A key!', "notification-top");
     };
     document.getElementById('bd-slot-open-hitbox').onclick = () => showPage('mh-bd-slot-closed-page');
 
@@ -1692,16 +1716,18 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            await spawnThemedBox('It\'s unlocked !', "notification-bottom");
+            await delay(20);
+            await spawnThemedBox('It\'s unlocked !', "notification-top");
         } else {
-            await spawnThemedBox('hm... I\'ll need to find a key for this door', "notification-bottom");
+            await spawnThemedBox('hm... I\'ll need to find a key for this door', "notification-top");
         }
     };
     document.getElementById('bd-door-handle-hitbox').onclick = async (e) => {
         if (state.bdUnlocked) {
             showPage('bd-door-open-page');
         } else {
-            await spawnThemedBox('I need to unlock the door first', "notification-bottom");
+            await delay(20);
+            await spawnThemedBox('I need to unlock the door first', "notification-top");
         }
     };
 
@@ -1714,13 +1740,15 @@ function init() {
     document.getElementById('bd-fb-hitbox').onclick = () => {
         state.hasPrKey ? showPage('bd-fb-open-page') : showPage('bd-fb-open-key-page');
     };
-    document.getElementById('bd-fb-key-hitbox').onclick = () => {
+    document.getElementById('bd-fb-key-hitbox').onclick = async (e) => {
         state.hasPrKey = true;
         const keySlot = document.getElementById('inv-pr-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
         showPage('bd-fb-open-page');
+        await delay(20);
+        await spawnThemedBox('Another key!', "notification-top");
     };
 
     // door behind book drop and locking
@@ -1733,16 +1761,16 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            await spawnThemedBox('It\'s unlocked !', "notification-bottom");
+            await spawnThemedBox('It\'s unlocked !', "notification-top");
         } else {
-            await spawnThemedBox('I need to find another key...', "notification-bottom");
+            await spawnThemedBox('I need to find another key...', "notification-top");
         }
     };
     document.getElementById('bd-back-handle-handle-hitbox').onclick = async (e) => {
         if (state.bdBackDoorUnlocked) {
             showPage('bd-back-door-open-page');
         } else {
-            await spawnThemedBox('I need to unlock the door first', "notification-bottom");
+            await spawnThemedBox('I need to unlock the door first', "notification-top");
         }
     };
 
@@ -1771,23 +1799,23 @@ function init() {
     document.getElementById('pr-pw-he-projector-hitbox').onclick = () => showPage('pr-pw-noBook-projector-off-page');
     document.getElementById('pr-pw-hb-projector-hitbox').onclick = () => showPage('pr-pw-book-projector-off-page');
 
-    document.getElementById('pr-pw-book-projector-hitbox').onclick = () => {
+    document.getElementById('pr-pw-book-projector-hitbox').onclick = async (e) => {
         if (state.solvedWirePuzzle) {
             state.isProjectorOn = true;
             showPage ('pr-pw-book-projector-on-page');
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I wonder if I could get this projector to turn on", "notification-top");
         }
     }
 
     document.getElementById('pr-po-wr-hitbox').onclick = () => showPage('pr-wr-main-page');
 
-    document.getElementById('pr-pw-noBook-projector-hitbox').onclick = () => {
+    document.getElementById('pr-pw-noBook-projector-hitbox').onclick = async (e) => {
         if (state.solvedWirePuzzle) {
             state.isProjectorOn = true;
             showPage ('pr-pw-noBook-projector-on-page');
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I wonder if I could get this projector to turn on", "notification-top");
         }
     }
 
@@ -1814,6 +1842,7 @@ function init() {
         }
         // fixme
         showPage('pr-pw-hole-noBook-page');
+        openOverlay('pw-book', 'inv-images/pw-book.png');
     }
 
     //Wire Room Section
@@ -1843,7 +1872,6 @@ function init() {
     //handle and locking
     document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('mh-ki-door-handle-page');
 
-    //fixme - made pr book key for kitchen (potentially change)
     document.getElementById('ki-door-handle-keyhole-hitbox').onclick = async (e) => {
         if (state.hasKiKey) {
             state.kiUnlocked = true;
@@ -1851,17 +1879,17 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            await spawnThemedBox('It\'s unlocked!', "notification-bottom");
+            await spawnThemedBox('It\'s unlocked!', "notification-top");
         }
         else {
-            await spawnThemedBox('It\'s locked! Where am I going to find another key ?', "notification-bottom");
+            await spawnThemedBox('It\'s locked! Where am I going to find another key ?', "notification-top");
         }
     };
     document.getElementById('ki-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.kiUnlocked) {
             showPage('ki-door-open-page');
         } else {
-            await spawnThemedBox('This door\'s locked, too', "notification-bottom");
+            await spawnThemedBox('This door\'s locked, too', "notification-top");
         }
     };
 
@@ -1883,9 +1911,9 @@ function init() {
         showPage('ki-pt-code-page');
     }
     document.getElementById('ki-pt-code-hitbox').onclick= async (e) => {
-        await spawnThemedBox('3672', "notification-bottom");
-        await spawnThemedBox('Who would write a code here ?', "notification-bottom");
-        await spawnThemedBox('And what is it for ?', "notification-bottom");
+        await spawnThemedBox('3672', "notification-top");
+        await spawnThemedBox('Who would write a code here ?', "notification-top");
+        await spawnThemedBox('And what is it for ?', "notification-top");
     }
 
 
@@ -1898,7 +1926,7 @@ function init() {
         if (state.crUnlocked) {
             showPage('sh-cr-door-open-page');
         } else {
-            await spawnThemedBox('I need to unlock the door first', 'notification-bottom');
+            await spawnThemedBox('I need to unlock the door first', 'notification-top');
         }
     }
     document.getElementById('bh-sh-cr-door-handle-keypad-hitbox').onclick = () => {
@@ -1927,19 +1955,20 @@ function init() {
     document.getElementById('cr-main-1dc-couches-hitbox').onclick = () => showPage('cr-couches-page');
     document.getElementById('cr-couches-key-couch-hitbox').onclick = () => showPage('cr-couch-key-page');
     document.getElementById('cr-couch-key-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-key-page');
-    document.getElementById('cr-couch-key-hitbox').onclick = () => {
-        showPage('cr-couch-zoom-page');
+    document.getElementById('cr-couch-key-hitbox').onclick = async (e) => {
         state.hasCamrKey = true;
         const keySlot = document.getElementById('inv-camr-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
-        //fixme make sure the camr key shows in inventory
+        showPage('cr-couch-zoom-page');
+        await delay(20);
+        await spawnThemedBox("Another key ! Maybe this will unlock one of the doors in this room", "notification-top");
     }
     document.getElementById('cr-couches-couch-hitbox').onclick = () => showPage('cr-couch-page');
     document.getElementById('cr-couch-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-page');
-    document.getElementById('cr-couch-hitbox').onclick = () => {
-        //fixme add feedback
+    document.getElementById('cr-couch-hitbox').onclick = async (e) => {
+        await spawnThemedBox("There's nothing left in the cushions", "notification-top");
     }
 
     document.getElementById('cr-main-2dc-doors-hitbox').onclick = () => showPage('cr-doors-2dc-page');
@@ -1971,7 +2000,7 @@ function init() {
             state.camrUnlocked = true; state.camrDoorOpen = true;
             showPage('cr-doors-1dc-page');
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I need to find a key for this door", "notification-top");
         }
     }
     document.getElementById('cr-doors-1dc-cam-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
@@ -1983,18 +2012,17 @@ function init() {
                 keySlot.classList.add('hidden');
             }
             showPage('clr-main-id-page');
-            await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-bottom');
+            await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-top');
         } else {
-            await spawnThemedBox('I need to find a key for this door', "notification-bottom");
+            await spawnThemedBox('I need to find a key for this door', "notification-top");
         }
     }
-    document.getElementById('clr-main-cloth-hitbox').onclick = () => {
+    document.getElementById('clr-main-cloth-hitbox').onclick = async (e) => {
         showPage('clr-cloth-page');
-        //fixme add feedback
     }
     document.getElementById('clr-cloth-hitbox').onclick = () => {showPage('clr-cloth-octagon-page');}
     document.getElementById('clr-cloth-octagon-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        await spawnThemedBox("Another shape...", "notification-top");
     }
     document.getElementById('clr-main-id-id-hitbox').onclick = async (e) => {
         state.hasWrId = true;
@@ -2004,6 +2032,7 @@ function init() {
         }
         showPage('clr-main-page');
         openOverlay('wr-id', 'inv-items/wr-id.png');
+        await spawnThemedBox("The Demon Decon's ID card. It's huge !!", "notification-top");
     }
 
     //----- CAMERA ROOM SECTION -----
@@ -2041,7 +2070,7 @@ function init() {
         state.justFoundWp = true;
     }
     document.getElementById('camr-wp-hitbox').onclick = async (e) => {
-        await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-bottom");
+        await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-top");
     }
     document.getElementById('camr-main-ml-on-person-hitbox').onclick = async (e) => {
         showPage('camr-ml-on-person-page');
@@ -2101,7 +2130,7 @@ function init() {
     // ------- C-WING SECTION -----
     document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('stairs-rubble-page'); //fixme add door sound effect
     document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        await spawnThemedBox("What happened here ? It looks like the upper floors have been demolished.", "notification-top");
     }
     document.getElementById('mh-cw-stairs-hitbox').onclick = () => showPage('stairs-page');
     document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => showPage('mh-cw-door-page');
@@ -2112,11 +2141,11 @@ function init() {
     //fixme then add a page going through the door into the hallway
     document.getElementById('cw-bath-door-hitbox').onclick = async (e) => {
         showPage('bath-page');
-        await spawnThemedBox('temp message', "notification-bottom");// fixme
+        await spawnThemedBox("This bathroom looks straight out of the 1950s", "notification-top");
     }
     document.getElementById('bath-sink-hitbox').onclick = () => showPage('bath-sink-page');
     document.getElementById('bath-sink-sink-hitbox').onclick = async (e) => {
-        await spawnThemedBox('temp message', "notification-bottom"); //fixme add feedback
+        await spawnThemedBox("This sink is so old you can't turn the water off", "notification-top");
     }
     document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('cw-wr-handle-unlocked-page');
     document.getElementById('cw-wr-dc-hitbox').onclick = () => showPage('cw-wr-handle-locked-page');
@@ -2128,16 +2157,17 @@ function init() {
                 keySlot.classList.add('hidden');
         }
         showPage('cw-wr-handle-unlocked-page');
-        //fixme add feedback
+        await delay (20);
+        await spawnThemedBox("It's unlocked now !", "notification-top");
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I'll need to find a keycard to unlock this door", 'notification-top');
         }
     }
     document.getElementById('cw-elevator-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        await spawnThemedBox("It's not working", "notification-top");
     }
     document.getElementById('cw-wr-locked-handle-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        spawnThemedBox("I need to unlock the door first", "notification-top");
     }
     document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {showPage('wr-mid-page')}; //fixme show wr room main page when added
     document.getElementById('oh3-entrance-hitbox').onclick = () => showPage('oh2-oh3-entrance-page');
@@ -2145,7 +2175,7 @@ function init() {
     document.getElementById('cw-oh1-entrance-hitbox').onclick = () => showPage('oh1-left-1-page');
     document.getElementById('oh1-left-4-key-books-hitbox').onclick = () => showPage('oh1-books-key-page');
     document.getElementById('oh1-books-hitbox').onclick = async (e) => {
-        await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
+        await spawnThemedBox("I don't see anything else useful here", "notification-top");
     }
     document.getElementById('oh1-books-key-hitbox').onclick = async (e) => {
         state.hasClrKey = true;
@@ -2154,10 +2184,15 @@ function init() {
             keySlot.classList.remove('hidden');
         }
         showPage('oh1-books-page');
-        //fixme add feedback
+        await delay(20);
+        await spawnThemedBox("Another key !", "notification-top");
     }
     document.getElementById('printer-hitbox').onclick = () => showPage('print-page');
-    document.getElementById('printer-paper-hitbox').onclick = () => showPage('print-paper-page');
+    document.getElementById('printer-paper-hitbox').onclick = async (e) => {
+        showPage('print-paper-page');
+        await delay(20);
+        await spawnThemedBox("what's this?", "notification-bottom");
+    }
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
         showPage('printer-sync-minigame');
@@ -2188,18 +2223,35 @@ function init() {
         showPage('wr-desk-page');
     }
     document.getElementById('wr-desk-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
     }
     document.getElementById('wr-left-desk-hitbox').onclick = () => showPage('wr-desk-page');
     document.getElementById('wr-right-papers-hitbox').onclick = async (e) => {
         showPage('wr-papers-page');
-        //fixme add feedback
+        await delay(20);
+        await spawnThemedBox("who left these papers here ?", "notification-top");
     }
     document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
-    document.getElementById('wr-papers-tu-hitbox').onclick = () => { openOverlay('wr-tu', "wr-images/wr-tu.png"); }
-    document.getElementById('wr-papers-ogb-hitbox').onclick = () => openOverlay('wr-ogb', 'wr-images/wr-ogb.png');
-    document.getElementById('wr-papers-reddit-hitbox').onclick = () => openOverlay('wr-reddit', 'wr-images/wr-reddit.png');
-    document.getElementById('wr-right-note-note-hitbox').onclick = () => showPage('wr-note-page');
+    document.getElementById('wr-papers-tu-hitbox').onclick = async (e) => {
+        openOverlay('wr-tu', "wr-images/wr-tu.png");
+        await delay(20);
+        await spawnThemedBox("A cutout of a newspaper article about underground tunnels", "notification-top");
+    }
+    document.getElementById('wr-papers-ogb-hitbox').onclick = async (e) => {
+        openOverlay('wr-ogb', 'wr-images/wr-ogb.png');
+        await delay(20);
+        await spawnThemedBox("The old gold and black. That's the school newspaper", "notification-top");
+    }
+    document.getElementById('wr-papers-reddit-hitbox').onclick = async (e) =>  {
+        openOverlay('wr-reddit', 'wr-images/wr-reddit.png');
+        await delay (20);
+        await spawnThemedBox("A printout of some random reddit post ?", "notification-top");
+    }
+    document.getElementById('wr-right-note-note-hitbox').onclick = async (e) => {
+        showPage('wr-note-page');
+        await delay(20);
+        await spawnThemedBox("Who wrote this note ? Someone else is definitely down here with me...", "notification-top");
+    }
     document.getElementById('wr-note-hitbox').onclick = () => {
         //fixme allow them to read wr-note more easily,, do same thing w the tu, ogb, and reddit
     }
@@ -2222,16 +2274,16 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
-            await spawnThemedBox("It's unlocked !", 'notification-bottom');
+            await spawnThemedBox("It's unlocked !", 'notification-top');
         } else {
-            await spawnThemedBox('I need to find a key for this door', 'notification-bottom');
+            await spawnThemedBox('I need to find a key for this door', 'notification-top');
         }
     }
     document.getElementById('li-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.liUnlocked) {
             showPage('li-door-open-page');
         } else {
-            await spawnThemedBox('I need to unlock the door first', "notification-bottom");
+            await spawnThemedBox('I need to unlock the door first', "notification-top");
         }
     }
     document.getElementById('li-main-lw-lt-hitbox').onclick = () => {
@@ -2247,13 +2299,13 @@ function init() {
                 keySlot.classList.add('hidden');
             }
         } else {
-            await spawnThemedBox('I need to find a book to scan', "notification-bottom");
+            await spawnThemedBox('I need to find a book to scan', "notification-top");
         }
     }
 
     document.getElementById('li-laptop-hitbox').onclick = async (e) => {
-        await spawnThemedBox('I wonder what happens if I scan this book', 'notification-bottom');
-        await spawnThemedBox('I should look around and see if I can find it.', 'notification-bottom');
+        await spawnThemedBox('I wonder what happens if I scan this book', 'notification-top');
+        await spawnThemedBox('I should look around and see if I can find it.', 'notification-top');
     }
     document.getElementById('li-main-lw-mw-hitbox').onclick = () => showPage('li-mw-books-page');
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
@@ -2337,13 +2389,14 @@ function init() {
                 keySlot.classList.add('hidden');
             }
             showPage('li-read-on-page');
-            //fixme add feedback
+            await delay(20);
+            await spawnThemedBox("Nice, it's on now. Not sure why I felt the need to do that tho.", "notification-top");
         } else {
-            //fixme add feedback
+            await spawnThemedBox("This sign looks like it can be turned on.", "notification-top");
         }
     }
     document.getElementById('li-read-on-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        await spawnThemedBox("I wonder if the colors are of any importance", "notification-top");
     }
 
     document.getElementById('li-tv-remotes-hitbox').onclick = () => showPage('li-2r-page');
@@ -2390,8 +2443,8 @@ function init() {
         }
         showPage('li-nr-page');
     }
-    document.getElementById('li-tv-on-hitbox').onclick = () => {
-        //fixme add feedback
+    document.getElementById('li-tv-on-hitbox').onclick = async () => {
+        await spawnThemedBox("What's up with all these shapes?", "notification-top");
     }
     document.getElementById('li-tv-hitbox').onclick = async (e) => {
         if (state.hasBr) {
@@ -2401,9 +2454,10 @@ function init() {
                 keySlot.classList.add('hidden');
             }
             showPage('li-tv-on-page');
-            //fixme add feedback
+            await delay(20);
+            await spawnThemedBox("It's on now !", "notification-top");
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I'll need a remote if I want to turn the tv on", "notification-top");
         }
     }
     document.getElementById('li-tv-wr-tv-hitbox').onclick = async (e) => {
@@ -2414,9 +2468,10 @@ function init() {
                 keySlot.classList.add('hidden');
             }
             showPage('li-tv-wr-tvo-page');
-            //fixme add feedback
+            await delay(20);
+            await spawnThemedBox("It's on now !", "notification-top");
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I'll need a remote if I want to turn the tv on", "notification-top");
         }
     }
     document.getElementById('li-tv-wr-tvo-hitbox').onclick = async (e) => {
@@ -2434,9 +2489,10 @@ function init() {
                 keySlot.classList.add('hidden');
             }
             showPage('li-read-on-page');
-            //fixme add feedback
+            await delay(20);
+            await spawnThemedBox("Nice, it's on now. Not sure why I felt the need to do that tho.", "notification-top");
         } else {
-            //fixme add feedback
+            await spawnThemedBox("This sign looks like it can be turned on.", "notification-top");
         }
     }
 
@@ -2461,7 +2517,7 @@ function init() {
     document.getElementById('li-main-rw-rw-hitbox').onclick = async (e) => {
         if (state.hasSkPaper && !state.hasSherlockBook) {
             showPage('li-rw-books-birb-page');
-            await spawnThemedBox('What ? that bird wasn\'t there a second ago', "notification-bottom");
+            await spawnThemedBox('What ? that bird wasn\'t there a second ago', "notification-top");
         } else {
             showPage('li-rw-books-page');
         }
@@ -2498,7 +2554,7 @@ function init() {
             }
             showPage('li-office-door-open-page');
         } else {
-            //fixme add feedback
+            await spawnThemedBox("I need one more key...", "notification-top");
         }
     }
     document.getElementById('li-office-door-open-hitbox').onclick = () => showPage('lo-main-page');
@@ -2626,7 +2682,7 @@ function init() {
                 } break;
                 case 'inv-images/pw-book-open-key.png': {
                     document.getElementById('pw-book-key-hitbox').classList.remove('hidden');
-                    document.getElementById('pw-book-key-hitbox').onclick = () => {
+                    document.getElementById('pw-book-key-hitbox').onclick = async (e) => {
                         state.hasKiKey = true;
                         const keySlot = document.getElementById('inv-ki-key');
                         if (keySlot) {
@@ -2634,6 +2690,8 @@ function init() {
                         }
                         document.getElementById("item-overlay").classList.add("hidden");
                         openOverlay("pw-book", "inv-images/pw-book-open.png");
+                        await delay(20);
+                        await spawnThemedBox("Another key.... Which door is this one for ?", "notification-top");
                     }
                 } break;
                 case 'inv-images/pw-book-open.png': {
@@ -3045,7 +3103,7 @@ function getWireCanvasPos(e) {
     };
 }
 
-function checkWireSolved() {
+async function checkWireSolved() {
     if (Object.keys(wireConnections).length < wireNumWires) return;
     const allCorrect = Object.entries(wireConnections).every(([leftIdx, rightIdx]) => {
         const left = wireLeftNodes[leftIdx];
@@ -3053,9 +3111,11 @@ function checkWireSolved() {
         return left && right && left.color === right.color;
     });
     if (allCorrect) {
-        setTimeout(() => {
-            document.getElementById('wire-solved-popup').classList.remove('hidden');
-        }, 400);
+        await spawnThemedBox("I did it ! I wonder if the projector will work now", "notification-top");
+        //fixme maybe temp change--
+        // setTimeout(() => {
+        //     document.getElementById('wire-solved-popup').classList.remove('hidden');
+        // }, 400);
         state.solvedWirePuzzle = true;
     }
 }

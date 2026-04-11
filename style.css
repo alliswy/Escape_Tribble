@@ -197,7 +197,7 @@ body {
 
 /* --- POPUP MESSAGES --- */
 /* Bottom Popup */
-.notification-bottom {
+.notification-top {
     position: fixed !important;
     top: 30px !important;    /* Distance from the floor */
     left: 50% !important;      /* Horizontal center */
@@ -1324,10 +1324,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #pr-pw-book-projector-hitbox {
     position: absolute;
-    top: 37%;
-    left: 70%;
-    width: 6%;
-    height: 9%;
+    top: 36%;
+    left: 19%;
+    width: 44%;
+    height: 59%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -1337,10 +1337,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #pr-pw-noBook-projector-hitbox {
     position: absolute;
-    top: 37%;
-    left: 70%;
-    width: 6%;
-    height: 9%;
+    top: 36%;
+    left: 19%;
+    width: 44%;
+    height: 59%;
 
     background-color: transparent;
     border: 2px solid transparent;
