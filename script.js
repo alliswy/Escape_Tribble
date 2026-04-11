@@ -646,6 +646,15 @@ async function triggerNotification(pageId) {
                 await spawnThemedBox('AH ! Where did that skeleton come from ?!?', "notification-top");
                 state.notificationsSeen['li-lt-sk-paper-init'] = true;
             }
+        }break;
+        case 'clr-main-page': {
+            await delay(20);
+            if (!state.notificationsSeen['clr-main-init']) {
+                await spawnThemedBox("That person from the camera feed, they're not here", "notification-top");
+                await spawnThemedBox("Something's wrong with this place", "notification-top");
+                await spawnThemedBox("Also what the heck ! What's with that giant ID card ??", "notification-top");
+                state.notificationsSeen['clr-main-init'] = true;
+            }
         }
 
     }
@@ -2076,7 +2085,7 @@ function init() {
         showPage('camr-ml-on-person-page');
     }
     document.getElementById('camr-ml-on-person-hitbox').onclick = async (e) => {
-        //fixme add feedback
+        await spawnThemedBox("There's a person in that room ! Are they ok ? I need to get in there.", "notification-top");
     }
 
     document.getElementById('camr-mr-off-hitbox').onclick = async (e) => {

@@ -215,6 +215,7 @@ body {
     /* Make sure text looks good */
     text-align: center;
     pointer-events: auto; /* Allow clicking if you want to manually close */
+    z-index: 10000 !important;
 }
 
 .notification-arrow {
