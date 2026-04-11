@@ -2191,7 +2191,7 @@ function init() {
     document.getElementById('printer-paper-hitbox').onclick = async (e) => {
         showPage('print-paper-page');
         await delay(20);
-        await spawnThemedBox("what's this?", "notification-bottom");
+        await spawnThemedBox("what's this?", "notification-top");
     }
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
@@ -2204,8 +2204,10 @@ function init() {
         generateRandomTarget();
         update();
     }
-    document.getElementById('print-paper-hitbox').onclick = () => {
+    document.getElementById('print-paper-hitbox').onclick = async (e) => {
         openOverlay("print-paper", "cw-images/cw-sideHall-images/print-paper-item.png");
+        await delay(20);
+        await spawnThemedBox("A... fax to the president of the US ? from 1963 ?!? what's this about ?", "notification-top");
     };
     document.getElementById('cw-right-print-room-hitbox').onclick = () => {state.isPrinterCalibrated ? showPage('print-main-paper-page') : showPage('print-main-page')};
 
@@ -3111,11 +3113,9 @@ async function checkWireSolved() {
         return left && right && left.color === right.color;
     });
     if (allCorrect) {
-        await spawnThemedBox("I did it ! I wonder if the projector will work now", "notification-top");
-        //fixme maybe temp change--
-        // setTimeout(() => {
-        //     document.getElementById('wire-solved-popup').classList.remove('hidden');
-        // }, 400);
+        setTimeout(() => {
+            document.getElementById('wire-solved-popup').classList.remove('hidden');
+        }, 400);
         state.solvedWirePuzzle = true;
     }
 }
