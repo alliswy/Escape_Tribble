@@ -94,7 +94,7 @@ const state = {
     movedAnimals: false,
     scannedBook: false,
     loMonitorUnlocked: false,
-    usedUsb: false,
+    usedDrive: false,
 
     //stuff for feedback checks
     visitedPages: {},
@@ -655,6 +655,16 @@ async function triggerNotification(pageId) {
                 await spawnThemedBox("Also what the heck ! What's with that giant ID card ??", "notification-top");
                 state.notificationsSeen['clr-main-init'] = true;
             }
+        } break;
+        case 'ls-in-10-sk-nd-page': {
+            await delay(20);
+            if (!state.notificationsSeen['ls-in-10-sk-init']) {
+                await spawnThemedBox("It's that skeleton again...", "notification-top");
+                state.notificationsSeen['ls-in-10-sk-init'] = true;
+            }
+        }break;
+        case 'lo-monitor-page': {
+            document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
         }
 
     }
@@ -1179,7 +1189,18 @@ function openTerminal() {
     termPage.classList.remove('hidden');
     document.getElementById('lo-monitor-hitbox').classList.add('hidden');
 
-    if (state.loMonitorUnlocked) {
+    if (state.usedDrive) {
+        termInput.style.display = "none";
+        if (loginHeader) loginHeader.style.display = "none";
+        termFeedback.style.display = "none";
+
+        const finalError = document.getElementById('final-error-feedback');
+        if (finalError) finalError.innerText = "";
+
+        document.getElementById('final-auth-section').classList.remove('hidden');
+        setTimeout(() => document.getElementById('final-terminal-input').focus(), 10);
+        return; // Don't run the rest of the function
+    } else if (state.loMonitorUnlocked) {
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
 
@@ -1187,6 +1208,7 @@ function openTerminal() {
         termFeedback.style.fontSize = "1.8rem";
         termFeedback.style.color = "#00ff41";
         termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
     } else {
         termInput.style.display = "block";
         if (loginHeader) loginHeader.style.display = "block";
@@ -1204,34 +1226,8 @@ function closeTerminal() {
 
     // 2. Re-enable the monitor hitbox
     document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
+    document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
 }
-
-termInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
-        // Define the elements inside the function so JS knows what they are
-        const feedback = document.getElementById('terminal-feedback');
-        const header = document.getElementById('auth-header');
-        const prompt = document.getElementById('pin-prompt');
-
-        if (termInput.value === "8450") {
-            state.loMonitorUnlocked = true;
-
-            // 1. Update the feedback text
-            feedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
-            feedback.style.color = "#00ff41";
-
-            // 2. Hide the elements using the variables we just defined
-            termInput.style.display = "none";
-            if (header) header.style.display = "none";
-            if (prompt) prompt.style.display = "none";
-
-        } else {
-            feedback.innerText = "> ACCESS DENIED";
-            feedback.style.color = "#ff4444";
-            termInput.value = "";
-        }
-    }
-});
 
 termInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
@@ -1246,6 +1242,7 @@ termInput.addEventListener('keyup', (e) => {
             feedback.style.fontSize = "1.8rem";
             feedback.style.color = "#00ff41";
             feedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
+            document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
 
             // 2. Hide everything else
             termInput.style.display = "none";
@@ -1266,7 +1263,70 @@ termInput.addEventListener('keyup', (e) => {
 // Ensure typing is always active while the overlay is up
 termPage.addEventListener('click', (e) => {
     if (e.target.id !== 'terminal-close-btn') {
-        termInput.focus();
+        // If the drive is used, focus the 8-digit box. Otherwise, the 4-digit box.
+        if (state.usedDrive) {
+            document.getElementById('final-terminal-input').focus();
+        } else {
+            termInput.focus();
+        }
+    }
+});
+
+async function useDrive() {
+    if (state.hasLs10drive) {
+        state.usedDrive = true;
+        const keySlot = document.getElementById('inv-ls-drive');
+        if (keySlot) {
+            keySlot.classList.add('hidden');
+        }
+
+        // 1. Hide EVERYTHING from the previous stage
+        termFeedback.style.display = "none";
+        termInput.style.display = "none";
+        if (loginHeader) loginHeader.style.display = "none";
+
+        // Add these two lines to clear the old prompts
+        if (document.getElementById('auth-header')) document.getElementById('auth-header').style.display = "none";
+        if (document.getElementById('pin-prompt')) document.getElementById('pin-prompt').style.display = "none";
+
+        document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
+
+        // 2. Show the final 8-digit section
+        const finalSection = document.getElementById('final-auth-section');
+        const finalInput = document.getElementById('final-terminal-input');
+
+        finalSection.classList.remove('hidden');
+        // Force it to display as a block/flex since 'hidden' usually sets display:none
+        finalSection.style.display = "block";
+
+        setTimeout(() => finalInput.focus(), 50);
+    } else {
+        await spawnThemedBox("I guess I should look around this area for a flash drive", "notification-top");
+    }
+}
+
+const finalInput = document.getElementById('final-terminal-input');
+const finalError = document.getElementById('final-error-feedback');
+
+// 1. Only allow numbers to be typed
+finalInput.addEventListener('input', (e) => {
+    // Replaces anything that isn't 0-9 with an empty string
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+});
+
+// 2. Handle the Enter key
+finalInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') {
+        if (finalInput.value === "97939394") {
+            finalInput.disabled = true;
+            finalError.style.color = "#00ff41";
+            finalError.innerText = "ACCESS GRANTED. DECRYPTING...";
+            // fixme your final event
+        } else {
+            // Show error in the dedicated error div
+            finalError.innerText = "> INCORRECT AUTHORIZATION KEY";
+            finalInput.value = "";
+        }
     }
 });
 
@@ -2575,6 +2635,9 @@ function init() {
     document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
     document.getElementById('lo-desk-monitor-hitbox').onclick = () => showPage('lo-monitor-page');
     //fixme add stuff for the monitor page
+    document.getElementById('lo-monitor-drive-hitbox').onclick = async (e) => {
+        useDrive();
+    }
 
 
 

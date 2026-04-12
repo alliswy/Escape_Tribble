@@ -4448,6 +4448,18 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#lo-monitor-drive-hitbox {
+    position: absolute;
+    top: 20%;
+    left: 8%;
+    width: 15%;
+    height: 55%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 1100;
+}
 
 /* -------- LIBRARY STORAGE PAGES -----------*/
 
