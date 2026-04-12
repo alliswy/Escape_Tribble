@@ -95,6 +95,7 @@ const state = {
     scannedBook: false,
     loMonitorUnlocked: false,
     usedDrive: false,
+    hatchOpen: false,
 
     //stuff for feedback checks
     visitedPages: {},
@@ -198,8 +199,10 @@ const roomLeads = {
     'mh-bh-right-endc-page':    { back: 'mh-hall-right-endc-page', forward: 'mh-trash-right-endc-page', right: 'bh-entrance-page' },
     'mh-trash-right-endc-page': { back: 'mh-bh-right-endc-page', forward: 'mh-bd-right-endc-page' },
     'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page', left: 'mh-bd-main-page' },
-    'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'mh-li-door-closed-page' },
+    'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'mh-li-door-closed-page', right: 'mh-tu-stairs-door-page' },
     'mh-cend-right-endc-kc-page': { back: 'mh-li-right-endc-page', right: 'mh-ki-door-closed-page' },
+
+    'mh-tu-stairs-door-page':    {left: 'mh-li-right-endc-page', right: 'mh-li-left-endc-page'},
 
     // Main Hall (Left Side)
     'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page' },
@@ -499,7 +502,11 @@ const roomLeads = {
     'ls-out-7-page':  { back: 'ls-out-6-page', forward: 'ls-out-8-page' },
     'ls-out-8-page':  { back: 'ls-out-7-page', forward: 'ls-out-9-page' },
     'ls-out-9-page':  { back: 'ls-out-8-page', forward: 'ls-out-10-page' },
-    'ls-out-10-page': { back: 'ls-out-9-page', forward: 'ls-lo-entrance-page'}
+    'ls-out-10-page': { back: 'ls-out-9-page', forward: 'ls-lo-entrance-page'},
+
+    //tunnel pages
+    'tu-stairs-page':       {back: 'mh-tu-stairs-door-page'},
+    'tu-stairs-ho-page':    {back: 'mh-tu-stairs-door-page'},
 
 };
 
@@ -1321,7 +1328,10 @@ finalInput.addEventListener('keyup', (e) => {
             finalInput.disabled = true;
             finalError.style.color = "#00ff41";
             finalError.innerText = "ACCESS GRANTED. DECRYPTING...";
-            // fixme your final event
+
+
+            // fixme add the final event
+            state.hatchOpen = true;
         } else {
             // Show error in the dedicated error div
             finalError.innerText = "> INCORRECT AUTHORIZATION KEY";
@@ -2793,6 +2803,26 @@ function init() {
         overlay.classList.add("hidden");
         currentOverlayItem = null;
     });
+
+    // ---------- TUNNELS SECTION ----------
+    document.getElementById('mh-tu-stairs-door-hitbox').onclick = () => {
+        if (!state.hatchOpen) {
+            showPage('tu-stairs-page');
+        } else {
+            showPage('tu-stairs-ho-page');
+        }
+    }
+    document.getElementById('tu-rubble-hitbox').onclick = async () => {
+        await spawnThemedBox("The stairs are completely blocked.", "notification-top");
+    }
+    document.getElementById('tu-hatch-hitbox').onclick = async () => {
+        await spawnThemedBox("I wonder if I can unlock this hatch somehow", "notification-top");
+    }
+
+
+
+
+
 
 }
 
