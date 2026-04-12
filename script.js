@@ -697,14 +697,17 @@ function move(dir) {
 //this function makes it look like the lights in the room flicker
 function triggerFlicker(elementId) {
     const el = document.getElementById(elementId);
-    if (!el) return;
+    if (!el) {
+        console.error("Flicker Error: Element ID '" + elementId + "' not found.");
+        return;
+    }
 
+    // Ensure we add the class that matches your CSS
     el.classList.add('flicker-dark');
 
-    // Match the 0.8s (800ms) duration of the new animation
     setTimeout(() => {
         el.classList.remove('flicker-dark');
-    }, 800);
+    }, 600);
 }
 
 // ---------- HINT SYSTEM LOGIC ------------
@@ -1210,6 +1213,7 @@ function openTerminal() {
     document.getElementById('lo-monitor-hitbox').classList.add('hidden');
 
     if (state.usedDrive) {
+        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
         termFeedback.style.display = "none";
@@ -1245,8 +1249,12 @@ function closeTerminal() {
     termPage.classList.add('hidden');
 
     // 2. Re-enable the monitor hitbox
-    document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
-    document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
+    if (state.usedDrive) {
+        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
+    } else {
+        document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
+        document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
+    }
 }
 
 termInput.addEventListener('keyup', (e) => {
@@ -1299,6 +1307,8 @@ async function useDrive() {
         if (keySlot) {
             keySlot.classList.add('hidden');
         }
+        showPage('lo-monitor-drive-page');
+        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
 
         // 1. Hide EVERYTHING from the previous stage
         termFeedback.style.display = "none";
@@ -1335,19 +1345,25 @@ finalInput.addEventListener('input', (e) => {
 });
 
 // 2. Handle the Enter key
-finalInput.addEventListener('keyup', (e) => {
+finalInput.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
         if (finalInput.value === "97939394") {
+            console.log("PIN Correct! Starting flicker..."); // Debugging check
             finalInput.disabled = true;
             finalError.style.color = "#00ff41";
             finalError.innerText = "ACCESS GRANTED. DECRYPTING...";
 
-            triggerFlicker('lo-monitor-page');
+            await delay(500);
+            setTimeout(() => {
+                // Flickering the page container
+                triggerFlicker('lo-monitor-drive-page');
 
-            // fixme add the final event
+                // ALSO flicker the terminal-login-page so the UI glitches too
+                triggerFlicker('terminal-login-page');
+            }, 100);
+
             state.hatchOpen = true;
         } else {
-            // Show error in the dedicated error div
             finalError.innerText = "> INCORRECT AUTHORIZATION KEY";
             finalInput.value = "";
         }
