@@ -694,6 +694,19 @@ function move(dir) {
     if (dest) showPage(dest);
 }
 
+//this function makes it look like the lights in the room flicker
+function triggerFlicker(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    el.classList.add('flicker-dark');
+
+    // Match the 0.8s (800ms) duration of the new animation
+    setTimeout(() => {
+        el.classList.remove('flicker-dark');
+    }, 800);
+}
+
 // ---------- HINT SYSTEM LOGIC ------------
 const hintRules = [
     {
@@ -1329,6 +1342,7 @@ finalInput.addEventListener('keyup', (e) => {
             finalError.style.color = "#00ff41";
             finalError.innerText = "ACCESS GRANTED. DECRYPTING...";
 
+            triggerFlicker('lo-monitor-page');
 
             // fixme add the final event
             state.hatchOpen = true;
@@ -1341,7 +1355,7 @@ finalInput.addEventListener('keyup', (e) => {
 });
 
 
-// ---- PRINTER SYNC MINIMGAME ----
+// ---- PRINTER SYNC MINIGAME ----
 // --- Settings ---
 const CONSTANT_SPEED = 3.0;
 const totalLevels = 6; // UPDATED TO 6

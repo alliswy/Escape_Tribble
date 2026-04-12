@@ -4761,3 +4761,27 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 
+/*--------- flicker animation ----- */
+/* The Animation Definition */
+@keyframes glitchFlicker {
+    /* Pulse 1: Sharp zap right at the start */
+    0%   { filter: brightness(1); }
+    4%   { filter: brightness(0.3); }
+    8%   { filter: brightness(1); }
+
+    /* Pulse 2: Wait a beat, then a second zap */
+    30%  { filter: brightness(0.4); }
+    34%  { filter: brightness(1); }
+
+    /* Pulse 3: The "short" one - tiny blink near the end */
+    94%  { filter: brightness(0.4); }
+    97%  { filter: brightness(1); }
+
+    100% { filter: brightness(1); }
+}
+
+.flicker-dark {
+    /* 0.6s is the 'sweet spot' for a sequence that feels substantial but fast */
+    animation: glitchFlicker 0.6s linear !important;
+}
+
