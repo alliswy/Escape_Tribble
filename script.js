@@ -156,6 +156,7 @@ const sfx = {
 
     //c-wing sounds
     sinkWater: new Audio('sounds/water-in-sink.mp3'),
+    printClick: new Audio('sounds/printer-clicking.mp3'),
     //printerClicking: new Audio('sounds/click.m4a'),
 }; //fixme need to actually add these sounds
 
@@ -2404,6 +2405,14 @@ function init() {
         showPage('oh1-books-page');
         await delay(20);
         await spawnThemedBox("Another key !", "notification-top");
+        sfx.printClick.volume = 0.2;
+        sfx.printClick.play();
+        setTimeout(async () => {
+            await spawnThemedBox("Is that a printer making noise ?", "notification-top");
+            setTimeout(async () => {
+                await spawnThemedBox("Maybe I should go check it out", "notification-top");
+            }, 2000);
+        }, 1500);
     }
     document.getElementById('printer-hitbox').onclick = () => showPage('print-page');
     document.getElementById('printer-paper-hitbox').onclick = async (e) => {
