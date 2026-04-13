@@ -152,6 +152,10 @@ const sfx = {
     tuClank: new Audio('sounds/low-metal-hit-3.mp3'),
     tuExpl: new Audio('sounds/medium-explosion.mp3'),
     tuScratch: new Audio('sounds/metal-moving.mp3'),
+
+
+    //c-wing sounds
+    sinkWater: new Audio('sounds/water-in-sink.mp3'),
     //printerClicking: new Audio('sounds/click.m4a'),
 }; //fixme need to actually add these sounds
 
@@ -514,6 +518,67 @@ const roomLeads = {
 
 };
 
+function createSoundClip(clip, volume = 1, loop = true, startCrop = 0, endCrop = 0) {
+    return {
+        clip: clip,
+        volume: volume,
+        loop: loop,
+        startCrop: startCrop, // Seconds to skip at start
+        endCrop: endCrop     // Seconds to cut off at end
+    };
+}
+
+const pageSounds = {
+    'bath-page': createSoundClip(sfx.sinkWater, 0.07, true, 1, 2),
+    'bath-sink-page': createSoundClip(sfx.sinkWater, 0.3, true, 1, 2),
+}
+let activeLoop = null; // To stop the loop when we change pages
+
+function triggerSound(pageId) {
+    const data = pageSounds[pageId];
+    if (!data) return;
+
+    const { clip, volume, loop, startCrop, endCrop } = data;
+
+    // Reset any existing heartbeat
+    if (activeLoop) cancelAnimationFrame(activeLoop);
+
+    clip.volume = volume;
+    clip.loop = false; // We handle the loop ourselves for precision
+
+    if (loop) {
+        const checkTime = () => {
+            // High-precision check
+            if (clip.currentTime >= (clip.duration - endCrop)) {
+                clip.currentTime = startCrop;
+                clip.play();
+            }
+            activeLoop = requestAnimationFrame(checkTime);
+        };
+
+        clip.currentTime = startCrop;
+        clip.play();
+        activeLoop = requestAnimationFrame(checkTime);
+    } else {
+        clip.play();
+    }
+}
+
+function stopSound(pageId) {
+    const soundData = pageSounds[pageId];
+
+    // 1. Check if we actually found a sound for this ID
+    if (soundData) {
+        // 2. Reach inside the object to find the 'clip'
+        const audio = soundData.clip;
+
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }
+}
+
 // ----- 3. CORE FUNCTIONS ----
 // Replace your old getDestination with this:
 function getDestination(direction, pageId) {
@@ -525,6 +590,8 @@ let lastPage = null; //tracks prev page
 async function showPage(pageId) {
     const target = document.getElementById(pageId);
     if (!target) return;
+
+    const previousPageId = lastPage ? lastPage.id : null;
 
     // ONLY hide the last page we were on
     if (lastPage) {
@@ -551,6 +618,10 @@ async function showPage(pageId) {
 
         // Run the notification without 'await' to keep the frame rate high
         triggerNotification(pageId);
+        if (previousPageId) {
+            stopSound(previousPageId);
+        }
+        triggerSound(pageId);
     }, 0);
 }
 
