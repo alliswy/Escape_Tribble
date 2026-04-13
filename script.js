@@ -147,8 +147,12 @@ const entryPages = [
 
 // ------------ audio -------------
 const sfx = {
-    movingPaper: new Audio('sounds/page-flip.m4a'),
-    printerClicking: new Audio('sounds/click.m4a'),
+    //sounds for unlocking the tunnels
+    tuRumble: new Audio('sounds/earth-rumble.mp3'),
+    tuClank: new Audio('sounds/low-metal-hit-3.mp3'),
+    tuExpl: new Audio('sounds/medium-explosion.mp3'),
+    tuScratch: new Audio('sounds/metal-moving.mp3'),
+    //printerClicking: new Audio('sounds/click.m4a'),
 }; //fixme need to actually add these sounds
 
 function playSound(audio) {
@@ -1354,13 +1358,14 @@ finalInput.addEventListener('keyup', async (e) => {
             finalError.innerText = "ACCESS GRANTED. DECRYPTING...";
 
             await delay(500);
+            playHatchSequence();
             setTimeout(() => {
                 // Flickering the page container
                 triggerFlicker('lo-monitor-drive-page');
 
                 // ALSO flicker the terminal-login-page so the UI glitches too
                 triggerFlicker('terminal-login-page');
-            }, 100);
+            }, 700);
 
             state.hatchOpen = true;
         } else {
@@ -1579,6 +1584,33 @@ function closeSecurityTerminal() {
     }
 }
 
+
+// ------  SOUNDS FUNCTIONS ---------
+function playHatchSequence() {
+    sfx.tuExpl.volume = 0.2;
+    sfx.tuExpl.play();
+    setTimeout(() => {
+        sfx.tuRumble.volume = 0.3;
+        sfx.tuRumble.play();
+        // Layer the scratch/moving sound shortly after
+        setTimeout(() => {
+            sfx.tuScratch.volume = 0.1;
+            sfx.tuScratch.play();
+            sfx.tuClank.volume = 0.03;
+        }, 25);
+        setTimeout(() => {
+            sfx.tuClank.play();
+        }, 20);
+    }, 300);
+    setTimeout(() => { sfx.tuRumble.volume = 0.2; }, 2500);
+    setTimeout(() => { sfx.tuRumble.volume = 0.05; }, 2700);
+
+   // Finally stop it at 3 seconds
+    setTimeout(() => {
+        sfx.tuRumble.pause();
+        sfx.tuRumble.volume = 1.0; // Reset volume for next use
+    }, 4000);
+}
 
 
 
