@@ -123,24 +123,7 @@ body {
     opacity: 1;    /* Ensures it is visible immediately */
 }
 
-.back-arrow {
-    position: absolute;
-    bottom: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 30px solid transparent;
-    border-right: 30px solid transparent;
-    border-top: 40px solid rgba(255, 255, 255, 0.4); /* Slightly see-through */
-    cursor: pointer;
-    z-index: 100; /* High number to stay on top */
-}
-
-.back-arrow:hover {
-    border-top-color: rgba(255, 255, 255, 0.8);
-}
-
+/* --- FORWARD ARROW --- */
 .forward-arrow {
     position: absolute;
     top: 5%;
@@ -148,51 +131,149 @@ body {
     transform: translateX(-50%);
     width: 0;
     height: 0;
-    border-left: 30px solid transparent;
-    border-right: 30px solid transparent;
-    border-bottom: 40px solid rgba(255, 255, 255, 0.4); /* Points it UP */
+    border-left: 32px solid transparent;
+    border-right: 32px solid transparent;
+    border-bottom: 42px solid #c9a84c;
     cursor: pointer;
-    z-index: 100; /* High number to stay on top */
+    z-index: 100;
+    transition: all 0.2s ease;
 }
 
+.forward-arrow::after {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 0;
+    height: 0;
+    border-left: 28px solid transparent;
+    border-right: 28px solid transparent;
+    border-bottom: 36px solid rgba(100, 20, 30, 0.5);
+    transition: all 0.2s ease;
+}
+
+/* Hover Effects */
 .forward-arrow:hover {
-    border-bottom-color: rgba(255, 255, 255, 0.8);
+    filter: drop-shadow(0 0 8px #c9a84c); /* Gold Glow */
+    transform: translateX(-50%) translateY(-3px); /* Slight pop up */
 }
 
+.forward-arrow:hover::after {
+    border-bottom-color: rgba(100, 20, 30, 0.8); /* Fill gets darker/more solid */
+}
+
+/* --- BACK ARROW --- */
+.back-arrow {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 32px solid transparent;
+    border-right: 32px solid transparent;
+    border-top: 42px solid #c9a84c;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+}
+
+.back-arrow::after {
+    content: '';
+    position: absolute;
+    left: -28px;
+    bottom: 4px;
+    width: 0;
+    height: 0;
+    border-left: 28px solid transparent;
+    border-right: 28px solid transparent;
+    border-top: 36px solid rgba(100, 20, 30, 0.5);
+    transition: all 0.2s ease;
+}
+
+.back-arrow:hover {
+    filter: drop-shadow(0 0 8px #c9a84c);
+    transform: translateX(-50%) translateY(3px);
+}
+
+.back-arrow:hover::after {
+    border-top-color: rgba(100, 20, 30, 0.8);
+}
+
+/* --- RIGHT ARROW --- */
 .right-arrow {
     position: absolute;
-    bottom: 50%;
-    right: 20px;
+    top: 50%;
+    right: 30px;
     transform: translateY(-50%);
     width: 0;
     height: 0;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-    border-left: 40px solid rgba(255, 255, 255, 0.4); /* points RIGHT */
+    border-top: 32px solid transparent;
+    border-bottom: 32px solid transparent;
+    border-left: 42px solid #c9a84c;
     cursor: pointer;
-    z-index: 100; /* High number to stay on top */
+    z-index: 100;
+    transition: all 0.2s ease;
+}
+
+.right-arrow::after {
+    content: '';
+    position: absolute;
+    top: -28px;
+    left: -40px;
+    width: 0;
+    height: 0;
+    border-top: 28px solid transparent;
+    border-bottom: 28px solid transparent;
+    border-left: 36px solid rgba(100, 20, 30, 0.5);
+    transition: all 0.2s ease;
 }
 
 .right-arrow:hover {
-    border-left-color: rgba(255, 255, 255, 0.8);
+    filter: drop-shadow(0 0 8px #c9a84c);
+    transform: translateY(-50%) translateX(3px);
 }
 
+.right-arrow:hover::after {
+    border-left-color: rgba(100, 20, 30, 0.8);
+}
+
+/* --- LEFT ARROW --- */
 .left-arrow {
     position: absolute;
-    bottom: 50%;
-    left: 20px;
+    top: 50%;
+    left: 30px;
     transform: translateY(-50%);
     width: 0;
     height: 0;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
-    border-right: 40px solid rgba(255, 255, 255, 0.4); /* Points LEFT */
+    border-top: 32px solid transparent;
+    border-bottom: 32px solid transparent;
+    border-right: 42px solid #c9a84c;
     cursor: pointer;
-    z-index: 100; /* High number to stay on top */
+    z-index: 100;
+    transition: all 0.2s ease;
+}
+
+.left-arrow::after {
+    content: '';
+    position: absolute;
+    top: -28px;
+    right: -40px;
+    width: 0;
+    height: 0;
+    border-top: 28px solid transparent;
+    border-bottom: 28px solid transparent;
+    border-right: 36px solid rgba(100, 20, 30, 0.5);
+    transition: all 0.2s ease;
 }
 
 .left-arrow:hover {
-    border-right-color: rgba(255, 255, 255, 0.8);
+    filter: drop-shadow(0 0 8px #c9a84c);
+    transform: translateY(-50%) translateX(-3px);
+}
+
+.left-arrow:hover::after {
+    border-right-color: rgba(100, 20, 30, 0.8);
 }
 
 /* --- POPUP MESSAGES --- */

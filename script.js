@@ -2423,7 +2423,7 @@ function init() {
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
         showPage('printer-sync-minigame');
-
+u[j .m]
         // 3. Reset the state
         currentLevel = 1;
         isRunning = true;
