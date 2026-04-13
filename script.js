@@ -747,7 +747,14 @@ async function triggerNotification(pageId) {
         }break;
         case 'lo-monitor-page': {
             document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
-        }
+        }break;
+        case 'bath-page': {
+            await delay(20);
+            if (!state.notificationsSeen['bath-init']) {
+                await spawnThemedBox("This bathroom looks straight out of the 1950s", "notification-top");
+                state.notificationsSeen['bath-init'] = true;
+            }
+        } break;
 
     }
 }
@@ -2353,7 +2360,6 @@ function init() {
     //fixme then add a page going through the door into the hallway
     document.getElementById('cw-bath-door-hitbox').onclick = async (e) => {
         showPage('bath-page');
-        await spawnThemedBox("This bathroom looks straight out of the 1950s", "notification-top");
     }
     document.getElementById('bath-sink-hitbox').onclick = () => showPage('bath-sink-page');
     document.getElementById('bath-sink-sink-hitbox').onclick = async (e) => {
