@@ -1120,6 +1120,33 @@ inventoryTab.onclick = () => {
     panel.classList.toggle('inventory-open');
 };
 
+function refreshInventorySlots() {
+    const content = document.getElementById('inventory-content');
+    const items = content.querySelectorAll('.inv-item:not(.empty)');
+    const emptySlots = content.querySelectorAll('.inv-item.empty');
+
+    // Count how many real items are currently visible (not hidden)
+    let visibleItemsCount = 0;
+    items.forEach(item => {
+        if (!item.classList.contains('hidden')) {
+            visibleItemsCount++;
+        }
+    });
+
+    // Let's say your inventory capacity is 8
+    const maxCapacity = 8;
+    const neededEmptySlots = maxCapacity - visibleItemsCount;
+
+    // Show or hide empty slots based on remaining space
+    emptySlots.forEach((slot, index) => {
+        if (index < neededEmptySlots) {
+            slot.classList.remove('hidden'); // Show this empty box
+        } else {
+            slot.classList.add('hidden');    // Hide this empty box
+        }
+    });
+}
+
 // ---- TYPEWRITER EFFECT ----
 function typeWriter(element, text, speed, callback) {
     if (!element) return;
@@ -1521,6 +1548,7 @@ async function useDrive() {
         const keySlot = document.getElementById('inv-ls-drive');
         if (keySlot) {
             keySlot.classList.add('hidden');
+            refreshInventorySlots();
         }
         showPage('lo-monitor-drive-page');
         document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
@@ -2053,6 +2081,7 @@ function init() {
         const keySlot = document.getElementById('inv-bd-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('mh-bd-slot-open-page');
         await delay(20);
@@ -2067,6 +2096,7 @@ function init() {
             const keySlot = document.getElementById('inv-bd-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             await delay(20);
             await spawnThemedBox('It\'s unlocked !', "notification-top");
@@ -2097,6 +2127,7 @@ function init() {
         const keySlot = document.getElementById('inv-pr-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('bd-fb-open-page');
         await delay(20);
@@ -2112,6 +2143,7 @@ function init() {
             const keySlot = document.getElementById('inv-pr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             await spawnThemedBox('It\'s unlocked !', "notification-top");
         } else {
@@ -2191,6 +2223,7 @@ function init() {
         const keySlot = document.getElementById('inv-pw-book')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         // fixme
         showPage('pr-pw-hole-noBook-page');
@@ -2230,10 +2263,12 @@ function init() {
             const keySlot = document.getElementById('inv-ki-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             const keySlot2 = document.getElementById('inv-pw-book');
             if (keySlot2) {
                 keySlot2.classList.add('hidden');
+                refreshInventorySlots();
             }
             await spawnThemedBox('It\'s unlocked!', "notification-top");
         }
@@ -2316,6 +2351,7 @@ function init() {
         const keySlot = document.getElementById('inv-camr-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('cr-couch-zoom-page');
         await delay(20);
@@ -2350,6 +2386,7 @@ function init() {
             const keySlot = document.getElementById('inv-camr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             state.camrUnlocked = true; state.camrDoorOpen = true;
             showPage('cr-doors-1dc-page');
@@ -2364,6 +2401,7 @@ function init() {
             const keySlot = document.getElementById('inv-clr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             showPage('clr-main-id-page');
             await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-top');
@@ -2383,6 +2421,7 @@ function init() {
         const keySlot = document.getElementById('inv-wr-id');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('clr-main-page');
         openOverlay('wr-id', 'inv-items/wr-id.png');
@@ -2508,6 +2547,7 @@ function init() {
         const keySlot = document.getElementById('inv-wr-od');
         if (keySlot) {
                 keySlot.classList.add('hidden');
+            refreshInventorySlots();
         }
         showPage('cw-wr-handle-unlocked-page');
         await delay (20);
@@ -2535,6 +2575,7 @@ function init() {
         const keySlot = document.getElementById('inv-clr-key')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('oh1-books-page');
         await delay(20);
@@ -2582,6 +2623,7 @@ function init() {
         const keySlot = document.getElementById('inv-li-key')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('wr-desk-page');
             if (!state.foundWrPapers) {
@@ -2646,6 +2688,7 @@ function init() {
             const keySlot = document.getElementById('inv-li-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             await spawnThemedBox("It's unlocked !", 'notification-top');
         } else {
@@ -2670,6 +2713,7 @@ function init() {
             const keySlot = document.getElementById('inv-lor-book')
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
         } else {
             await spawnThemedBox('I need to find a book to scan', "notification-top");
@@ -2687,6 +2731,7 @@ function init() {
         const keySlot = document.getElementById('inv-sk-paper')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-lt-sk-page');
     }
@@ -2710,6 +2755,7 @@ function init() {
         const keySlot = document.getElementById('inv-lor-book')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-tolkein-nb-page');
     }
@@ -2761,6 +2807,7 @@ function init() {
             const keySlot = document.getElementById('inv-wr');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             showPage('li-read-on-page');
             await delay(20);
@@ -2782,6 +2829,7 @@ function init() {
         const keySlot = document.getElementById('inv-wr');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-br-page');
     }
@@ -2790,6 +2838,7 @@ function init() {
         const keySlot = document.getElementById('inv-Br');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-wr-page');
     }
@@ -2798,6 +2847,7 @@ function init() {
         const keySlot = document.getElementById('inv-wr');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-nr-page');
     }
@@ -2806,6 +2856,7 @@ function init() {
         const keySlot = document.getElementById('inv-wr');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-nr-tvo-page');
     }
@@ -2814,6 +2865,7 @@ function init() {
         const keySlot = document.getElementById('inv-Br');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-nr-page');
     }
@@ -2826,6 +2878,7 @@ function init() {
             const keySlot = document.getElementById('inv-br');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             showPage('li-tv-on-page');
             await delay(20);
@@ -2840,6 +2893,7 @@ function init() {
             const keySlot = document.getElementById('inv-br');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             showPage('li-tv-wr-tvo-page');
             await delay(20);
@@ -2861,6 +2915,7 @@ function init() {
             const keySlot = document.getElementById('inv-wr');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             showPage('li-read-on-page');
             await delay(20);
@@ -2881,6 +2936,7 @@ function init() {
         const keySlot = document.getElementById('inv-sh-book');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-birb-page');
         openOverlay('sherlock-book', 'inv-images/sherlock-book.png');
@@ -2910,6 +2966,7 @@ function init() {
         const keySlot = document.getElementById('inv-lo-key');
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('li-animals-open-2-page');
     }
@@ -2925,6 +2982,7 @@ function init() {
             const keySlot = document.getElementById('inv-lo-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
+                refreshInventorySlots();
             }
             showPage('li-office-door-open-page');
         } else {
@@ -2961,6 +3019,7 @@ function init() {
         const keySlot = document.getElementById('inv-ls-note')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('ls-10-sk-drive-page');
         openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
@@ -2970,6 +3029,7 @@ function init() {
         const keySlot = document.getElementById('inv-ls-note')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('ls-10-sk-page');
         openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
@@ -2979,6 +3039,7 @@ function init() {
         const keySlot = document.getElementById('inv-ls-drive')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('ls-10-sk-note-page');
         openOverlay('ls-10-drive', 'ls-images/ls-10-drive.png'); //I want it to overlay immediately and the character to comment on it
@@ -2989,6 +3050,7 @@ function init() {
         const keySlot = document.getElementById('inv-ls-drive')
         if (keySlot) {
             keySlot.classList.remove('hidden');
+            refreshInventorySlots();
         }
         showPage('ls-10-sk-page');
         openOverlay('ls-10-drive', 'ls-images/ls-10-drive.png');
@@ -3064,6 +3126,7 @@ function init() {
                         const keySlot = document.getElementById('inv-ki-key');
                         if (keySlot) {
                             keySlot.classList.remove('hidden');
+                            refreshInventorySlots();
                         }
                         document.getElementById("item-overlay").classList.add("hidden");
                         openOverlay("pw-book", "inv-images/pw-book-open.png"); //fixme will the repeated item name cause issues?
