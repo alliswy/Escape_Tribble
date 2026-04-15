@@ -2232,8 +2232,8 @@ function init() {
                 keySlot.classList.add('hidden');
             }
             const keySlot2 = document.getElementById('inv-pw-book');
-            if (keySlot) {
-                keySlot.classList.add('hidden');
+            if (keySlot2) {
+                keySlot2.classList.add('hidden');
             }
             await spawnThemedBox('It\'s unlocked!', "notification-top");
         }
