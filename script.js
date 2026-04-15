@@ -163,7 +163,8 @@ const sfx = {
     // C-Wing
     sinkWater:   { audio: new Audio('sounds/water-in-sink.mp3'),     baseVol: 0.3 },
     printClick:  { audio: new Audio('sounds/printer-clicking.mp3'),  baseVol: 0.2 },
-    shufflePapers: { audio: new Audio('sounds/shuffle-papers.mp3'),  baseVol: 0.2 }
+    shufflePapers: { audio: new Audio('sounds/shuffle-papers.mp3'),  baseVol: 0.2 },
+    unlock: { audio: new Audio('sounds/unlock.mp3'),  baseVol: 0.5 },
 }; //fixme add more sounds
 
 
@@ -657,6 +658,9 @@ function createSoundClip(sfxEntry, volume = 1, loop = true, startCrop = 0, endCr
 const pageSounds = {
     'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
     'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
+
+    //action sounds fixme this may break something not sure yet
+    'unlock': createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
 }
 let activeLoop = null; // To stop the loop when we change pages
 
@@ -697,8 +701,23 @@ function triggerSound(pageId) {
         clip.play();
         activeLoop = requestAnimationFrame(checkTime);
     } else {
+        // --- ONE-SHOT LOGIC WITH END CROP ---
         clip.currentTime = startCrop;
         clip.play();
+
+        // Calculate how long the sound should play:
+        // (Total Duration) - (Start Crop) - (End Crop)
+        const playDuration = (clip.duration - startCrop - endCrop) * 1000;
+
+        // stop the sound after the duration has passed
+        if (playDuration > 0) {
+            setTimeout(() => {
+                // Check to make sure we are still playing the same clip
+                // and it hasn't been looped or changed by another page
+                clip.pause();
+                clip.currentTime = startCrop;
+            }, playDuration);
+        }
     }
 }
 
@@ -2213,6 +2232,7 @@ function init() {
                 keySlot.classList.add('hidden');
                 refreshInventorySlots();
             }
+            triggerSound('unlock');
             await delay(20);
             await spawnThemedBox('It\'s unlocked !', "notification-top");
         } else {
@@ -2260,6 +2280,8 @@ function init() {
                 keySlot.classList.add('hidden');
                 refreshInventorySlots();
             }
+            triggerSound('unlock');
+            await delay(20);
             await spawnThemedBox('It\'s unlocked !', "notification-top");
         } else {
             await spawnThemedBox('I need to find another key...', "notification-top");
@@ -2374,6 +2396,7 @@ function init() {
 
     document.getElementById('ki-door-handle-keyhole-hitbox').onclick = async (e) => {
         if (state.hasKiKey) {
+            triggerSound('unlock');
             state.kiUnlocked = true;
             const keySlot = document.getElementById('inv-ki-key');
             if (keySlot) {
@@ -2385,6 +2408,7 @@ function init() {
                 keySlot2.classList.add('hidden');
                 refreshInventorySlots();
             }
+            await delay(20);
             await spawnThemedBox('It\'s unlocked!', "notification-top");
         }
         else {
@@ -2497,7 +2521,7 @@ function init() {
     document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
     document.getElementById('cr-camr-door-closed-hitbox').onclick = async (e) => {
         if (state.hasCamrKey) {
-            state.bdUnlocked = true;
+            triggerSound('unlock');
             const keySlot = document.getElementById('inv-camr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
@@ -2512,7 +2536,8 @@ function init() {
     document.getElementById('cr-doors-1dc-cam-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
     document.getElementById('cr-1dc-ld-door-closed-hitbox').onclick = async (e) => {
         if (state.hasClrKey) {
-            state.bdUnlocked = true;
+            triggerSound('unlock');
+            state.crlUnlocked = true;
             const keySlot = document.getElementById('inv-clr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
@@ -2798,6 +2823,7 @@ function init() {
     }
     document.getElementById('li-door-handle-keyhole-hitbox').onclick = async (e) => {
         if (state.hasLiKey) {
+            triggerSound('unlock');
             state.liUnlocked = true;
             const keySlot = document.getElementById('inv-li-key');
             if (keySlot) {
@@ -3092,6 +3118,7 @@ function init() {
     // --------- LIBRARY OFFICE SECTION -----------//
     document.getElementById('li-office-door-closed-hitbox').onclick = async (e) => {
         if (state.hasLoKey) {
+            triggerSound('unlock');
             state.loUnlocked = true;
             const keySlot = document.getElementById('inv-lo-key');
             if (keySlot) {
