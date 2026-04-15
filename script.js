@@ -706,6 +706,8 @@ async function triggerNotification(pageId) {
             // Functional logic for the hitbox remains the same
             if (!state.scannedBook || !state.hasSherlockBook) {
                 document.getElementById('li-main-rw-animals-hitbox').classList.add('hidden');
+            } else {
+                document.getElementById('li-main-rw-animals-hitbox').classList.remove('hidden');
             }
         } break;
 
@@ -3064,7 +3066,7 @@ function init() {
                             keySlot.classList.remove('hidden');
                         }
                         document.getElementById("item-overlay").classList.add("hidden");
-                        openOverlay("pw-book", "inv-images/pw-book-open.png");
+                        openOverlay("pw-book", "inv-images/pw-book-open.png"); //fixme will the repeated item name cause issues?
                         await delay(20);
                         await spawnThemedBox("Another key.... Which door is this one for ?", "notification-top");
                     }
@@ -3072,10 +3074,41 @@ function init() {
                 case 'inv-images/pw-book-open.png': {
                     document.getElementById('pw-book-open-hitbox').classList.remove('hidden');
                 } break;
+            }
+        }
+        if (itemName === "sherlock-book") {
+            switch (imgSrc) {
                 case 'inv-images/sherlock-book.png': {
                     document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
+                    document.getElementById("sherlock-book-hitbox").onclick = () => {
+                        openOverlay("sherlock-book", "inv-images/sherlock-book-open.png")
+                    };
                 } break;
-
+                case 'inv-images/sherlock-book-open.png': {
+                    document.getElementById('sherlock-book-open-hitbox').classList.remove('hidden');
+                    document.getElementById("sherlock-book-open-hitbox").onclick = () => {
+                        if (state.hasSkPaper) {
+                            openOverlay("sherlock-book", "inv-images/sherlock-book-open-paper.png");
+                        } else {
+                            console.log('Error with progression has occurred'); //fixme check that they have to get the paper before being able to access the book
+                        }
+                    };
+                } break;
+                case 'inv-images/sherlock-book-open-paper.png': {
+                    document.getElementById('sherlock-book-open-un-hitbox').classList.remove('hidden')
+                    document.getElementById('sherlock-book-open-der-hitbox').classList.remove('hidden');
+                    document.getElementById('sherlock-book-open-animals-hitbox').classList.remove('hidden');
+                    document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
+                        await spawnThemedBox("un-", "notification-top");
+                    }
+                    document.getElementById('sherlock-book-open-der-hitbox').onclick = async () => {
+                        await spawnThemedBox("der-", "notification-top");
+                    }
+                    document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
+                        await spawnThemedBox("animals", "notification-top");
+                    }
+                    //fixme make it so if they click one more time they'll see un-der-animals maybe ?
+                } break;
             }
         }
     }

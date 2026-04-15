@@ -1992,10 +1992,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #sherlock-book-hitbox {
     position: absolute;
-    top: 16%;
-    left: 10%;
-    width: 66%;
-    height: 71%;
+    top: 6%;
+    left: 30%;
+    width: 39%;
+    height: 78%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2005,9 +2005,48 @@ input[type="range"]::-webkit-slider-thumb {
 
 #sherlock-book-open-hitbox {
     position: absolute;
+    top: 9%;
+    left: 9%;
+    width: 77%;
+    height: 82%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#sherlock-book-open-un-hitbox {
+    position: absolute;
     top: 16%;
     left: 10%;
-    width: 66%;
+    width: 16%;
+    height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#sherlock-book-open-der-hitbox {
+    position: absolute;
+    top: 16%;
+    left: 30%;
+    width: 16%;
+    height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#sherlock-book-open-animals-hitbox {
+    position: absolute;
+    top: 56%;
+    left: 50%;
+    width: 16%;
     height: 71%;
 
     background-color: transparent;
