@@ -152,25 +152,142 @@ const entryPages = [
 ]; //fixme, double check these are starting pages, and add inv images
 
 // ------------ audio -------------
+// --- Audio Assets & Base Volumes ---
 const sfx = {
-    //sounds for unlocking the tunnels
-    tuRumble: new Audio('sounds/earth-rumble.mp3'),
-    tuClank: new Audio('sounds/low-metal-hit-3.mp3'),
-    tuExpl: new Audio('sounds/medium-explosion.mp3'),
-    tuScratch: new Audio('sounds/metal-moving.mp3'),
+    // Tunnels
+    tuRumble:    { audio: new Audio('sounds/earth-rumble.mp3'),      baseVol: 0.6 },
+    tuClank:     { audio: new Audio('sounds/low-metal-hit-3.mp3'),   baseVol: 0.8 },
+    tuExpl:      { audio: new Audio('sounds/medium-explosion.mp3'),  baseVol: 0.7 },
+    tuScratch:   { audio: new Audio('sounds/metal-moving.mp3'),      baseVol: 0.5 },
+
+    // C-Wing
+    sinkWater:   { audio: new Audio('sounds/water-in-sink.mp3'),     baseVol: 0.3 },
+    printClick:  { audio: new Audio('sounds/printer-clicking.mp3'),  baseVol: 0.2 },
+    shufflePapers: { audio: new Audio('sounds/shuffle-papers.mp3'),  baseVol: 0.2 }
+}; //fixme add more sounds
 
 
-    //c-wing sounds
-    sinkWater: new Audio('sounds/water-in-sink.mp3'),
-    printClick: new Audio('sounds/printer-clicking.mp3'),
-    shufflePapers: new Audio('sounds/shuffle-papers.mp3'),
-    //printerClicking: new Audio('sounds/click.m4a'),
-}; //fixme need to actually add these sounds
+// ------  SOUNDS FUNCTIONS --------- fixme move these down later for organization
 
-function playSound(audio) {
-    audio.currentTime = 0; // Rewind to start
-    audio.play();
+
+function getSFXMultiplier() {
+    const slider = document.getElementById('sfx-slider');
+    return slider ? parseFloat(slider.value) / 50 : 1.0;
 }
+
+// Standard Play function
+function playSound(key) {
+    const entry = sfx[key];
+    if (entry) {
+        const m = getSFXMultiplier();
+        entry.audio.volume = Math.min(Math.max(entry.baseVol * m, 0), 1);
+        entry.audio.currentTime = 0;
+        entry.audio.play();
+    }
+}
+
+// Smooth Fade Out function
+function fadeOut(key, durationMs) {
+    const entry = sfx[key];
+    if (!entry || !entry.audio) return;
+
+    const audio = entry.audio;
+    const startVol = audio.volume;
+    const steps = 30; // More steps = smoother fade
+    const interval = durationMs / steps;
+
+    let currentStep = 0;
+    const fadeTimer = setInterval(() => {
+        currentStep++;
+        audio.volume = Math.max(0, startVol * (1 - currentStep / steps));
+
+        if (currentStep >= steps) {
+            audio.pause();
+            clearInterval(fadeTimer);
+        }
+    }, interval);
+}
+
+function playHatchSequence() {
+    const m = getSFXMultiplier();
+
+    // 1. Initial Explosion
+    const expl = sfx.tuExpl.audio;
+    expl.volume = 0.2 * m;
+    expl.play();
+
+    setTimeout(() => {
+        // 2. Start the Rumble
+        const rumble = sfx.tuRumble.audio;
+        rumble.volume = 0.3 * m;
+        rumble.play();
+
+        // 3. Layer the mechanical "crunch"
+        setTimeout(() => {
+            const scratch = sfx.tuScratch.audio;
+            scratch.volume = 0.1 * m;
+            scratch.play();
+        }, 25);
+
+        setTimeout(() => {
+            const clank = sfx.tuClank.audio;
+            clank.volume = 0.03 * m;
+            clank.play();
+        }, 20);
+
+        // 4. Smoothly fade the rumble away after 2.5 seconds
+        // This will reach 0 volume at exactly the 4000ms mark
+        setTimeout(() => {
+            fadeOut('tuRumble', 1500);
+        }, 2200);
+
+    }, 300);
+}
+//
+// function leaveRoomAudio() {
+//     stopSound('bath-page', 500);
+// } fixme prolly remove this
+
+/**
+ * Master SFX Controller
+ * Handles UI syncing, volume scaling, and real-time audio updates.
+ */
+function syncSFXSystems(val) {
+    const multiplier = val / 50; // 50 is our 1.0 baseline
+
+    // 1. Update all Slider Values & Labels
+    const sliders = ['sfx-slider', 'ingame-sfx-slider'];
+    const labels = ['sfx-value', 'ingame-sfx-value'];
+
+    sliders.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    });
+
+    labels.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    });
+
+    // 2. Update all active sounds in the library
+    for (let key in sfx) {
+        const entry = sfx[key];
+        if (entry && entry.audio) {
+            // Apply Base Volume * Multiplier, clamped between 0.0 and 1.0
+            const finalVol = entry.baseVol * multiplier;
+            entry.audio.volume = Math.min(Math.max(finalVol, 0), 1);
+        }
+    }
+
+    for (let page in pageSounds) {
+        const data = pageSounds[page];
+        if (data.clip) {
+            data.clip.volume = Math.min(Math.max(data.volume * multiplier, 0), 1);
+        }
+    }
+}
+
+
 
 // ----- NAVIGATION MAP -----
 const roomLeads = {
@@ -479,6 +596,7 @@ const roomLeads = {
     'lo-desk-page':                 {back: 'lo-main-page', forward: 'lo-desk-2-page'},
     'lo-desk-2-page':               {back: 'lo-desk-page'},
     'lo-monitor-page':              {back: 'lo-desk-2-page'},
+    'lo-monitor-drive-page':        {back: 'lo-desk-2-page'},
 
     //library storage pages
     'ls-lo-entrance-page':          {back: 'ls-out-10-page', forward: 'lo-main-right-page'},
@@ -526,19 +644,19 @@ const roomLeads = {
 
 };
 
-function createSoundClip(clip, volume = 1, loop = true, startCrop = 0, endCrop = 0) {
+function createSoundClip(sfxEntry, volume = 1, loop = true, startCrop = 0, endCrop = 0) {
     return {
-        clip: clip,
+        clip: sfxEntry.audio, // Add .audio here!
         volume: volume,
         loop: loop,
-        startCrop: startCrop, // Seconds to skip at start
-        endCrop: endCrop     // Seconds to cut off at end
+        startCrop: startCrop,
+        endCrop: endCrop
     };
 }
 
 const pageSounds = {
-    'bath-page': createSoundClip(sfx.sinkWater, 0.07, true, 1, 2),
-    'bath-sink-page': createSoundClip(sfx.sinkWater, 0.3, true, 1, 2),
+    'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
+    'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
 }
 let activeLoop = null; // To stop the loop when we change pages
 
@@ -548,15 +666,26 @@ function triggerSound(pageId) {
 
     const { clip, volume, loop, startCrop, endCrop } = data;
 
-    // Reset any existing heartbeat
+    // FIX: If this specific sound is currently fading out, STOP that fade immediately
+    if (clip.activeFade) {
+        clearInterval(clip.activeFade);
+        clip.activeFade = null;
+    }
+
     if (activeLoop) cancelAnimationFrame(activeLoop);
 
-    clip.volume = volume;
-    clip.loop = false; // We handle the loop ourselves for precision
+    // Recalculate volume using the multiplier right now
+    const m = getSFXMultiplier();
+    clip.volume = Math.min(Math.max(volume * m, 0), 1);
+
+    clip.loop = false;
 
     if (loop) {
         const checkTime = () => {
-            // High-precision check
+            // Real-time volume sync while looping
+            const currentM = getSFXMultiplier();
+            clip.volume = Math.min(Math.max(volume * currentM, 0), 1);
+
             if (clip.currentTime >= (clip.duration - endCrop)) {
                 clip.currentTime = startCrop;
                 clip.play();
@@ -568,23 +697,42 @@ function triggerSound(pageId) {
         clip.play();
         activeLoop = requestAnimationFrame(checkTime);
     } else {
+        clip.currentTime = startCrop;
         clip.play();
     }
 }
 
-function stopSound(pageId) {
+function stopSound(pageId, fadeDuration = 50) {
     const soundData = pageSounds[pageId];
+    if (!soundData || !soundData.clip) return;
 
-    // 1. Check if we actually found a sound for this ID
-    if (soundData) {
-        // 2. Reach inside the object to find the 'clip'
-        const audio = soundData.clip;
+    const audio = soundData.clip;
+    const startVol = audio.volume;
+    const steps = 20;
+    const interval = fadeDuration / steps;
+    let currentStep = 0;
 
-        if (audio) {
+    // 1. Start a fade timer
+    audio.activeFade = setInterval(() => {
+        currentStep++;
+
+        // Gradually decrease volume
+        audio.volume = Math.max(0, startVol * (1 - currentStep / steps));
+
+        // 2. Once silent, kill everything
+        if (currentStep >= steps) {
+            clearInterval(audio.activeFade);
             audio.pause();
             audio.currentTime = 0;
+
+            // DISCREPANCY FIX: You must nullify the loop heartbeat
+            // or it will try to play again even after the fade.
+            if (activeLoop) {
+                cancelAnimationFrame(activeLoop);
+                activeLoop = null;
+            }
         }
-    }
+    }, interval);
 }
 
 // ----- 3. CORE FUNCTIONS ----
@@ -1607,6 +1755,8 @@ finalInput.addEventListener('keyup', async (e) => {
             }, 700);
 
             state.hatchOpen = true;
+            await delay(4000);
+            await spawnThemedBox("What the heck was that ???", "notification-top");
         } else {
             finalError.innerText = "> INCORRECT AUTHORIZATION KEY";
             finalInput.value = "";
@@ -1824,34 +1974,6 @@ function closeSecurityTerminal() {
 }
 
 
-// ------  SOUNDS FUNCTIONS ---------
-function playHatchSequence() {
-    sfx.tuExpl.volume = 0.2;
-    sfx.tuExpl.play();
-    setTimeout(() => {
-        sfx.tuRumble.volume = 0.3;
-        sfx.tuRumble.play();
-        // Layer the scratch/moving sound shortly after
-        setTimeout(() => {
-            sfx.tuScratch.volume = 0.1;
-            sfx.tuScratch.play();
-            sfx.tuClank.volume = 0.03;
-        }, 25);
-        setTimeout(() => {
-            sfx.tuClank.play();
-        }, 20);
-    }, 300);
-    setTimeout(() => { sfx.tuRumble.volume = 0.2; }, 2500);
-    setTimeout(() => { sfx.tuRumble.volume = 0.05; }, 2700);
-
-   // Finally stop it at 3 seconds
-    setTimeout(() => {
-        sfx.tuRumble.pause();
-        sfx.tuRumble.volume = 1.0; // Reset volume for next use
-    }, 4000);
-}
-
-
 
 // ----- 5. INITIALIZE EVENT LISTENERS -----
 
@@ -1914,11 +2036,8 @@ function init() {
 
     //SFX volume slider
     document.getElementById('sfx-slider').oninput = (e) => {
-        document.getElementById('sfx-value').textContent = e.target.value;
-        //FIXME - connect to SFX audio when added
-        console.log('SFX volume:', e.target.value);
+        syncSFXSystems(e.target.value);
     };
-
 
     //Fullscreen toggle
     document.getElementById('fullscreen-toggle').onchange = (e) => {
@@ -1981,11 +2100,7 @@ function init() {
 
 // In-game SFX slider
     document.getElementById('ingame-sfx-slider').oninput = (e) => {
-        document.getElementById('ingame-sfx-value').textContent = e.target.value;
-        // Keep main menu slider in sync
-        document.getElementById('sfx-slider').value = e.target.value;
-        document.getElementById('sfx-value').textContent = e.target.value;
-        console.log('SFX volume:', e.target.value);
+        syncSFXSystems(e.target.value);
     };
 
 // In-game fullscreen toggle
@@ -2580,8 +2695,7 @@ function init() {
         showPage('oh1-books-page');
         await delay(20);
         await spawnThemedBox("Another key !", "notification-top");
-        sfx.printClick.volume = 0.2;
-        sfx.printClick.play();
+        playSound('printClick');
         setTimeout(async () => {
             await spawnThemedBox("Is that a printer making noise ?", "notification-top");
             setTimeout(async () => {
@@ -2628,7 +2742,7 @@ function init() {
         showPage('wr-desk-page');
             if (!state.foundWrPapers) {
                 await delay(30);
-                sfx.shufflePapers.play();
+                playSound('shufflePapers');
 
                 await delay(1000);
                 await spawnThemedBox("What's that noise ? Is someone moving stuff around in this room?", "notification-top");
