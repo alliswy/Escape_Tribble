@@ -71,6 +71,12 @@ const state = {
     solvedWirePuzzle: false,
     foundPtCode: false,
     foundWrNote: false,
+    foundOctagon: false,
+    foundScanner: false,
+    foundLiClue: false, //fixme add this when they use the paper on the sherlock book
+    foundLoMonitor: false,
+    foundArchives: false,
+    foundWrPapers: false,
 
     foundWp: false,
 
@@ -157,6 +163,7 @@ const sfx = {
     //c-wing sounds
     sinkWater: new Audio('sounds/water-in-sink.mp3'),
     printClick: new Audio('sounds/printer-clicking.mp3'),
+    shufflePapers: new Audio('sounds/shuffle-papers.mp3'),
     //printerClicking: new Audio('sounds/click.m4a'),
 }; //fixme need to actually add these sounds
 
@@ -756,6 +763,9 @@ async function triggerNotification(pageId) {
                 state.notificationsSeen['bath-init'] = true;
             }
         } break;
+        case 'ls-archives-sk-page': {
+            state.foundArchives = true;
+        }
 
     }
 }
@@ -863,7 +873,127 @@ const hintRules = [
         condition: () => state.wonWordle && !state.isLeftMonitorOn && state.foundMl,
         text: "For the left monitor in the camera room, the password is 5 letters, and so is the wordle..."
     },
-    //fixme add more
+    {
+        condition: () => state.isLeftMonitorOn && !state.hasClrKey,
+        text: "Make sure you check every corner of the c-wing. There may be something useful hiding for you there."
+    },
+    {
+        condition: () => state.isLeftMonitorOn && state.hasClrKey && !state.crlDoorOpen,
+        text: "The key you're holding opens a door in the creepy room"
+    },
+    {
+        condition: () => state.hasClrKey && !state.crlDoorOpen,
+        text: "The key you're holding opens a door in the creepy room"
+    },
+    {
+        condition: () => state.crlDoorOpen && !state.foundOctagon,
+        text: "Try inspecting the cloth in the counseling room"
+    },
+    {
+        condition: () => state.foundOctagon && !state.hasWrId,
+        text: "The ID in the counseling room may be useful"
+    },
+    {
+        condition: () => state.hasWrId && !state.wrUnlocked,
+        text: "You may be able to unlock the room in the c-wing with the ID you're holding"
+    },
+    {
+        condition: () => state.wrUnlocked && !state.hasLiKey,
+        text: "Look around in the classroom for a key"
+    },
+    {
+        condition: () => state.hasLiKey && !state.foundWrNote && !state.liUnlocked,
+        text: "There may be some more things to find in the classroom, or you can search the main hall for a new room to unlock"
+    },
+    {
+        condition: () => state.hasLiKey && state.foundWrNote && !state.liUnlocked,
+        text: "The key you're holding unlocks the door next to the book drop in the main hall"
+    },
+    {
+        condition: () => state.liUnlocked && !state.isLiTvOn && !state.hasBr,
+        text: "Try searching near the tv for a new item"
+    },
+    {
+        condition: () => state.liUnlocked && state.hasBr && !state.isLiTvOn,
+        text: "The remote you're holding looks a lot like a tv remote. Maybe it will work on the tv"
+    },
+    {
+        condition: () => state.isLiTvOn && !state.hasWr,
+        text: "There's another remote near the tv that may be useful"
+    },
+    {
+        condition: () => state.isLiTvOn && state.hasWr && !state.isLiReadOn,
+        text: "The READ sign in the library looks like it can be turned on with the remote you're holding"
+    },
+    {
+        condition: () => state.isLiTvOn && state.isLiReadOn && !state.foundScanner,
+        text: "Look around the library for a hint"
+    },
+    {
+        condition: () => state.isLiTvOn && state.isLiReadOn && state.foundScanner && !state.hasLorBook,
+        text: "Search the walls in the library and inspect each book. You need to find the Lord of the Rings book"
+    },
+    {
+        condition: () => state.isLiTvOn && state.isLiReadOn && state.hasLorBook && !state.scannedBook,
+        text: "Try scanning the Lord of the Rings book with the scanner near the laptop"
+    },
+    {
+        condition: () => state.scannedBook && !state.hasSkPaper,
+        text: "Look around the library again for a hint"
+    },
+    {
+        condition: () => state.hasSkPaper && !state.hasLoKey && !state.hasSherlockBook,
+        text: "Maybe the piece of paper can be used on a book in the room. Look around the shelves for a book that you can collect."
+    },
+    {
+        condition: () => state.hasSkPaper && !state.hasLoKey && state.hasSherlockBook && !state.foundLiClue,
+        text: "Try using the paper on the bookmarked page of the book you collected. Make sure to inspect the book first, then use the paper"
+    },
+    {
+        condition: () => state.foundLiClue && !state.hasLoKey,
+        text: "\"under animals\"-- maybe you should search under the stuffed animals in the library"
+    },
+    {
+        condition: () => state.hasLoKey && !state.loUnlocked,
+        text: "The key you're holding unlocks the office at the back of the library"
+    },
+    {
+        condition: () => state.loUnlocked && !state.loMonitorUnlocked && !state.foundLoMonitor,
+        text: "Try inspecting the monitor in the library office"
+    },
+    {
+        condition: () => state.foundLoMonitor && !state.loMonitorUnlocked && (!state.isProjectorOn || !state.isLiTvOn || !state.isLiLaptopOn || !state.foundOctagon),
+        text: "The key to the library monitor is 4 digits, all numbers. Throughout the map are scattered 4 shapes. Find them all to solve the puzzle"
+    },
+    {
+        condition: () => state.foundLoMonitor && !state.loMonitorUnlocked && (state.isProjectorOn && state.isLiTvOn && state.isLiLaptopOn && state.foundOctagon) && !state.isLiReadOn,
+        text: "Each shape has a certain number of vertices and a color. You'll need to find a clue to what the order of the colors is to determine the library office monitor code. Try finding a remote and turning on the READ sign in the library"
+    },
+    {
+        condition: () => state.foundLoMonitor && !state.loMonitorUnlocked && (state.isProjectorOn && state.isLiTvOn && state.isLiLaptopOn && state.foundOctagon) && state.isLiReadOn,
+        text: "You hold all pieces to the library monitor code, you need simply to connect them. Each shape has a certain number of vertices. For example, a square has 4. The READ sign indicates the order in which these numbers should be typed in as the code"
+    },
+    {
+        condition: () => state.loMonitorUnlocked && !state.hasLs10drive,
+        text: "You need a usb drive. Look around the library storage area to see if you can find one."
+    },
+    {
+        condition: () => state.hasLs10drive && !state.usedDrive,
+        text: "Try using the drive on the library office monitor"
+    },
+    {
+        condition: () => state.usedDrive && !state.foundArchives,
+        text: "You'll need to inspect the archives to determine the final code for the library office monitor. They are located in the library storage area"
+    },
+    {
+        condition: () => state.foundArchives && !state.hatchOpen,
+        text: "The final code is hidden in the archives. Use the sticky note to determine the correct order. Inspect each thesis, and note the last two digits of each publication date. Input those numbers in the order indicated on the sticky note."
+    },
+    {
+        condition: () => state.hatchOpen,
+        text: "Look around for the exit hatch to escape through the tunnels!"
+    },
+    //fixme bug check for if progression is completed out of order
 
 
 
@@ -2099,6 +2229,10 @@ function init() {
             if (keySlot) {
                 keySlot.classList.add('hidden');
             }
+            const keySlot2 = document.getElementById('inv-pw-book');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+            }
             await spawnThemedBox('It\'s unlocked!', "notification-top");
         }
         else {
@@ -2199,12 +2333,10 @@ function init() {
 
     document.getElementById('cr-main-1dc-doors-hitbox').onclick = () => {
         if (state.isLeftMonitorOn) {
-            showPage('cr-doors-1dc-cam-page')//fixme
+            showPage('cr-doors-1dc-cam-page')//fixme -- I don't remember why I put this fixme here..., maybe to do with the ghost ?
         } else {
             showPage('cr-doors-1dc-page');
         }
-
-        //fixme finish if/else logic for added cam pages
     }
     document.getElementById('cr-doors-1dc-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
     document.getElementById('cr-doors-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
@@ -2240,7 +2372,7 @@ function init() {
     document.getElementById('clr-main-cloth-hitbox').onclick = async (e) => {
         showPage('clr-cloth-page');
     }
-    document.getElementById('clr-cloth-hitbox').onclick = () => {showPage('clr-cloth-octagon-page');}
+    document.getElementById('clr-cloth-hitbox').onclick = () => {showPage('clr-cloth-octagon-page'); state.foundOctagon = true;}
     document.getElementById('clr-cloth-octagon-hitbox').onclick = async (e) => {
         await spawnThemedBox("Another shape...", "notification-top");
     }
@@ -2423,7 +2555,7 @@ function init() {
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
         showPage('printer-sync-minigame');
-u[j .m]
+        u[j .m] //fixme
         // 3. Reset the state
         currentLevel = 1;
         isRunning = true;
@@ -2443,13 +2575,22 @@ u[j .m]
     //------ WRITING ROOM SECTION -----
     document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('wr-mid-page');
     document.getElementById('wr-left-desk-key-hitbox').onclick = () => showPage('wr-desk-key-page');
-    document.getElementById('wr-desk-key-hitbox').onclick = () => {
+    document.getElementById('wr-desk-key-hitbox').onclick = async () => {
         state.hasLiKey = true;
         const keySlot = document.getElementById('inv-li-key')
         if (keySlot) {
             keySlot.classList.remove('hidden');
         }
         showPage('wr-desk-page');
+            if (!state.foundWrPapers) {
+                await delay(30);
+                sfx.shufflePapers.play();
+
+                await delay(1000);
+                await spawnThemedBox("What's that noise ? Is someone moving stuff around in this room?", "notification-top");
+                await delay(1500);
+                await spawnThemedBox("I should look around the room to see if anything changed", "notification-top");
+            }
     }
     document.getElementById('wr-desk-hitbox').onclick = async (e) => {
         await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
@@ -2459,6 +2600,7 @@ u[j .m]
         showPage('wr-papers-page');
         await delay(20);
         await spawnThemedBox("who left these papers here ?", "notification-top");
+        state.foundWrPapers = true;
     }
     document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
     document.getElementById('wr-papers-tu-hitbox').onclick = async (e) => {
@@ -2535,6 +2677,7 @@ u[j .m]
     document.getElementById('li-laptop-hitbox').onclick = async (e) => {
         await spawnThemedBox('I wonder what happens if I scan this book', 'notification-top');
         await spawnThemedBox('I should look around and see if I can find it.', 'notification-top');
+        state.foundScanner = true;
     }
     document.getElementById('li-main-lw-mw-hitbox').onclick = () => showPage('li-mw-books-page');
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
@@ -2791,7 +2934,7 @@ u[j .m]
     document.getElementById('lo-storage-entrance-hitbox').onclick = () => showPage('ls-in-1-page');
     document.getElementById('lo-main-right-desk-hitbox').onclick = () => showPage('lo-desk-page');
     document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
-    document.getElementById('lo-desk-monitor-hitbox').onclick = () => showPage('lo-monitor-page');
+    document.getElementById('lo-desk-monitor-hitbox').onclick = () => {showPage('lo-monitor-page'); state.foundLoMonitor = true;}
     //fixme add stuff for the monitor page
     document.getElementById('lo-monitor-drive-hitbox').onclick = async (e) => {
         useDrive();
