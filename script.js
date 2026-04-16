@@ -384,7 +384,7 @@ const roomLeads = {
 
     // Main Hall (Left Side)
     'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page' },
-    'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'mh-li-door-closed-page' },
+    'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'mh-li-door-closed-page', left: 'mh-tu-stairs-door-page' },
     'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'mh-bd-main-page' },
     'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page'},
     'mh-hall-left-endc-page':   { back: 'mh-bh-left-endc-page', forward: 'mh-sl-left-endc-page' },
@@ -715,7 +715,7 @@ const pageSounds = {
     'keycardSwipe': createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
     'accessBeep': createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
     'steps': createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
-    'markerWhiteboard': createSoundClips(sfx.markerWhiteboard, 0.3, false, 3, 45), //fixme check boundaries on this one, and add it to the desired page
+    'markerWhiteboard': createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45), //fixme check boundaries on this one, and add it to the desired page
 }
 
 let activeLoop = null; // To stop the loop when we change pages
@@ -962,13 +962,13 @@ async function triggerNotification(pageId) {
                 state.notificationsSeen['mh-bd-main-init'] = true;
             }
         } break;
-        case 'bd-door-open-page': {
-            await delay(20);
-            if (!state.notificationsSeen['bd-door-open-init']) {
-                await spawnThemedBox('Another room.... I wonder what\'s behind that back door', "notification-top");
-                state.notificationsSeen['bd-door-open-init'] = true;
-            }
-        } break;
+        // case 'bd-door-open-page': {
+        //     await delay(20);
+        //     if (!state.notificationsSeen['bd-door-open-init']) {
+        //         await spawnThemedBox('Another room.... I wonder what\'s behind that back door', "notification-top");
+        //         state.notificationsSeen['bd-door-open-init'] = true;
+        //     }
+        // } break; fixme may remove this
         case 'pr-wr-box-page': {
             await delay(20);
             if (!state.notificationsSeen['pr-wr-box-init']) {
@@ -3474,6 +3474,7 @@ function init() {
     document.getElementById('tu-hatch-hitbox').onclick = async () => {
         await spawnThemedBox("I wonder if I can unlock this hatch somehow", "notification-top");
     }
+    document.getElementById('mh-li-right-endc-sd-hitbox').onclick = () => showPage('mh-tu-stairs-door-page');
 
 
 
