@@ -130,6 +130,7 @@ const menu = document.getElementById('menu-screen');
 const tutorial = document.getElementById('tutorial');
 
 const startButton = document.getElementById('start-button');
+const loadSaveButton = document.getElementById('load-save-button');
 const play = document.getElementById('play');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
@@ -339,12 +340,12 @@ const roomLeads = {
     // Book Drop (BD)
     'mh-bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
     'mh-bd-door-page':           { back: 'mh-bd-main-page' },
-    'bd-door-open-page':      { back: 'mh-bd-main-page', forward: 'bd-cart-page', audio: {back: 'doorClose'} },
+    'bd-door-open-page':      { back: 'mh-bd-main-page', audio: {back: 'doorClose'} },
     'mh-bd-slot-closed-page':    { back: 'mh-bd-door-page' },
     'mh-bd-door-handle-page':    { back: 'mh-bd-door-page' },
     'mh-bd-slot-open-key-page':  { back: 'mh-bd-slot-closed-page' },
     'mh-bd-slot-open-page':      { back: 'mh-bd-slot-closed-page' },
-    'bd-cart-page':           { back: 'bd-door-open-page', forward: 'bd-books-page' },
+    'bd-cart-page':           { back: 'bd-door-open-page'},
     'bd-back-door-handle-page': { back: 'bd-door-open-page' },
     'bd-books-page':          { back: 'bd-cart-page' },
     'bd-fb-open-key-page':    { back: 'bd-books-page' },
@@ -875,6 +876,7 @@ async function showPage(pageId) {
         }
         triggerSound(pageId);
     }, 0);
+    saveGame(pageId);
 }
 
 function preloadWholeRoom(pageId) {
@@ -1063,7 +1065,7 @@ function triggerFlicker(elementId) {
 const hintRules = [
     {
         condition: () => !state.bdUnlocked && !state.hasBdKey,
-        text: "Try looking in the book drop"
+        text: "Try inspecting the book depository"
     },
     {
         condition: () => !state.bdUnlocked && state.hasBdKey,
@@ -1071,7 +1073,7 @@ const hintRules = [
     },
     {
         condition: () => state.bdUnlocked && !state.bdBackDoorUnlocked && !state.hasPrKey,
-        text: "Try looking in the book depository in the book drop room"
+        text: "Try inspecting the pile of books in the book drop room"
     },
     {
         condition: () => !state.bdBackDoorUnlocked && state.hasPrKey,
@@ -1376,27 +1378,30 @@ inventoryTab.onclick = () => {
 
 function refreshInventorySlots() {
     const content = document.getElementById('inventory-content');
-    const items = content.querySelectorAll('.inv-item:not(.empty)');
+    if (!content) return;
+
+    // 1. Get real items and empty slots separately
+    const realItems = content.querySelectorAll('.inv-item:not(.empty)');
     const emptySlots = content.querySelectorAll('.inv-item.empty');
 
-    // Count how many real items are currently visible (not hidden)
+    // 2. Count how many REAL items are visible (unhidden)
     let visibleItemsCount = 0;
-    items.forEach(item => {
+    realItems.forEach(item => {
         if (!item.classList.contains('hidden')) {
             visibleItemsCount++;
         }
     });
 
-    // Let's say your inventory capacity is 8
-    const maxCapacity = 8;
-    const neededEmptySlots = maxCapacity - visibleItemsCount;
+    // 3. Set your limit to 6
+    const maxCapacity = 6;
+    const neededEmptySlots = Math.max(0, maxCapacity - visibleItemsCount);
 
-    // Show or hide empty slots based on remaining space
+    // 4. THE FIX: Explicitly hide or show empty slots
     emptySlots.forEach((slot, index) => {
         if (index < neededEmptySlots) {
-            slot.classList.remove('hidden'); // Show this empty box
+            slot.classList.remove('hidden'); // Keep it visible to fill the 6
         } else {
-            slot.classList.add('hidden');    // Hide this empty box
+            slot.classList.add('hidden');    // HIDE it because a real item is here
         }
     });
 }
@@ -2094,33 +2099,36 @@ function init() {
         }, 1000); // Wait 1 second after the page is visible to start background loading
     });
     startButton.onclick = () => {
-        // 1. IMMEDIATE ACTION (This fixes the "Input Delay")
-        menu.classList.add('hidden');
+        prepareGameUI();
 
-        // 2. WAIT ONE FRAME (Let the menu disappear first)
         requestAnimationFrame(() => {
-            // 3. SHOW THE BASE UI (The "Skeleton" of the game)
-            play.classList.remove('hidden');
-            document.getElementById('inventory-drawer').classList.remove('hidden');
-            document.getElementById('hamburger-menu').classList.remove('hidden');
+            // Clear any old save data so they start fresh
+            clearSave();
 
-            // 4. WAIT ANOTHER FRAME (Let the UI settle)
-            requestAnimationFrame(() => {
-                // 5. SHOW THE INTERACTIVE TOOLS
-                document.getElementById('hint-btn').classList.remove('hidden');
-                document.getElementById('hint-box').classList.remove('hidden');
+            triggerSound('globalAmbience'); //fixme move this and lower line/change when add tutorial
+            // Start from the beginning
+            showPage('mh-bd-main-page');
+        });
+    };
+    loadSaveButton.onclick = () => {
+        if (!hasSaveFile()) {
+            alert("No save file found!"); // Safety check
+            return;
+        }
 
-                // 6. FINAL STEP: Load the content
-                if (hasSaveFile()) {
-                    const saveData = loadGame();
-                    if (saveData) {
-                        showPage(saveData.currentPage);
-                        return;
-                    }
-                }
-                triggerSound('globalAmbience'); //fixme move this when I add tutorial
+        prepareGameUI();
+
+        requestAnimationFrame(() => {
+            const loaded = loadGame();
+
+            if (loaded) {
+                triggerSound('globalAmbience');
+                // NOTE: loadGame already calls showPage,
+                // but we can call it here explicitly if loadGame only returns the data.
+            } else {
+                // Backup plan: If the save is corrupted, start a new game
                 showPage('mh-bd-main-page');
-            });
+            }
         });
     };
 
@@ -3934,86 +3942,84 @@ function setupWireCanvasEvents() {
 }
 
 // ---- SAVE SYSTEM ----
+// ---- SAVE SYSTEM ----
 const SAVE_KEY = 'escapeTribble_save';
 
+function prepareGameUI() {
+    menu.classList.add('hidden');
+    play.classList.remove('hidden');
+    document.getElementById('inventory-drawer').classList.remove('hidden');
+    document.getElementById('hamburger-menu').classList.remove('hidden');
+    document.getElementById('hint-btn').classList.remove('hidden');
+    document.getElementById('hint-box').classList.remove('hidden');
+}
+
 function saveGame(currentPageId) {
-    const inventoryState = {};
+    // 1. Get a list of every item currently visible in the inventory
+    const visibleItems = [];
     document.querySelectorAll('.inv-item').forEach(item => {
-        if (item.id) {
-            inventoryState[item.id] = !item.classList.contains('hidden');
+        if (!item.classList.contains('hidden')) {
+            visibleItems.push(item.id);
         }
     });
 
-    const wireSave = {
-        initialized: wirePuzzleInitialized,
-        solved: state.solvedWirePuzzle,
-        connections: wirePuzzleInitialized ? { ...wireConnections } : {},
-        leftNodes: wirePuzzleInitialized ? wireLeftNodes.map(n => ({ ...n })) : [],
-        rightNodes: wirePuzzleInitialized ? wireRightNodes.map(n => ({ ...n })) : [],
-    };
-
+    // 2. Package everything together
     const saveData = {
-        state: { ...state },
+        state: { ...state }, // This copies all your booleans/flags
         currentPage: currentPageId,
-        inventory: inventoryState,
-        wire: wireSave,
+        inventory: visibleItems
     };
 
     try {
         localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+        console.log("Game Saved at: " + currentPageId);
     } catch (e) {
-        console.error('Autosave failed:', e);
+        console.error('Save failed:', e);
     }
 }
 
 function loadGame() {
     try {
         const raw = localStorage.getItem(SAVE_KEY);
-        if (!raw) return false;
+        if (!raw) {
+            console.warn("No save data found in localStorage.");
+            return false;
+        }
 
         const saveData = JSON.parse(raw);
 
-        // Restore state
-        Object.keys(saveData.state).forEach(key => {
-            state[key] = saveData.state[key];
+        // 1. Restore the state variables (all your booleans, flags, and keys)
+        // This overwrites your 'const state' with the saved values
+        Object.assign(state, saveData.state);
+
+        // 2. Restore Inventory Visuals
+        // First, hide all inventory items to create a clean slate
+        document.querySelectorAll('.inv-item').forEach(item => {
+            item.classList.add('hidden');
         });
 
-        // Restore inventory UI
-        Object.entries(saveData.inventory).forEach(([id, visible]) => {
-            const el = document.getElementById(id);
-            if (el) {
-                visible ? el.classList.remove('hidden') : el.classList.add('hidden');
-            }
-        });
+        // Then, loop through the list of IDs we saved and un-hide them
+        if (saveData.inventory && Array.isArray(saveData.inventory)) {
+            saveData.inventory.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('hidden');
+                }
+            });
+        }
+        refreshInventorySlots();
 
-        // Restore wire puzzle
-        if (saveData.wire.initialized) {
-            wirePuzzleInitialized = true;
-            wireCanvas = document.getElementById('wire-canvas');
-            wireCtx = wireCanvas.getContext('2d');
-            wireCanvas.width = 500;
-            wireCanvas.height = 350;
-            wireColors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6'];
-            wireColorNames = ['red', 'blue', 'green', 'yellow', 'purple'];
-            wireNumWires = 5;
-            wireNodeRadius = 14;
-            wireLeftX = 80;
-            wireRightX = 420;
-            wireLeftNodes = saveData.wire.leftNodes;
-            wireRightNodes = saveData.wire.rightNodes;
-            wireConnections = saveData.wire.connections;
-            wireDragging = false;
-            wireDragStart = null;
-            wireDragCurrent = null;
-            wireErrorFlash = false;
-            setupWireCanvasEvents();
+        // 3. Handle specific puzzle cleanups / UI synchronization
+        // Since the wire puzzle isn't saved in detail, we just check if it was finished
+        if (state.solvedWirePuzzle) {
+            const popup = document.getElementById('wire-solved-popup');
+            if (popup) popup.classList.add('hidden');
         }
 
-        if (saveData.wire.solved) {
-            document.getElementById('wire-solved-popup').classList.add('hidden');
-        }
-
+        // 4. Return the data so the calling function knows where to send the player
+        console.log("Game Loaded Successfully. Last page:", saveData.currentPage);
         return saveData;
+
     } catch (e) {
         console.error('Load failed:', e);
         return false;
