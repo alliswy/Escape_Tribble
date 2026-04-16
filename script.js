@@ -165,6 +165,17 @@ const sfx = {
     printClick:  { audio: new Audio('sounds/printer-clicking.mp3'),  baseVol: 0.2 },
     shufflePapers: { audio: new Audio('sounds/shuffle-papers.mp3'),  baseVol: 0.2 },
     unlock: { audio: new Audio('sounds/unlock.mp3'),  baseVol: 0.5 },
+    openDoor: {audio: new Audio('sounds/door-open.mp3'), baseVol: 0.4},
+    cwDoor: {audio: new Audio('sounds/cw-door.mp3'), baseVol: 0.5},
+    doorOpenClose: {audio: new Audio('sounds/door-open-close.mp3'), baseVol: 0.5},
+    doorClose: {audio: new Audio('sounds/door-close.mp3'), baseVol: 0.5},
+
+    scanner: {audio: new Audio('sounds/scanner.mp3'), baseVol: 0.5},
+    keypadBeep: {audio: new Audio('sounds/keypad-beep.mp3'), baseVol: 0.5},
+    keycardSwipe: {audio: new Audio('sounds/keycard-swipe.mp3'), baseVol: 0.5},
+    accessBeep: {audio: new Audio('sounds/access-beep.mp3'), baseVol: 0.5},
+    errorBeep: {audio: new Audio('sounds/error-beep.mp3'), baseVol: 0.5},
+
 }; //fixme add more sounds
 
 
@@ -295,7 +306,7 @@ const roomLeads = {
     // Book Drop (BD)
     'mh-bd-main-page':           { right: 'mh-bd-right-endc-page', left: 'mh-bd-left-endc-page' },
     'mh-bd-door-page':           { back: 'mh-bd-main-page' },
-    'bd-door-open-page':      { back: 'mh-bd-main-page', forward: 'bd-cart-page' },
+    'bd-door-open-page':      { back: 'mh-bd-main-page', forward: 'bd-cart-page', audio: {back: 'doorClose'} },
     'mh-bd-slot-closed-page':    { back: 'mh-bd-door-page' },
     'mh-bd-door-handle-page':    { back: 'mh-bd-door-page' },
     'mh-bd-slot-open-key-page':  { back: 'mh-bd-slot-closed-page' },
@@ -308,7 +319,7 @@ const roomLeads = {
     'bd-back-door-open-page': { back: 'bd-door-open-page' },
 
     // Projector Room (PR)
-    'pr-steps-page':          { back: 'bd-back-door-open-page', forward: 'pr-main-page' },
+    'pr-steps-page':          { back: 'bd-back-door-open-page', forward: 'pr-main-page'},
     'pr-main-page':           { back: 'pr-steps-page' },
     'pr-wr-main-page':        { back: () => state.isProjectorOn ? 'pr-main-po-page': 'pr-main-page'},
     'pr-pw-main-book-page':   { back: 'pr-main-page' },
@@ -422,7 +433,7 @@ const roomLeads = {
     //kitchen
     'mh-ki-door-closed-page':    { left: 'mh-cend-right-endc-kc-page', right: 'mh-cend-left-endc-page' },
     'mh-ki-door-handle-page':    { back: 'mh-ki-door-closed-page' },
-    'ki-door-open-page':       {back: 'mh-ki-door-closed-page', forward: 'ki-entrance-page'},
+    'ki-door-open-page':       {back: 'mh-ki-door-closed-page', forward: 'ki-entrance-page', audio: {back: 'doorClose'}},
     'ki-entrance-page':        {back: 'ki-door-open-page'},
     'ki-entrance-code-page':   {back: 'ki-door-open-page'},
     'ki-main-code-page':       {back: 'ki-entrance-code-page'},
@@ -514,7 +525,7 @@ const roomLeads = {
     //library
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
-    'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: () => state.isLiTvOn ? 'li-entrance-tvo-page' :'li-entrance-page'},
+    'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: () => state.isLiTvOn ? 'li-entrance-tvo-page' :'li-entrance-page', audio: {back: 'doorClose'}},
     'li-entrance-page':          {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-nb-page':       {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-tvo-page':      {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
@@ -661,6 +672,9 @@ const pageSounds = {
 
     //action sounds fixme this may break something not sure yet
     'unlock': createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
+    'doorClose': createSoundClip(sfx.doorClose, 0.7, false, 1.03,0),
+    'keycardSwipe': createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
+    'accessBeep': createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
 }
 let activeLoop = null; // To stop the loop when we change pages
 
@@ -946,13 +960,23 @@ function goRight()   { move('right'); }
 
 function move(dir) {
     const current = Array.from(allPages).find(p => !p.classList.contains('hidden'));
-    let dest = getDestination(dir, current?.id);
+    if (!current) return;
 
-    // ADD THIS: If dest is a function, execute it to get the string
+    const roomData = roomLeads[current.id];
+    let dest = getDestination(dir, current.id);
+
+    // 1. Check for transition audio before moving
+    // It looks for roomLeads[current.id].audio[dir]
+    if (roomData && roomData.audio && roomData.audio[dir]) {
+        triggerSound(roomData.audio[dir]);
+    }
+
+    // 2. Resolve destination
     if (typeof dest === 'function') {
         dest = dest();
     }
 
+    // 3. Navigate
     if (dest) showPage(dest);
 }
 
@@ -1171,7 +1195,7 @@ const hintRules = [
     {
         // Default hint (always keep at the bottom)
         condition: () => true,
-        text: "Keep looking around, there's a detail you've missed."
+        text: "ERROR: No hints available right now."
     }
 ];
 
@@ -1916,6 +1940,7 @@ function exitPrinterGame() {
 
 // 2. THIS HANDLES THE TYPING (Keep this outside/separate)
 async function inputKey(num) {
+    playSound('keypadBeep');
     enteredCode += num;
     console.log("Input: " + enteredCode);
 
@@ -1943,7 +1968,7 @@ function checkSecurityPass() {
 
     // THIS IS THE "SUCCESS BLOCK" (The 'if' part)
     if (state.wonWordle && userAttempt === correctKey) {
-
+        triggerSound('accessBeep');
         // 1. Show the "Authorizing" state immediately
         feedback.innerText = "AUTHORIZING...";
         feedback.style.color = "#26e600";
@@ -1967,6 +1992,7 @@ function checkSecurityPass() {
     }
     // THIS IS THE "FAILURE BLOCK" (The 'else' part)
     else {
+        playSound('errorBeep');
         feedback.innerText = "[ERROR] INCORRECT PASSWORD";
         feedback.style.color = "#ff4444";
         status.innerText = "ACCESS DENIED";
@@ -2241,6 +2267,7 @@ function init() {
     };
     document.getElementById('bd-door-handle-hitbox').onclick = async (e) => {
         if (state.bdUnlocked) {
+            playSound('openDoor');
             showPage('bd-door-open-page');
         } else {
             await delay(20);
@@ -2289,6 +2316,7 @@ function init() {
     };
     document.getElementById('bd-back-handle-handle-hitbox').onclick = async (e) => {
         if (state.bdBackDoorUnlocked) {
+            playSound('openDoor');
             showPage('bd-back-door-open-page');
         } else {
             await spawnThemedBox('I need to unlock the door first', "notification-top");
@@ -2417,6 +2445,7 @@ function init() {
     };
     document.getElementById('ki-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.kiUnlocked) {
+            playSound('openDoor');
             showPage('ki-door-open-page');
         } else {
             await spawnThemedBox('This door\'s locked, too', "notification-top");
@@ -2679,10 +2708,11 @@ function init() {
     document.getElementById('bath-sink-sink-hitbox').onclick = async (e) => {
         await spawnThemedBox("This sink is so old you can't turn the water off", "notification-top");
     }
-    document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('cw-wr-handle-unlocked-page');
+    //document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('cw-wr-handle-unlocked-page'); //fixme why are there two of these and why does the second run instead
     document.getElementById('cw-wr-dc-hitbox').onclick = () => showPage('cw-wr-handle-locked-page');
     document.getElementById('cw-wr-scanner-hitbox').onclick = async (e) => {
         if (state.hasWrId) {
+            triggerSound('keycardSwipe');
         state.wrUnlocked = true;
         const keySlot = document.getElementById('inv-wr-od');
         if (keySlot) {
@@ -2702,7 +2732,10 @@ function init() {
     document.getElementById('cw-wr-locked-handle-hitbox').onclick = async (e) => {
         spawnThemedBox("I need to unlock the door first", "notification-top");
     }
-    document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {showPage('wr-mid-page')}; //fixme show wr room main page when added
+    document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {
+        playSound('doorOpenClose')
+        showPage('wr-mid-page')
+    }; //fixme show wr room main page when added
     document.getElementById('oh3-entrance-hitbox').onclick = () => showPage('oh2-oh3-entrance-page');
 
     document.getElementById('cw-oh1-entrance-hitbox').onclick = () => showPage('oh1-left-1-page');
@@ -2755,7 +2788,10 @@ function init() {
 
 
     //------ WRITING ROOM SECTION -----
-    document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('wr-mid-page');
+    document.getElementById('cw-wr-do-hitbox').onclick = () => {
+        playSound('doorOpenClose');
+        showPage('wr-mid-page');
+    }
     document.getElementById('wr-left-desk-key-hitbox').onclick = () => showPage('wr-desk-key-page');
     document.getElementById('wr-desk-key-hitbox').onclick = async () => {
         state.hasLiKey = true;
@@ -2816,6 +2852,7 @@ function init() {
     //door, handle, and locking
     document.getElementById('li-door-handle-hitbox').onclick = () => {
         if (state.liUnlocked) {
+            playSound('openDoor');
             showPage('li-door-open-page');
         } else {
             showPage('mh-li-door-handle-page');
@@ -2837,24 +2874,31 @@ function init() {
     }
     document.getElementById('li-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.liUnlocked) {
+            playSound('openDoor');
             showPage('li-door-open-page');
         } else {
             await spawnThemedBox('I need to unlock the door first', "notification-top");
         }
     }
     document.getElementById('li-main-lw-lt-hitbox').onclick = () => {
-        showPage('li-left-lt-page'); //fixme later add check for if they did what was needed for this page
+        if (state.hasSkPaper) {
+            showPage('li-left-lt-star-page'); //fixme add this image
+        } else {
+           showPage('li-left-lt-page');
+        } //fixme later add check for if they did what was needed for this page
     }
     document.getElementById('li-left-lt-hitbox').onclick = () => showPage('li-lt-page');
     document.getElementById('li-lt-laptop-hitbox').onclick = () => showPage('li-laptop-page');
     document.getElementById('li-lt-scanner-hitbox').onclick = async(e) => {
         if (state.hasLorBook) {
+            playSound('scanner');
             state.scannedBook = true;
             const keySlot = document.getElementById('inv-lor-book')
             if (keySlot) {
                 keySlot.classList.add('hidden');
                 refreshInventorySlots();
             }
+            showPage('li-lt-star-page');
         } else {
             await spawnThemedBox('I need to find a book to scan', "notification-top");
         }
@@ -3125,6 +3169,7 @@ function init() {
                 keySlot.classList.add('hidden');
                 refreshInventorySlots();
             }
+            playSound('openDoor');
             showPage('li-office-door-open-page');
         } else {
             await spawnThemedBox("I need one more key...", "notification-top");
