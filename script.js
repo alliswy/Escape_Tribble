@@ -169,12 +169,14 @@ const sfx = {
     cwDoor: {audio: new Audio('sounds/cw-door.mp3'), baseVol: 0.5},
     doorOpenClose: {audio: new Audio('sounds/door-open-close.mp3'), baseVol: 0.5},
     doorClose: {audio: new Audio('sounds/door-close.mp3'), baseVol: 0.5},
+    steps: {audio: new Audio('sounds/steps.mp3'), baseVol: 0.5},
 
     scanner: {audio: new Audio('sounds/scanner.mp3'), baseVol: 0.5},
     keypadBeep: {audio: new Audio('sounds/keypad-beep.mp3'), baseVol: 0.5},
     keycardSwipe: {audio: new Audio('sounds/keycard-swipe.mp3'), baseVol: 0.5},
     accessBeep: {audio: new Audio('sounds/access-beep.mp3'), baseVol: 0.5},
     errorBeep: {audio: new Audio('sounds/error-beep.mp3'), baseVol: 0.5},
+    ambientNoise: {audio: new Audio('sounds/ambient-noise.m4a'), baseVol: 1},
 
 }; //fixme add more sounds
 
@@ -187,16 +189,21 @@ function getSFXMultiplier() {
     return slider ? parseFloat(slider.value) / 50 : 1.0;
 }
 
-// Standard Play function
-function playSound(key) {
-    const entry = sfx[key];
-    if (entry) {
-        const m = getSFXMultiplier();
-        entry.audio.volume = Math.min(Math.max(entry.baseVol * m, 0), 1);
-        entry.audio.currentTime = 0;
-        entry.audio.play();
-    }
+function getMusicMultiplier() {
+    const slider = document.getElementById('music-slider'); // Your music slider ID
+    return slider ? parseFloat(slider.value) / 50 : 1.2; // Defaulting to 1.2 for "extra loud"
 }
+//fixme delete this
+// // Standard Play function
+// function playSound(key) {
+//     const entry = sfx[key];
+//     if (entry) {
+//         const m = getSFXMultiplier();
+//         entry.audio.volume = Math.min(Math.max(entry.baseVol * m, 0), 1);
+//         entry.audio.currentTime = 0;
+//         entry.audio.play();
+//     }
+// }
 
 // Smooth Fade Out function
 function fadeOut(key, durationMs) {
@@ -283,9 +290,11 @@ function syncSFXSystems(val) {
 
     // 2. Update all active sounds in the library
     for (let key in sfx) {
+        // Tell the SFX slider to keep its hands off the music file!
+        if (key === 'ambientNoise') continue;
+
         const entry = sfx[key];
         if (entry && entry.audio) {
-            // Apply Base Volume * Multiplier, clamped between 0.0 and 1.0
             const finalVol = entry.baseVol * multiplier;
             entry.audio.volume = Math.min(Math.max(finalVol, 0), 1);
         }
@@ -293,7 +302,30 @@ function syncSFXSystems(val) {
 
     for (let page in pageSounds) {
         const data = pageSounds[page];
-        if (data.clip) {
+        // This part is already correct!
+        if (data.clip && data.type !== 'music') {
+            data.clip.volume = Math.min(Math.max(data.volume * multiplier, 0), 1);
+        }
+    }
+}
+
+//syncs music sounds to music slider
+function syncMusicSystems(val) {
+    const multiplier = val / 50;
+
+    document.getElementById('music-value').textContent = val;
+    document.getElementById('music-slider').value = val;
+
+    // 1. Update the raw audio file in the sfx warehouse
+    if (sfx.ambientNoise) {
+        const finalVol = sfx.ambientNoise.baseVol * multiplier;
+        sfx.ambientNoise.audio.volume = Math.min(Math.max(finalVol, 0), 1);
+    }
+
+    // 2. Update any clips tagged as music
+    for (let page in pageSounds) {
+        const data = pageSounds[page];
+        if (data.clip && data.type === 'music') {
             data.clip.volume = Math.min(Math.max(data.volume * multiplier, 0), 1);
         }
     }
@@ -667,6 +699,12 @@ function createSoundClip(sfxEntry, volume = 1, loop = true, startCrop = 0, endCr
 }
 
 const pageSounds = {
+    //ambient noise throughout the whole game (music)
+    'globalAmbience': {
+        ...createSoundClip(sfx.ambientNoise, 1, true, 1.5, 1.5),
+        type: 'music'
+    },
+
     'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
     'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
 
@@ -675,64 +713,87 @@ const pageSounds = {
     'doorClose': createSoundClip(sfx.doorClose, 0.7, false, 1.03,0),
     'keycardSwipe': createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
     'accessBeep': createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
+    'steps': createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
 }
+
 let activeLoop = null; // To stop the loop when we change pages
+// Variable to track the currently playing LOOPING sound
+let currentlyPlayingId = null;
 
-function triggerSound(pageId) {
-    const data = pageSounds[pageId];
-    if (!data) return;
+function triggerSound(id) {
+    // 1. CHECK THE REGISTRY (Clips)
+    const data = pageSounds[id];
 
-    const { clip, volume, loop, startCrop, endCrop } = data;
+    if (data) {
+        const { clip, volume, loop, startCrop, endCrop, type } = data;
 
-    // FIX: If this specific sound is currently fading out, STOP that fade immediately
-    if (clip.activeFade) {
-        clearInterval(clip.activeFade);
-        clip.activeFade = null;
-    }
+        // Prevent restarting loops
+        if (loop && id === currentlyPlayingId) return;
 
-    if (activeLoop) cancelAnimationFrame(activeLoop);
+        // Cleanup old timers/fades
+        if (clip.activeFade) { clearInterval(clip.activeFade); clip.activeFade = null; }
+        if (clip.actionTimer) { clearTimeout(clip.actionTimer); clip.actionTimer = null; }
+        if (loop && activeLoop) { cancelAnimationFrame(activeLoop); activeLoop = null; }
 
-    // Recalculate volume using the multiplier right now
-    const m = getSFXMultiplier();
-    clip.volume = Math.min(Math.max(volume * m, 0), 1);
+        const m = (type === 'music') ? getMusicMultiplier() : getSFXMultiplier();
+        clip.volume = Math.min(Math.max(volume * m, 0), 1);
+        clip.loop = false;
 
-    clip.loop = false;
-
-    if (loop) {
-        const checkTime = () => {
-            // Real-time volume sync while looping
-            const currentM = getSFXMultiplier();
-            clip.volume = Math.min(Math.max(volume * currentM, 0), 1);
-
-            if (clip.currentTime >= (clip.duration - endCrop)) {
-                clip.currentTime = startCrop;
-                clip.play();
-            }
+        if (loop) {
+            currentlyPlayingId = id;
+            const checkTime = () => {
+                if (currentlyPlayingId !== id) return;
+                if (clip.currentTime >= (clip.duration - endCrop)) {
+                    clip.currentTime = startCrop;
+                }
+                activeLoop = requestAnimationFrame(checkTime);
+            };
+            clip.currentTime = startCrop;
+            clip.play();
             activeLoop = requestAnimationFrame(checkTime);
-        };
-
-        clip.currentTime = startCrop;
-        clip.play();
-        activeLoop = requestAnimationFrame(checkTime);
-    } else {
-        // --- ONE-SHOT LOGIC WITH END CROP ---
-        clip.currentTime = startCrop;
-        clip.play();
-
-        // Calculate how long the sound should play:
-        // (Total Duration) - (Start Crop) - (End Crop)
-        const playDuration = (clip.duration - startCrop - endCrop) * 1000;
-
-        // stop the sound after the duration has passed
-        if (playDuration > 0) {
-            setTimeout(() => {
-                // Check to make sure we are still playing the same clip
-                // and it hasn't been looped or changed by another page
-                clip.pause();
-                clip.currentTime = startCrop;
-            }, playDuration);
+        } else {
+            clip.currentTime = startCrop;
+            clip.play();
+            const playDuration = (clip.duration - startCrop - endCrop) * 1000;
+            if (playDuration > 0) {
+                clip.actionTimer = setTimeout(() => {
+                    clip.pause();
+                    clip.currentTime = startCrop;
+                }, playDuration);
+            }
         }
     }
+    // 2. FALLBACK TO RAW SFX (For things that don't have clips)
+    else if (sfx[id]) {
+        const entry = sfx[id];
+        const m = getSFXMultiplier();
+
+        // Reset and play immediately (simple logic)
+        entry.audio.volume = Math.min(Math.max(entry.baseVol * m, 0), 1);
+        entry.audio.currentTime = 0;
+        entry.audio.play();
+    }
+}
+
+function stopAllAudio() {
+    // 1. Stop the looping heartbeat (requestAnimationFrame)
+    if (activeLoop) {
+        cancelAnimationFrame(activeLoop);
+        activeLoop = null;
+    }
+
+    // 2. Pause the actual audio clip that was playing
+    if (currentlyPlayingId) {
+        const data = pageSounds[currentlyPlayingId];
+        if (data && data.clip) {
+            data.clip.pause();
+            data.clip.currentTime = 0; // Reset to start
+        }
+        currentlyPlayingId = null; // Clear the tracker
+    }
+
+    // 3. Clear any one-shot timers (like your unlock/swipe sounds)
+    // You can loop through your registry and clear all .actionTimer if needed
 }
 
 function stopSound(pageId, fadeDuration = 50) {
@@ -1940,7 +2001,7 @@ function exitPrinterGame() {
 
 // 2. THIS HANDLES THE TYPING (Keep this outside/separate)
 async function inputKey(num) {
-    playSound('keypadBeep');
+    triggerSound('keypadBeep');
     enteredCode += num;
     console.log("Input: " + enteredCode);
 
@@ -1992,7 +2053,7 @@ function checkSecurityPass() {
     }
     // THIS IS THE "FAILURE BLOCK" (The 'else' part)
     else {
-        playSound('errorBeep');
+        triggerSound('errorBeep');
         feedback.innerText = "[ERROR] INCORRECT PASSWORD";
         feedback.style.color = "#ff4444";
         status.innerText = "ACCESS DENIED";
@@ -2055,6 +2116,7 @@ function init() {
                         return;
                     }
                 }
+                triggerSound('globalAmbience'); //fixme move this when I add tutorial
                 showPage('mh-bd-main-page');
             });
         });
@@ -2074,9 +2136,7 @@ function init() {
 
     //Music volume slider
     document.getElementById('music-slider').oninput = (e) => {
-        document.getElementById('music-value').textContent = e.target.value;
-        //FIXME - connect to music audio when added
-        console.log('Music volume:', e.target.value);
+        syncMusicSystems(e.target.value);
     };
 
     //SFX volume slider
@@ -2136,11 +2196,19 @@ function init() {
 
 // In-game music slider
     document.getElementById('ingame-music-slider').oninput = (e) => {
-        document.getElementById('ingame-music-value').textContent = e.target.value;
-        // Keep main menu slider in sync
-        document.getElementById('music-slider').value = e.target.value;
-        document.getElementById('music-value').textContent = e.target.value;
-        console.log('Music volume:', e.target.value);
+        const val = e.target.value;
+
+        // 1. Update UI for the current slider
+        document.getElementById('ingame-music-value').textContent = val;
+
+        // 2. Keep main menu slider in sync
+        const mainSlider = document.getElementById('music-slider');
+        const mainLabel = document.getElementById('music-value');
+        if (mainSlider) mainSlider.value = val;
+        if (mainLabel) mainLabel.textContent = val;
+
+        // 3. THE MISSING LINK: Actually change the sound volume!
+        syncMusicSystems(val);
     };
 
 // In-game SFX slider
@@ -2168,6 +2236,7 @@ function init() {
 
     //Restart button
     document.getElementById('restart-btn').onclick = () => {
+        stopAllAudio();
         hamburgerDropdown.classList.remove('dropdown-open');
 
         // Reset all state flags
@@ -2193,11 +2262,18 @@ function init() {
         clearSave();
 
         // Return to start of game
+        triggerSound('ambientNoise');
+        const currentMusicVol = document.getElementById('music-slider').value;
+        const currentSFXVol = document.getElementById('sfx-slider').value;
+        syncMusicSystems(currentMusicVol);
+        syncSFXSystems(currentSFXVol);
+
         showPage('mh-bd-main-page');
     };
 
     //Quit to main menu button
     document.getElementById('quit-btn').onclick = () => {
+        stopAllAudio();
         hamburgerDropdown.classList.remove('dropdown-open');
         play.classList.add('hidden');
         document.getElementById('inventory-drawer').classList.add('hidden');
@@ -2267,7 +2343,7 @@ function init() {
     };
     document.getElementById('bd-door-handle-hitbox').onclick = async (e) => {
         if (state.bdUnlocked) {
-            playSound('openDoor');
+            triggerSound('openDoor');
             showPage('bd-door-open-page');
         } else {
             await delay(20);
@@ -2316,7 +2392,7 @@ function init() {
     };
     document.getElementById('bd-back-handle-handle-hitbox').onclick = async (e) => {
         if (state.bdBackDoorUnlocked) {
-            playSound('openDoor');
+            triggerSound('openDoor');
             showPage('bd-back-door-open-page');
         } else {
             await spawnThemedBox('I need to unlock the door first', "notification-top");
@@ -2445,7 +2521,7 @@ function init() {
     };
     document.getElementById('ki-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.kiUnlocked) {
-            playSound('openDoor');
+            triggerSound('openDoor');
             showPage('ki-door-open-page');
         } else {
             await spawnThemedBox('This door\'s locked, too', "notification-top");
@@ -2694,8 +2770,13 @@ function init() {
     document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async (e) => {
         await spawnThemedBox("What happened here ? It looks like the upper floors have been demolished.", "notification-top");
     }
-    document.getElementById('mh-cw-stairs-hitbox').onclick = () => showPage('stairs-page');
-    document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => showPage('mh-cw-door-page');
+    document.getElementById('mh-cw-stairs-hitbox').onclick = () => {
+        showPage('stairs-page');
+    }
+    document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => {
+        triggerSound('steps'); //fixme only on way down rn
+        showPage('mh-cw-door-page');
+    }
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
     //^fixme add some stuff on the plate page
     document.getElementById('mh-cw-door-hitbox').onclick = () => showPage('cw-entrance-page');
@@ -2733,7 +2814,7 @@ function init() {
         spawnThemedBox("I need to unlock the door first", "notification-top");
     }
     document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {
-        playSound('doorOpenClose')
+        triggerSound('doorOpenClose')
         showPage('wr-mid-page')
     }; //fixme show wr room main page when added
     document.getElementById('oh3-entrance-hitbox').onclick = () => showPage('oh2-oh3-entrance-page');
@@ -2753,7 +2834,7 @@ function init() {
         showPage('oh1-books-page');
         await delay(20);
         await spawnThemedBox("Another key !", "notification-top");
-        playSound('printClick');
+        triggerSound('printClick');
         setTimeout(async () => {
             await spawnThemedBox("Is that a printer making noise ?", "notification-top");
             setTimeout(async () => {
@@ -2789,7 +2870,7 @@ function init() {
 
     //------ WRITING ROOM SECTION -----
     document.getElementById('cw-wr-do-hitbox').onclick = () => {
-        playSound('doorOpenClose');
+        triggerSound('doorOpenClose');
         showPage('wr-mid-page');
     }
     document.getElementById('wr-left-desk-key-hitbox').onclick = () => showPage('wr-desk-key-page');
@@ -2803,7 +2884,7 @@ function init() {
         showPage('wr-desk-page');
             if (!state.foundWrPapers) {
                 await delay(30);
-                playSound('shufflePapers');
+                triggerSound('shufflePapers');
 
                 await delay(1000);
                 await spawnThemedBox("What's that noise ? Is someone moving stuff around in this room?", "notification-top");
@@ -2852,7 +2933,7 @@ function init() {
     //door, handle, and locking
     document.getElementById('li-door-handle-hitbox').onclick = () => {
         if (state.liUnlocked) {
-            playSound('openDoor');
+            triggerSound('openDoor');
             showPage('li-door-open-page');
         } else {
             showPage('mh-li-door-handle-page');
@@ -2874,7 +2955,7 @@ function init() {
     }
     document.getElementById('li-door-handle-handle-hitbox').onclick = async (e) => {
         if (state.liUnlocked) {
-            playSound('openDoor');
+            triggerSound('openDoor');
             showPage('li-door-open-page');
         } else {
             await spawnThemedBox('I need to unlock the door first', "notification-top");
@@ -2891,7 +2972,7 @@ function init() {
     document.getElementById('li-lt-laptop-hitbox').onclick = () => showPage('li-laptop-page');
     document.getElementById('li-lt-scanner-hitbox').onclick = async(e) => {
         if (state.hasLorBook) {
-            playSound('scanner');
+            triggerSound('scanner');
             state.scannedBook = true;
             const keySlot = document.getElementById('inv-lor-book')
             if (keySlot) {
@@ -3169,7 +3250,7 @@ function init() {
                 keySlot.classList.add('hidden');
                 refreshInventorySlots();
             }
-            playSound('openDoor');
+            triggerSound('openDoor');
             showPage('li-office-door-open-page');
         } else {
             await spawnThemedBox("I need one more key...", "notification-top");
