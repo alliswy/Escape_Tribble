@@ -170,6 +170,7 @@ const sfx = {
     doorOpenClose: {audio: new Audio('sounds/door-open-close.mp3'), baseVol: 0.5},
     doorClose: {audio: new Audio('sounds/door-close.mp3'), baseVol: 0.5},
     steps: {audio: new Audio('sounds/steps.mp3'), baseVol: 0.5},
+    markerWhiteboard: {audio: new Audio('sounds/marker-whiteboard.mp3'), baseVol: 0.5},
 
     scanner: {audio: new Audio('sounds/scanner.mp3'), baseVol: 0.5},
     keypadBeep: {audio: new Audio('sounds/keypad-beep.mp3'), baseVol: 0.5},
@@ -714,6 +715,7 @@ const pageSounds = {
     'keycardSwipe': createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
     'accessBeep': createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
     'steps': createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
+    'markerWhiteboard': createSoundClips(sfx.markerWhiteboard, 0.3, false, 3, 45), //fixme check boundaries on this one, and add it to the desired page
 }
 
 let activeLoop = null; // To stop the loop when we change pages
