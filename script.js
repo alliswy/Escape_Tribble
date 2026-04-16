@@ -2099,15 +2099,12 @@ function init() {
         }, 1000); // Wait 1 second after the page is visible to start background loading
     });
     startButton.onclick = () => {
-        prepareGameUI();
+        clearSave(); // Resets everything
+        prepareGameUI(); // Shows the game screens
 
         requestAnimationFrame(() => {
-            // Clear any old save data so they start fresh
-            clearSave();
-
-            triggerSound('globalAmbience'); //fixme move this and lower line/change when add tutorial
-            // Start from the beginning
-            showPage('mh-bd-main-page');
+            triggerSound('globalAmbience');
+            showPage('mh-bd-main-page'); // Teleport to start
         });
     };
     loadSaveButton.onclick = () => {
@@ -4031,7 +4028,117 @@ function hasSaveFile() {
 }
 
 function clearSave() {
+    // 1. Remove from localStorage
     localStorage.removeItem(SAVE_KEY);
+
+    // 2. Reset the 'state' object variables
+    // Because state is a 'const', we use Object.assign to keep the same object
+    // but update all its internal values to the initial ones.
+    Object.assign(state, getInitialState());
+
+    // 3. Hide all real inventory items
+    const items = document.querySelectorAll('.inv-item:not(.empty)');
+    items.forEach(item => item.classList.add('hidden'));
+
+    // 4. Reset the empty slots to show a full 6 (or 8) boxes
+    refreshInventorySlots();
+
+    console.log("Game state and Save file have been reset.");
+}
+
+function getInitialState() {
+    return {
+        hasBdKey: false,
+        hasPrKey: false,
+        hasKiKey: false,
+        hasLiKey: false,
+        hasPwBook: false,
+        hasCamrKey: false,
+        hasClrKey: false,
+        hasWrId: false,
+        hasWr: false,
+        hasBr: false,
+
+        hasLoKey: false,
+        hasLrBook: false,
+        hasSkPaper: false,
+        hasLs10note: false,
+        hasLs10drive: false,
+        hasLorBook: false,
+        hasSherlockBook: false,
+
+        bdUnlocked: false,
+        bdBackDoorUnlocked: false,
+        kiUnlocked: false,
+        liUnlocked: false,
+        crUnlocked: false,
+        camrUnlocked: false,
+        wrUnlocked: false,
+        loUnlocked: false,
+
+        camrDoorOpen: false,
+        crlDoorOpen: false,
+        crDoorOpen: false,
+
+        discoveredBd: false,
+        discoveredPr: false,
+        discoveredMh: false,
+        discoveredLi: false,
+        discoveredLo: false,
+        discoveredKi: false,
+        discoveredBh: false,
+        discoveredCr: false,
+        discoveredCamr: false,
+        discoveredSh: false,
+        discoveredLs: false,
+        discoveredClr: false,
+        discoveredStairs: false,
+        discoveredCw: false,
+        discoveredWr: false,
+        discoveredBath: false,
+        discoveredSnh: false,
+        discoveredOh1: false,
+        discoveredOh2: false,
+        discoveredOh3: false,
+        discoveredPrint: false,
+
+        solvedWirePuzzle: false,
+        foundPtCode: false,
+        foundWrNote: false,
+        foundOctagon: false,
+        foundScanner: false,
+        foundLiClue: false,
+        foundLoMonitor: false,
+        foundArchives: false,
+        foundWrPapers: false,
+
+        foundWp: false,
+
+        isProjectorOn: false,
+        isLeftMonitorOn: false,
+        isRightMonitorOn: false,
+        isLiLaptopOn: false,
+        isLiTvOn: false,
+        isLiReadOn: false,
+        isPrinterCalibrated: false,
+
+        wonWordle: false,
+        foundWordle: false,
+        foundml: false,
+
+        savedKey: "",
+        enteredCode: "",
+        correctCode: "3672",
+
+        movedAnimals: false,
+        scannedBook: false,
+        loMonitorUnlocked: false,
+        usedDrive: false,
+        hatchOpen: false,
+
+        visitedPages: {},
+        notificationsSeen: {},
+    };
 }
 
 init();
