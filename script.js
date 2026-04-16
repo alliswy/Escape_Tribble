@@ -2108,22 +2108,30 @@ function init() {
         });
     };
     loadSaveButton.onclick = () => {
-        if (!hasSaveFile()) {
-            alert("No save file found!"); // Safety check
+        const raw = localStorage.getItem(SAVE_KEY);
+
+        if (!raw) {
+            alert("No save file found!");
             return;
         }
 
+        // 1. Show the UI Skeleton
         prepareGameUI();
 
         requestAnimationFrame(() => {
-            const loaded = loadGame();
+            // 2. Load the data
+            const saveData = loadGame();
 
-            if (loaded) {
+            // 3. FORCE the page to render
+            if (saveData && saveData.currentPage) {
                 triggerSound('globalAmbience');
-                // NOTE: loadGame already calls showPage,
-                // but we can call it here explicitly if loadGame only returns the data.
+
+                // This is the "Light Switch" that fixes the black screen
+                showPage(saveData.currentPage);
+
+                console.log("Loaded room:", saveData.currentPage);
             } else {
-                // Backup plan: If the save is corrupted, start a new game
+                // Safety fallback
                 showPage('mh-bd-main-page');
             }
         });
@@ -2407,7 +2415,6 @@ function init() {
     };
 
     //entering room behind book drop
-    document.getElementById('bd-back-door-open-hitbox').onclick = () => showPage('bd-door-open-page')
     document.getElementById('bd-back-door-enter-hitbox').onclick = () =>  {
         if (state.isProjectorOn) {
             showPage ('pr-steps-po-page');
@@ -2416,7 +2423,6 @@ function init() {
         }
     }
 
-    document.getElementById('pr-steps-enter-hitbox').onclick = () => showPage('pr-main-page');
     document.getElementById('pr-steps-po-enter-hitbox').onclick = () => showPage('pr-main-po-page');
     document.getElementById('pr-po-pw-hitbox').onclick = () => {
         if (state.hasPwBook) {
@@ -4044,7 +4050,7 @@ function clearSave() {
     refreshInventorySlots();
 
     console.log("Game state and Save file have been reset.");
-}
+} //fixme need to fix but w inventory drawer
 
 function getInitialState() {
     return {
