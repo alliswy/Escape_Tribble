@@ -6,9 +6,6 @@
 //
 // console.log("God Mode Activated: All keys obtained and doors unlocked.");
 
-
-let score = 0;
-
 // 1. UTILITIES
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -73,7 +70,7 @@ const state = {
     foundWrNote: false,
     foundOctagon: false,
     foundScanner: false,
-    foundLiClue: false, //fixme add this when they use the paper on the sherlock book
+    foundLiClue: false,
     foundLoMonitor: false,
     foundArchives: false,
     foundWrPapers: false,
@@ -127,7 +124,6 @@ const forwardArrow = document.getElementById('master-forward-arrow');
 const leftArrow = document.getElementById('master-left-arrow');
 const rightArrow = document.getElementById('master-right-arrow');
 const menu = document.getElementById('menu-screen');
-const tutorial = document.getElementById('tutorial');
 
 const startButton = document.getElementById('start-button');
 const loadSaveButton = document.getElementById('load-save-button');
@@ -143,13 +139,23 @@ const entryPages = [
     'camr-main-page',     //camr
     'clr-main-id-page',   //clr
     'bh-entrance-page',   //back hall
-    'sh-cr-door-open',    //side hall
+    'sh-cr-door-open-page',    //side hall
     'li-door-open-page',   // Library
     'cw-entrance-page',   // C-Wing
     'bath-page',
+    'stairs-rubble-page',
     'wr-main-page',
     'ls-in-1-page',       //library storage
     'lo-main-page',       //library office
+    'tu-stairs-page',
+    'tu-stairs-ho-page',
+    'eh-door-page',
+    'oh2-entrance-page',
+    'oh3-page',
+    'print-main-page',
+    'snh-entrance-page',
+    'oh1-left-1-page',
+    //fixme add one more for oh1 for the other entrance when that photo is added
 ]; //fixme, double check these are starting pages, and add inv images
 
 // ------------ audio -------------
@@ -195,17 +201,6 @@ function getMusicMultiplier() {
     const slider = document.getElementById('music-slider'); // Your music slider ID
     return slider ? parseFloat(slider.value) / 50 : 1.2; // Defaulting to 1.2 for "extra loud"
 }
-//fixme delete this
-// // Standard Play function
-// function playSound(key) {
-//     const entry = sfx[key];
-//     if (entry) {
-//         const m = getSFXMultiplier();
-//         entry.audio.volume = Math.min(Math.max(entry.baseVol * m, 0), 1);
-//         entry.audio.currentTime = 0;
-//         entry.audio.play();
-//     }
-// }
 
 // Smooth Fade Out function
 function fadeOut(key, durationMs) {
@@ -264,10 +259,6 @@ function playHatchSequence() {
 
     }, 300);
 }
-//
-// function leaveRoomAudio() {
-//     stopSound('bath-page', 500);
-// } fixme prolly remove this
 
 /**
  * Master SFX Controller
@@ -500,9 +491,9 @@ const roomLeads = {
     //c-wing right progression/hallways
     'cw-right-snh-page':        {forward: 'cw-right-bath-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
     'cw-right-bath-page':       {back: 'cw-right-snh-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
-    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page', right: 'cw-stairs-entrance-page'}, //fixme add right
+    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page', right: 'cw-stairs-entrance-page'}, 
     'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
-    'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, //fixme add right
+    'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page'}, 
     'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page', right: 'cw-oh2-exit-page'},
 
     //c-wing side halls
@@ -518,7 +509,7 @@ const roomLeads = {
     'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page'}, //fixme add forward (?)
     'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left or back
     'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
-    'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'}, //fixme is this really Li key or should it be Clr key ?
+    'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-left-4-page':          {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-left-4-key-page':      {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
@@ -564,7 +555,7 @@ const roomLeads = {
     'li-entrance-nb-page':       {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-tvo-page':      {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
     'li-entrance-tvo-nb-page':   {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
-    'li-2dc-page':               {back: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page': 'li-main-2dc-page'},
+    'li-2dc-page':               {back: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page': 'li-main-2dc-page'},
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-page':       {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-tvo-page':      {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
@@ -573,7 +564,7 @@ const roomLeads = {
     'li-main-lw-page':           {back: () => state.hasLorBook ? state.isLiTvOn ? 'li-entrance-tvo-nb-page' : 'li-entrance-nb-page' : state.isLiTvOn ? 'li-entrance-tvo-page' : 'li-entrance-page', right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add do check
 
     //library mid-wall pages
-    'li-mid-wall-page':     {back: 'li-main-2dc-page'}, //fixme check for do
+    'li-mid-wall-page':     {back: 'li-main-2dc-page'}, 
     'li-mid-wall-ro-page':  {back: 'li-main-2dc-ro-page'},
     'li-mid-wall-tvo-page': {back: 'li-main-2dc-tvo-page'},
     'li-mid-wall-ro-tvo-page': {back: 'li-main-2dc-ro-tvo-page'},
@@ -610,7 +601,7 @@ const roomLeads = {
     'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add check for doors open
 
     //mw books pages
-    'li-mw-books-page':     {back: 'li-main-lw-page' }, //fixme
+    'li-mw-books-page':     {back: 'li-main-lw-page' }, 
     'li-mw-books-nb-page':  {back: 'li-main-lw-page'},
     'li-tolkein-page':      {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
     'li-esme-page':         {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
@@ -620,7 +611,7 @@ const roomLeads = {
 
     //lw books page
     'li-rw-books-page':     {back: 'li-main-rw-page'},
-    'li-rw-book-page':      {back: 'li-main-lw-page'}, //fixme
+    'li-lw-books-page':      {back: 'li-main-lw-page'}, //fixme
     'li-onoseta-page':      {back: 'li-rw-books-page'},
     'li-barnes-page':         {back: 'li-rw-books-page'},
     'li-boulley-page':        {back: 'li-rw-books-page'},
@@ -633,12 +624,12 @@ const roomLeads = {
     'li-birb-page':             {back: 'li-rw-books-birb-nb-page'},
 
     //library office pages
-    'li-office-door-closed-page':   {back: 'li-2dc-page'}, //fixme add stuff for this later
-    'li-office-door-open-page':     {back: 'li-office-door-closed-page'}, //fixme add back later
+    'li-office-door-closed-page':   {back: 'li-2dc-page'}, 
+    'li-office-door-open-page':     {back: 'li-office-door-closed-page'}, 
     'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
     'lo-main-left-page':            {back: 'lo-main-page' },
     'lo-storage-entrance-page':     {back: 'lo-main-left-page', forward: 'ls-in-1-page' },
-    'lo-main-right-page':           {back: 'ls-lo-entrance-page' }, //fixme add right image exiting the office
+    'lo-main-right-page':           {back: 'ls-lo-entrance-page' }, //fixme may need to fix navigation in this back room, it's a little weird (but difficult bc of how library images are)
     'lo-desk-page':                 {back: 'lo-main-page', forward: 'lo-desk-2-page'},
     'lo-desk-2-page':               {back: 'lo-desk-page'},
     'lo-monitor-page':              {back: 'lo-desk-2-page'},
@@ -710,7 +701,7 @@ const pageSounds = {
     'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
     'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
 
-    //action sounds fixme this may break something not sure yet
+    //action sounds 
     'unlock': createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
     'doorClose': createSoundClip(sfx.doorClose, 0.7, false, 1.03,0),
     'keycardSwipe': createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
@@ -986,14 +977,14 @@ async function triggerNotification(pageId) {
             }
         }break;
         case 'clr-main-page': {
-            await delay(20);
             if (!state.notificationsSeen['clr-main-init']) {
+                await delay(20);
                 await spawnThemedBox("That person from the camera feed, they're not here", "notification-top");
                 await spawnThemedBox("Something's wrong with this place", "notification-top");
                 await spawnThemedBox("Also what the heck ! What's with that giant ID card ??", "notification-top");
                 state.notificationsSeen['clr-main-init'] = true;
             }
-        } break;
+        } break; //fixme issue with this page when picking up the id card too quickly,, have the hitboxes wait for the themed boxes or smthn
         case 'ls-in-10-sk-nd-page': {
             await delay(20);
             if (!state.notificationsSeen['ls-in-10-sk-init']) {
@@ -1016,6 +1007,7 @@ async function triggerNotification(pageId) {
         }
 
     }
+    //fixme when loading a save file, it re plays these notifications, no matter if thes tate of the room changed. fix this problem
 }
 
 function goBack()    { move('back'); }
@@ -1097,7 +1089,7 @@ const hintRules = [
     },
     {
         condition: () => !state.kiUnlocked && state.hasKiKey,
-        text: "The key you're holding unlocks the kitchen door in the main hallway. Don't forget to unlock the door before opening it."
+        text: "The key you're holding unlocks the kitchen door in the main hallway."
     },
     {
         condition: () => state.kiUnlocked && !state.foundPtCode,
@@ -1136,15 +1128,15 @@ const hintRules = [
         text: "Make sure you check every corner of the c-wing. There may be something useful hiding for you there."
     },
     {
-        condition: () => state.isLeftMonitorOn && state.hasClrKey && !state.crlDoorOpen,
+        condition: () => state.isLeftMonitorOn && state.hasClrKey && !state.crlUnlocked,
         text: "The key you're holding opens a door in the creepy room"
     },
     {
-        condition: () => state.hasClrKey && !state.crlDoorOpen,
+        condition: () => state.hasClrKey && !state.crlUnlocked,
         text: "The key you're holding opens a door in the creepy room"
     },
     {
-        condition: () => state.crlDoorOpen && !state.foundOctagon,
+        condition: () => state.crlUnlocked && !state.foundOctagon,
         text: "Try inspecting the cloth in the counseling room"
     },
     {
@@ -1274,7 +1266,7 @@ function getCurrentHint() {
 // ----- TEXTBOX NOTIFICATIONS ----
 let activePopup = null;
 
-// ---- THE POPUP AT MOUSE ----
+// ---- THE POPUP AT MOUSE ---- //fixme currently non-used, remove if unwanted
 function spawnPopupAtMouse(event, message, speed = 40) {
     if (activePopup) activePopup.remove();
 
@@ -1724,7 +1716,7 @@ function openTerminal() {
 
         document.getElementById('final-auth-section').classList.remove('hidden');
         setTimeout(() => document.getElementById('final-terminal-input').focus(), 10);
-        return; // Don't run the rest of the function
+         // Don't run the rest of the function
     } else if (state.loMonitorUnlocked) {
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
@@ -1892,8 +1884,8 @@ let currentTarget = { pos: 0, width: 22 };
 
 const monitor = document.getElementById('printer-monitor-area');
 const bar = document.getElementById('scanner-bar');
-const target = document.getElementById('static-target');
 
+//fixme change so that it's only 5 levels and maybe fix syncing issue (?)
 function generateRandomTarget() {
     // Scaling for 6 levels:
     // Level 1: 22% | Level 6: 7%
@@ -2289,6 +2281,7 @@ function init() {
     //Quit to main menu button
     document.getElementById('quit-btn').onclick = () => {
         stopAllAudio();
+        //saveGame('') //fixme add some way to read current page to save on the current screen
         hamburgerDropdown.classList.remove('dropdown-open');
         play.classList.add('hidden');
         document.getElementById('inventory-drawer').classList.add('hidden');
@@ -2327,7 +2320,7 @@ function init() {
     document.getElementById('bd-closed-hitbox').onclick = () => {
         state.hasBdKey ? showPage('mh-bd-slot-open-page') : showPage('mh-bd-slot-open-key-page');
     };
-    document.getElementById('bd-key-hitbox').onclick = async (e) => {
+    document.getElementById('bd-key-hitbox').onclick = async () => {
         state.hasBdKey = true;
         const keySlot = document.getElementById('inv-bd-key');
         if (keySlot) {
@@ -2341,7 +2334,7 @@ function init() {
     document.getElementById('bd-slot-open-hitbox').onclick = () => showPage('mh-bd-slot-closed-page');
 
     // bd Door Handle & Locking
-    document.getElementById('bd-door-keyhole-hitbox').onclick = async (e) => {
+    document.getElementById('bd-door-keyhole-hitbox').onclick = async () => {
         if (state.hasBdKey) {
             state.bdUnlocked = true;
             const keySlot = document.getElementById('inv-bd-key');
@@ -2356,7 +2349,7 @@ function init() {
             await spawnThemedBox('hm... I\'ll need to find a key for this door', "notification-top");
         }
     };
-    document.getElementById('bd-door-handle-hitbox').onclick = async (e) => {
+    document.getElementById('bd-door-handle-hitbox').onclick = async () => {
         if (state.bdUnlocked) {
             triggerSound('openDoor');
             showPage('bd-door-open-page');
@@ -2375,7 +2368,7 @@ function init() {
     document.getElementById('bd-fb-hitbox').onclick = () => {
         state.hasPrKey ? showPage('bd-fb-open-page') : showPage('bd-fb-open-key-page');
     };
-    document.getElementById('bd-fb-key-hitbox').onclick = async (e) => {
+    document.getElementById('bd-fb-key-hitbox').onclick = async () => {
         state.hasPrKey = true;
         const keySlot = document.getElementById('inv-pr-key');
         if (keySlot) {
@@ -2390,7 +2383,7 @@ function init() {
     // door behind book drop and locking
     document.getElementById('bd-back-door-hitbox').onclick = () => showPage('bd-back-door-handle-page');
 
-    document.getElementById('bd-back-handle-keyhole-hitbox').onclick = async (e) => {
+    document.getElementById('bd-back-handle-keyhole-hitbox').onclick = async () => {
         if (state.hasPrKey) {
             state.bdBackDoorUnlocked = true;
             const keySlot = document.getElementById('inv-pr-key');
@@ -2405,7 +2398,7 @@ function init() {
             await spawnThemedBox('I need to find another key...', "notification-top");
         }
     };
-    document.getElementById('bd-back-handle-handle-hitbox').onclick = async (e) => {
+    document.getElementById('bd-back-handle-handle-hitbox').onclick = async () => {
         if (state.bdBackDoorUnlocked) {
             triggerSound('openDoor');
             showPage('bd-back-door-open-page');
@@ -2437,7 +2430,7 @@ function init() {
     document.getElementById('pr-pw-he-projector-hitbox').onclick = () => showPage('pr-pw-noBook-projector-off-page');
     document.getElementById('pr-pw-hb-projector-hitbox').onclick = () => showPage('pr-pw-book-projector-off-page');
 
-    document.getElementById('pr-pw-book-projector-hitbox').onclick = async (e) => {
+    document.getElementById('pr-pw-book-projector-hitbox').onclick = async () => {
         if (state.solvedWirePuzzle) {
             state.isProjectorOn = true;
             showPage ('pr-pw-book-projector-on-page');
@@ -2448,7 +2441,7 @@ function init() {
 
     document.getElementById('pr-po-wr-hitbox').onclick = () => showPage('pr-wr-main-page');
 
-    document.getElementById('pr-pw-noBook-projector-hitbox').onclick = async (e) => {
+    document.getElementById('pr-pw-noBook-projector-hitbox').onclick = async () => {
         if (state.solvedWirePuzzle) {
             state.isProjectorOn = true;
             showPage ('pr-pw-noBook-projector-on-page');
@@ -2511,7 +2504,7 @@ function init() {
     //handle and locking
     document.getElementById('ki-door-handle-hitbox').onclick = () => showPage('mh-ki-door-handle-page');
 
-    document.getElementById('ki-door-handle-keyhole-hitbox').onclick = async (e) => {
+    document.getElementById('ki-door-handle-keyhole-hitbox').onclick = async () => {
         if (state.hasKiKey) {
             triggerSound('unlock');
             state.kiUnlocked = true;
@@ -2532,7 +2525,7 @@ function init() {
             await spawnThemedBox('It\'s locked! Where am I going to find another key ?', "notification-top");
         }
     };
-    document.getElementById('ki-door-handle-handle-hitbox').onclick = async (e) => {
+    document.getElementById('ki-door-handle-handle-hitbox').onclick = async () => {
         if (state.kiUnlocked) {
             triggerSound('openDoor');
             showPage('ki-door-open-page');
@@ -2558,7 +2551,7 @@ function init() {
         state.foundPtCode = true;
         showPage('ki-pt-code-page');
     }
-    document.getElementById('ki-pt-code-hitbox').onclick= async (e) => {
+    document.getElementById('ki-pt-code-hitbox').onclick= async () => {
         await spawnThemedBox('3672', "notification-top");
         await spawnThemedBox('Who would write a code here ?', "notification-top");
         await spawnThemedBox('And what is it for ?', "notification-top");
@@ -2570,7 +2563,7 @@ function init() {
     document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
 
     document.getElementById('bh-sh-cr-door-closed-hitbox').onclick = () => showPage('bh-sh-cr-door-handle-page');
-    document.getElementById('bh-sh-cr-door-handle-handle-hitbox').onclick = async (e) => {
+    document.getElementById('bh-sh-cr-door-handle-handle-hitbox').onclick = async () => {
         if (state.crUnlocked) {
             showPage('sh-cr-door-open-page');
         } else {
@@ -2603,7 +2596,7 @@ function init() {
     document.getElementById('cr-main-1dc-couches-hitbox').onclick = () => showPage('cr-couches-page');
     document.getElementById('cr-couches-key-couch-hitbox').onclick = () => showPage('cr-couch-key-page');
     document.getElementById('cr-couch-key-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-key-page');
-    document.getElementById('cr-couch-key-hitbox').onclick = async (e) => {
+    document.getElementById('cr-couch-key-hitbox').onclick = async () => {
         state.hasCamrKey = true;
         const keySlot = document.getElementById('inv-camr-key');
         if (keySlot) {
@@ -2616,12 +2609,12 @@ function init() {
     }
     document.getElementById('cr-couches-couch-hitbox').onclick = () => showPage('cr-couch-page');
     document.getElementById('cr-couch-zoom-hitbox').onclick = () => showPage('cr-couch-zoom-page');
-    document.getElementById('cr-couch-hitbox').onclick = async (e) => {
+    document.getElementById('cr-couch-hitbox').onclick = async () => {
         await spawnThemedBox("There's nothing left in the cushions", "notification-top");
     }
 
     document.getElementById('cr-main-2dc-doors-hitbox').onclick = () => showPage('cr-doors-2dc-page');
-    //fixme add image: document.getElementById('dr-doors-2dc-rd-hitbox').onclick = () => showPage('');
+    //fixme add image: document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('');
     document.getElementById('cr-main-doors-hitbox').onclick = () => {
         state.isLeftMonitorOn ? showPage('cr-doors-cam-page') : showPage('cr-doors-page');
     }
@@ -2637,7 +2630,7 @@ function init() {
     document.getElementById('cr-doors-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
 
     document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
-    document.getElementById('cr-camr-door-closed-hitbox').onclick = async (e) => {
+    document.getElementById('cr-camr-door-closed-hitbox').onclick = async () => {
         if (state.hasCamrKey) {
             triggerSound('unlock');
             const keySlot = document.getElementById('inv-camr-key');
@@ -2652,10 +2645,11 @@ function init() {
         }
     }
     document.getElementById('cr-doors-1dc-cam-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
-    document.getElementById('cr-1dc-ld-door-closed-hitbox').onclick = async (e) => {
+    document.getElementById('cr-1dc-ld-door-closed-hitbox').onclick = async () => {
         if (state.hasClrKey) {
             triggerSound('unlock');
             state.crlUnlocked = true;
+            state.crlDoorOpen = true;
             const keySlot = document.getElementById('inv-clr-key');
             if (keySlot) {
                 keySlot.classList.add('hidden');
@@ -2667,14 +2661,14 @@ function init() {
             await spawnThemedBox('I need to find a key for this door', "notification-top");
         }
     }
-    document.getElementById('clr-main-cloth-hitbox').onclick = async (e) => {
+    document.getElementById('clr-main-cloth-hitbox').onclick = async () => {
         showPage('clr-cloth-page');
     }
     document.getElementById('clr-cloth-hitbox').onclick = () => {showPage('clr-cloth-octagon-page'); state.foundOctagon = true;}
-    document.getElementById('clr-cloth-octagon-hitbox').onclick = async (e) => {
+    document.getElementById('clr-cloth-octagon-hitbox').onclick = async () => {
         await spawnThemedBox("Another shape...", "notification-top");
     }
-    document.getElementById('clr-main-id-id-hitbox').onclick = async (e) => {
+    document.getElementById('clr-main-id-id-hitbox').onclick = async () => {
         state.hasWrId = true;
         const keySlot = document.getElementById('inv-wr-id');
         if (keySlot) {
@@ -2720,17 +2714,17 @@ function init() {
         showPage('camr-wp-page');
         state.justFoundWp = true;
     }
-    document.getElementById('camr-wp-hitbox').onclick = async (e) => {
+    document.getElementById('camr-wp-hitbox').onclick = async () => {
         await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-top");
     }
-    document.getElementById('camr-main-ml-on-person-hitbox').onclick = async (e) => {
+    document.getElementById('camr-main-ml-on-person-hitbox').onclick = async () => {
         showPage('camr-ml-on-person-page');
     }
-    document.getElementById('camr-ml-on-person-hitbox').onclick = async (e) => {
+    document.getElementById('camr-ml-on-person-hitbox').onclick = async () => {
         await spawnThemedBox("There's a person in that room ! Are they ok ? I need to get in there.", "notification-top");
     }
 
-    document.getElementById('camr-mr-off-hitbox').onclick = async (e) => {
+    document.getElementById('camr-mr-off-hitbox').onclick = async () => {
         state.foundWordle = true;
         const container = document.getElementById('wordle-minigame');
         const backArrow = document.getElementById('master-back-arrow');
@@ -2780,35 +2774,35 @@ function init() {
 
     // ------- C-WING SECTION -----
     document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('stairs-rubble-page'); //fixme add door sound effect
-    document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async (e) => {
+    document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async () => {
         await spawnThemedBox("What happened here ? It looks like the upper floors have been demolished.", "notification-top");
     }
     document.getElementById('mh-cw-stairs-hitbox').onclick = () => {
         showPage('stairs-page');
     }
     document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => {
-        triggerSound('steps'); //fixme only on way down rn
+        triggerSound('steps'); //fixme only on way down rn, and weird if you click quickly
         showPage('mh-cw-door-page');
     }
-    document.getElementById('mh-cw-door-plate-hitbox').onclick = () => showPage('mh-cw-door-plate-page');
-    //^fixme add some stuff on the plate page
+    document.getElementById('mh-cw-door-plate-hitbox').onclick = async () => {
+        await spawnThemedBox("What is this plate for ?", "notification-top");
+    }
     document.getElementById('mh-cw-door-hitbox').onclick = () => showPage('cw-entrance-page');
-    document.getElementById('cw-stairs-door-hitbox').onclick = () => {} //fixme add page to show here goign up the stairs,
+    document.getElementById('cw-stairs-door-hitbox').onclick = () => {showPage('mh-cend-left-endc-page')} //fixme add page to show here goign up the stairs,
     //fixme then add a page going through the door into the hallway
-    document.getElementById('cw-bath-door-hitbox').onclick = async (e) => {
+    document.getElementById('cw-bath-door-hitbox').onclick = async () => {
         showPage('bath-page');
     }
     document.getElementById('bath-sink-hitbox').onclick = () => showPage('bath-sink-page');
-    document.getElementById('bath-sink-sink-hitbox').onclick = async (e) => {
+    document.getElementById('bath-sink-sink-hitbox').onclick = async () => {
         await spawnThemedBox("This sink is so old you can't turn the water off", "notification-top");
     }
-    //document.getElementById('cw-wr-do-hitbox').onclick = () => showPage('cw-wr-handle-unlocked-page'); //fixme why are there two of these and why does the second run instead
     document.getElementById('cw-wr-dc-hitbox').onclick = () => showPage('cw-wr-handle-locked-page');
-    document.getElementById('cw-wr-scanner-hitbox').onclick = async (e) => {
+    document.getElementById('cw-wr-scanner-hitbox').onclick = async () => {
         if (state.hasWrId) {
             triggerSound('keycardSwipe');
         state.wrUnlocked = true;
-        const keySlot = document.getElementById('inv-wr-od');
+        const keySlot = document.getElementById('inv-wr-id');
         if (keySlot) {
                 keySlot.classList.add('hidden');
             refreshInventorySlots();
@@ -2820,24 +2814,24 @@ function init() {
             await spawnThemedBox("I'll need to find a keycard to unlock this door", 'notification-top');
         }
     }
-    document.getElementById('cw-elevator-hitbox').onclick = async (e) => {
+    document.getElementById('cw-elevator-hitbox').onclick = async () => {
         await spawnThemedBox("It's not working", "notification-top");
     }
-    document.getElementById('cw-wr-locked-handle-hitbox').onclick = async (e) => {
+    document.getElementById('cw-wr-locked-handle-hitbox').onclick = async () => {
         spawnThemedBox("I need to unlock the door first", "notification-top");
     }
     document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {
         triggerSound('doorOpenClose')
         showPage('wr-mid-page')
-    }; //fixme show wr room main page when added
+    };
     document.getElementById('oh3-entrance-hitbox').onclick = () => showPage('oh2-oh3-entrance-page');
 
     document.getElementById('cw-oh1-entrance-hitbox').onclick = () => showPage('oh1-left-1-page');
     document.getElementById('oh1-left-4-key-books-hitbox').onclick = () => showPage('oh1-books-key-page');
-    document.getElementById('oh1-books-hitbox').onclick = async (e) => {
+    document.getElementById('oh1-books-hitbox').onclick = async () => {
         await spawnThemedBox("I don't see anything else useful here", "notification-top");
     }
-    document.getElementById('oh1-books-key-hitbox').onclick = async (e) => {
+    document.getElementById('oh1-books-key-hitbox').onclick = async () => {
         state.hasClrKey = true;
         const keySlot = document.getElementById('inv-clr-key')
         if (keySlot) {
@@ -2856,7 +2850,7 @@ function init() {
         }, 1500);
     }
     document.getElementById('printer-hitbox').onclick = () => showPage('print-page');
-    document.getElementById('printer-paper-hitbox').onclick = async (e) => {
+    document.getElementById('printer-paper-hitbox').onclick = async () => {
         showPage('print-paper-page');
         await delay(20);
         await spawnThemedBox("what's this?", "notification-top");
@@ -2864,7 +2858,6 @@ function init() {
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
         showPage('printer-sync-minigame');
-        u[j .m] //fixme
         // 3. Reset the state
         currentLevel = 1;
         isRunning = true;
@@ -2872,7 +2865,7 @@ function init() {
         generateRandomTarget();
         update();
     }
-    document.getElementById('print-paper-hitbox').onclick = async (e) => {
+    document.getElementById('print-paper-hitbox').onclick = async () => {
         openOverlay("print-paper", "cw-images/cw-sideHall-images/print-paper-item.png");
         await delay(20);
         await spawnThemedBox("A... fax to the president of the US ? from 1963 ?!? what's this about ?", "notification-top");
@@ -2905,33 +2898,34 @@ function init() {
                 await spawnThemedBox("I should look around the room to see if anything changed", "notification-top");
             }
     }
-    document.getElementById('wr-desk-hitbox').onclick = async (e) => {
+    document.getElementById('wr-desk-hitbox').onclick = async () => {
         await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
     }
     document.getElementById('wr-left-desk-hitbox').onclick = () => showPage('wr-desk-page');
-    document.getElementById('wr-right-papers-hitbox').onclick = async (e) => {
+    document.getElementById('wr-right-papers-hitbox').onclick = async () => {
         showPage('wr-papers-page');
         await delay(20);
         await spawnThemedBox("who left these papers here ?", "notification-top");
         state.foundWrPapers = true;
     }
     document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
-    document.getElementById('wr-papers-tu-hitbox').onclick = async (e) => {
+    document.getElementById('wr-papers-tu-hitbox').onclick = async () => {
         openOverlay('wr-tu', "wr-images/wr-tu.png");
         await delay(20);
         await spawnThemedBox("A cutout of a newspaper article about underground tunnels", "notification-top");
     }
-    document.getElementById('wr-papers-ogb-hitbox').onclick = async (e) => {
+    document.getElementById('wr-papers-ogb-hitbox').onclick = async () => {
         openOverlay('wr-ogb', 'wr-images/wr-ogb.png');
         await delay(20);
         await spawnThemedBox("The old gold and black. That's the school newspaper", "notification-top");
     }
-    document.getElementById('wr-papers-reddit-hitbox').onclick = async (e) =>  {
+    document.getElementById('wr-papers-reddit-hitbox').onclick = async () =>  {
         openOverlay('wr-reddit', 'wr-images/wr-reddit.png');
         await delay (20);
         await spawnThemedBox("A printout of some random reddit post ?", "notification-top");
     }
-    document.getElementById('wr-right-note-note-hitbox').onclick = async (e) => {
+    document.getElementById('wr-right-note-note-hitbox').onclick = async () => {
+        state.foundWrNote = true;
         showPage('wr-note-page');
         await delay(20);
         await spawnThemedBox("Who wrote this note ? Someone else is definitely down here with me...", "notification-top");
@@ -2952,7 +2946,7 @@ function init() {
             showPage('mh-li-door-handle-page');
         }
     }
-    document.getElementById('li-door-handle-keyhole-hitbox').onclick = async (e) => {
+    document.getElementById('li-door-handle-keyhole-hitbox').onclick = async () => {
         if (state.hasLiKey) {
             triggerSound('unlock');
             state.liUnlocked = true;
@@ -2966,7 +2960,7 @@ function init() {
             await spawnThemedBox('I need to find a key for this door', 'notification-top');
         }
     }
-    document.getElementById('li-door-handle-handle-hitbox').onclick = async (e) => {
+    document.getElementById('li-door-handle-handle-hitbox').onclick = async () => {
         if (state.liUnlocked) {
             triggerSound('openDoor');
             showPage('li-door-open-page');
@@ -2983,7 +2977,7 @@ function init() {
     }
     document.getElementById('li-left-lt-hitbox').onclick = () => showPage('li-lt-page');
     document.getElementById('li-lt-laptop-hitbox').onclick = () => showPage('li-laptop-page');
-    document.getElementById('li-lt-scanner-hitbox').onclick = async(e) => {
+    document.getElementById('li-lt-scanner-hitbox').onclick = async() => {
         if (state.hasLorBook) {
             triggerSound('scanner');
             state.scannedBook = true;
@@ -2998,12 +2992,17 @@ function init() {
         }
     }
 
-    document.getElementById('li-laptop-hitbox').onclick = async (e) => {
+    document.getElementById('li-laptop-hitbox').onclick = async () => {
         await spawnThemedBox('I wonder what happens if I scan this book', 'notification-top');
         await spawnThemedBox('I should look around and see if I can find it.', 'notification-top');
         state.foundScanner = true;
     }
-    document.getElementById('li-main-lw-mw-hitbox').onclick = () => showPage('li-mw-books-page');
+    document.getElementById('li-laptop-star-hitbox').onclick = async() => {
+        spawnThemedBox("A yellow star...", "notification-top");
+    }
+    document.getElementById('li-main-lw-mw-hitbox').onclick = () => {
+        state.hasLorBook ? showPage('li-mw-books-nb-page') : showPage('li-mw-books-page');
+    }
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
         state.hasSkPaper = true;
         const keySlot = document.getElementById('inv-sk-paper')
@@ -3079,7 +3078,7 @@ function init() {
     document.getElementById('li-mw-tvo-read-hitbox').onclick = () => showPage('li-read-page');
     document.getElementById('li-mw-ro-read-hitbox').onclick = () => showPage('li-read-on-page');
     document.getElementById('li-mw-ro-tvo-read-hitbox').onclick = () => showPage('li-read-page');
-    document.getElementById('li-read-page').onclick = async (e) => {
+    document.getElementById('li-read-page').onclick = async () => {
         if (state.hasWr) {
             state.isLiReadOn = true;
             const keySlot = document.getElementById('inv-wr');
@@ -3089,12 +3088,12 @@ function init() {
             }
             showPage('li-read-on-page');
             await delay(20);
-            await spawnThemedBox("Nice, it's on now. Not sure why I felt the need to do that tho.", "notification-top");
+            await spawnThemedBox("Nice, it's on now. Why is each letter a different color?", "notification-top");
         } else {
             await spawnThemedBox("This sign looks like it can be turned on.", "notification-top");
         }
     }
-    document.getElementById('li-read-on-hitbox').onclick = async (e) => {
+    document.getElementById('li-read-on-hitbox').onclick = async () => {
         await spawnThemedBox("I wonder if the colors are of any importance", "notification-top");
     }
 
@@ -3150,7 +3149,7 @@ function init() {
     document.getElementById('li-tv-on-hitbox').onclick = async () => {
         await spawnThemedBox("What's up with all these shapes?", "notification-top");
     }
-    document.getElementById('li-tv-hitbox').onclick = async (e) => {
+    document.getElementById('li-tv-hitbox').onclick = async () => {
         if (state.hasBr) {
             state.isLiTvOn = true;
             const keySlot = document.getElementById('inv-br');
@@ -3165,7 +3164,7 @@ function init() {
             await spawnThemedBox("I'll need a remote if I want to turn the tv on", "notification-top");
         }
     }
-    document.getElementById('li-tv-wr-tv-hitbox').onclick = async (e) => {
+    document.getElementById('li-tv-wr-tv-hitbox').onclick = async () => {
         if (state.hasBr) {
             state.isLiTvOn = true;
             const keySlot = document.getElementById('inv-br');
@@ -3180,14 +3179,10 @@ function init() {
             await spawnThemedBox("I'll need a remote if I want to turn the tv on", "notification-top");
         }
     }
-    document.getElementById('li-tv-wr-tvo-hitbox').onclick = async (e) => {
-        if (state.hasBr) {
-            //fixme add feedback
-        } else {
-            //fixme add feedback
-        }
+    document.getElementById('li-tv-wr-tvo-hitbox').onclick = async () => {
+        await spawnThemedBox("What's up with all these shapes?", "notification-top");
     }
-    document.getElementById('li-read-hitbox').onclick = async (e) => {
+    document.getElementById('li-read-hitbox').onclick = async () => {
         if (state.hasWr) {
             state.isLiReadOn = true;
             const keySlot = document.getElementById('inv-wr');
@@ -3197,7 +3192,7 @@ function init() {
             }
             showPage('li-read-on-page');
             await delay(20);
-            await spawnThemedBox("Nice, it's on now. Not sure why I felt the need to do that tho.", "notification-top");
+            await spawnThemedBox("Nice, it's on now. Why is each letter a different color?", "notification-top");
         } else {
             await spawnThemedBox("This sign looks like it can be turned on.", "notification-top");
         }
@@ -3209,7 +3204,7 @@ function init() {
     document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
     document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');
     document.getElementById('li-rw-books-birb-hitbox').onclick = () => showPage('li-birb-book-page');
-    document.getElementById('li-birb-book-hitbox').onclick = async (e) => {
+    document.getElementById('li-birb-book-hitbox').onclick = async () => {
         state.hasSherlockBook = true;
         const keySlot = document.getElementById('inv-sh-book');
         if (keySlot) {
@@ -3219,10 +3214,9 @@ function init() {
         showPage('li-birb-page');
         openOverlay('sherlock-book', 'inv-images/sherlock-book.png');
         //fixme add feedback
-        //fixme finish adding interaction with this book, currently non-functional
     }
 
-    document.getElementById('li-main-rw-rw-hitbox').onclick = async (e) => {
+    document.getElementById('li-main-rw-rw-hitbox').onclick = async () => {
         if (state.hasSkPaper && !state.hasSherlockBook) {
             showPage('li-rw-books-birb-page');
             await spawnThemedBox('What ? that bird wasn\'t there a second ago', "notification-top");
@@ -3246,15 +3240,28 @@ function init() {
             keySlot.classList.remove('hidden');
             refreshInventorySlots();
         }
+        const keySlot2 = document.getElementById('inv-sh-book');
+        if (keySlot2) {
+            keySlot2.classList.add('hidden');
+            refreshInventorySlots();
+        }
+        const keySlot3 = document.getElementById('inv-sk-paper');
+        if (keySlot3) {
+            keySlot3.classList.add('hidden');
+            refreshInventorySlots();
+        }
         showPage('li-animals-open-2-page');
     }
     document.getElementById('li-animals-open-1-hitbox').onclick = () => {
         state.hasLoKey ? showPage('li-animals-open-2-page') : showPage('li-animals-open-key-page');
     }
 
+    //fixme so currently the animals hitbox opens when the user finds the sherlock book
+    //fixme potentially make it so taht instead, it only shows when they find the hint (after using the paper)
+
 
     // --------- LIBRARY OFFICE SECTION -----------//
-    document.getElementById('li-office-door-closed-hitbox').onclick = async (e) => {
+    document.getElementById('li-office-door-closed-hitbox').onclick = async () => {
         if (state.hasLoKey) {
             triggerSound('unlock');
             state.loUnlocked = true;
@@ -3275,8 +3282,7 @@ function init() {
     document.getElementById('lo-main-right-desk-hitbox').onclick = () => showPage('lo-desk-page');
     document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
     document.getElementById('lo-desk-monitor-hitbox').onclick = () => {showPage('lo-monitor-page'); state.foundLoMonitor = true;}
-    //fixme add stuff for the monitor page
-    document.getElementById('lo-monitor-drive-hitbox').onclick = async (e) => {
+    document.getElementById('lo-monitor-drive-hitbox').onclick = async () => {
         useDrive();
     }
 
@@ -3288,9 +3294,21 @@ function init() {
     document.getElementById('ls-archives-sk-hitbox').onclick = () => showPage('ls-archives-sk-2-page');
     document.getElementById('ls-archives-note-hitbox').onclick = () => showPage('ls-archives-note-page');
     document.getElementById('ls-archives-mcduffie-hitbox').onclick = () => showPage('ls-mcduffie-1993-page');
+    document.getElementById('ls-mcduffie-1993-hitbox').onclick = async () => {
+        spawnThemedBox("McDuffie, '93", "notification-top");
+    }
     document.getElementById('ls-archives-black-hitbox').onclick = () => showPage('ls-black-1997-page');
+    document.getElementById('ls-black-1997-hitbox').onclick = async () => {
+        spawnThemedBox("Black, '97", "notification-top");
+    }
     document.getElementById('ls-archives-keser-hitbox').onclick = () => showPage('ls-keser-1994-page');
+    document.getElementById('ls-keser-1994-hitbox').onclick = async () => {
+        spawnThemedBox("Keser, '94", "notification-top");
+    }
     document.getElementById('ls-archives-harrell-hitbox').onclick = () => showPage('ls-harrell-1993-page');
+    document.getElementById('ls-harrell-1993-hitbox').onclick = async () => {
+        spawnThemedBox("Harrell, '93", "notification-top");
+    }
 
     document.getElementById('ls-in-10-sk-nd-sk-hitbox').onclick = () => showPage('ls-10-sk-nd-page');
     document.getElementById('ls-in-10-sk-page').onclick = () => showPage('ls-10-sk-page');
@@ -3302,7 +3320,7 @@ function init() {
             refreshInventorySlots();
         }
         showPage('ls-10-sk-drive-page');
-        openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
+        openOverlay('ls-10-note', 'inv-images/ls-10-note.png');
     }
     document.getElementById('ls-10-sk-note-hitbox').onclick = () => {
         state.hasLs10note = true;
@@ -3312,9 +3330,9 @@ function init() {
             refreshInventorySlots();
         }
         showPage('ls-10-sk-page');
-        openOverlay('ls-10-note', 'ls-images/ls-10-note.png');
+        openOverlay('ls-10-note', 'inv-images/ls-10-note.png');
     }
-    document.getElementById('ls-10-sk-nd-drive-hitbox').onclick = () => {
+    document.getElementById('ls-10-sk-nd-drive-hitbox').onclick = async () => {
         state.hasLs10drive = true;
         const keySlot = document.getElementById('inv-ls-drive')
         if (keySlot) {
@@ -3322,10 +3340,11 @@ function init() {
             refreshInventorySlots();
         }
         showPage('ls-10-sk-note-page');
-        openOverlay('ls-10-drive', 'ls-images/ls-10-drive.png'); //I want it to overlay immediately and the character to comment on it
-        //fixme add feedback
+        openOverlay('ls-10-drive', 'inv-images/ls-10-drive.png'); //I want it to overlay immediately and the character to comment on it
+        //fixme maybe change feedback
+        await spawnThemedBox("Who is leaving these notes ?", "notification-top")
     }
-    document.getElementById('ls-10-sk-drive-hitbox').onclick = () => {
+    document.getElementById('ls-10-sk-drive-hitbox').onclick = async () => {
         state.hasLs10drive = true;
         const keySlot = document.getElementById('inv-ls-drive')
         if (keySlot) {
@@ -3333,8 +3352,16 @@ function init() {
             refreshInventorySlots();
         }
         showPage('ls-10-sk-page');
-        openOverlay('ls-10-drive', 'ls-images/ls-10-drive.png');
-        //fixme add feedback
+        openOverlay('ls-10-drive', 'inv-images/ls-10-drive.png');
+
+        if (state.loMonitorUnlocked) {
+            await spawnThemedBox("A flash drive ! I wonder if I can use this on the monitor in the office", "notification-top"); //fixme maybe change this message
+        } else {
+            await spawnThemedBox("A flash drive...");
+        }
+    }
+    document.getElementById('ls-sk-note-hitbox').onclick = () => {
+        openOverlay(''); //fixme take and add image of this page
     }
 
 
@@ -3343,7 +3370,6 @@ function init() {
 
     const overlay = document.getElementById("item-overlay");
     const closeBtn = document.getElementById("item-close-btn");
-    const overlayImg = document.getElementById("item-overlay-img");
 
 // Close overlay
     closeBtn.addEventListener("click", () => {
@@ -3401,7 +3427,7 @@ function init() {
                 } break;
                 case 'inv-images/pw-book-open-key.png': {
                     document.getElementById('pw-book-key-hitbox').classList.remove('hidden');
-                    document.getElementById('pw-book-key-hitbox').onclick = async (e) => {
+                    document.getElementById('pw-book-key-hitbox').onclick = async () => {
                         state.hasKiKey = true;
                         const keySlot = document.getElementById('inv-ki-key');
                         if (keySlot) {
@@ -3450,6 +3476,7 @@ function init() {
                     document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
                         await spawnThemedBox("animals", "notification-top");
                     }
+                    state.foundLiClue = true;
                     //fixme make it so if they click one more time they'll see un-der-animals maybe ?
                 } break;
             }
@@ -3887,6 +3914,7 @@ async function checkWireSolved() {
             document.getElementById('wire-solved-popup').classList.remove('hidden');
         }, 400);
         state.solvedWirePuzzle = true;
+        saveGame('pr-wr-box-page');
     }
 }
 
@@ -3945,7 +3973,6 @@ function setupWireCanvasEvents() {
 }
 
 // ---- SAVE SYSTEM ----
-// ---- SAVE SYSTEM ----
 const SAVE_KEY = 'escapeTribble_save';
 
 function prepareGameUI() {
@@ -3971,61 +3998,65 @@ function saveGame(currentPageId) {
         state: { ...state }, // This copies all your booleans/flags
         currentPage: currentPageId,
         inventory: visibleItems
-    };
+    }; //fixme it's not saving the wordle input/password
 
     try {
         localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
-        console.log("Game Saved at: " + currentPageId);
+        //console.log("Game Saved at: " + currentPageId);
     } catch (e) {
         console.error('Save failed:', e);
     }
 }
 
 function loadGame() {
-    try {
-        const raw = localStorage.getItem(SAVE_KEY);
-        if (!raw) {
-            console.warn("No save data found in localStorage.");
+    if (hasSaveFile()) {
+        try {
+            const raw = localStorage.getItem(SAVE_KEY);
+            if (!raw) {
+                console.warn("No save data found in localStorage.");
+                return false;
+            }
+
+            const saveData = JSON.parse(raw);
+
+            // 1. Restore the state variables (all your booleans, flags, and keys)
+            // This overwrites your 'const state' with the saved values
+            Object.assign(state, saveData.state);
+
+            // 2. Restore Inventory Visuals
+            // First, hide all inventory items to create a clean slate
+            document.querySelectorAll('.inv-item').forEach(item => {
+                item.classList.add('hidden');
+            });
+
+            // Then, loop through the list of IDs we saved and un-hide them
+            if (saveData.inventory && Array.isArray(saveData.inventory)) {
+                saveData.inventory.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.remove('hidden');
+                    }
+                });
+            }
+            refreshInventorySlots();
+
+            // 3. Handle specific puzzle cleanups / UI synchronization
+            // Since the wire puzzle isn't saved in detail, we just check if it was finished
+            if (state.solvedWirePuzzle) {
+                const popup = document.getElementById('wire-solved-popup');
+                if (popup) popup.classList.add('hidden');
+            }
+
+            // 4. Return the data so the calling function knows where to send the player
+            console.log("Game Loaded Successfully. Last page:", saveData.currentPage);
+            return saveData;
+
+        } catch (e) {
+            console.error('Load failed:', e);
             return false;
         }
-
-        const saveData = JSON.parse(raw);
-
-        // 1. Restore the state variables (all your booleans, flags, and keys)
-        // This overwrites your 'const state' with the saved values
-        Object.assign(state, saveData.state);
-
-        // 2. Restore Inventory Visuals
-        // First, hide all inventory items to create a clean slate
-        document.querySelectorAll('.inv-item').forEach(item => {
-            item.classList.add('hidden');
-        });
-
-        // Then, loop through the list of IDs we saved and un-hide them
-        if (saveData.inventory && Array.isArray(saveData.inventory)) {
-            saveData.inventory.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.remove('hidden');
-                }
-            });
-        }
-        refreshInventorySlots();
-
-        // 3. Handle specific puzzle cleanups / UI synchronization
-        // Since the wire puzzle isn't saved in detail, we just check if it was finished
-        if (state.solvedWirePuzzle) {
-            const popup = document.getElementById('wire-solved-popup');
-            if (popup) popup.classList.add('hidden');
-        }
-
-        // 4. Return the data so the calling function knows where to send the player
-        console.log("Game Loaded Successfully. Last page:", saveData.currentPage);
-        return saveData;
-
-    } catch (e) {
-        console.error('Load failed:', e);
-        return false;
+    } else {
+        console.log("No save file exists");
     }
 }
 
@@ -4050,7 +4081,7 @@ function clearSave() {
     refreshInventorySlots();
 
     console.log("Game state and Save file have been reset.");
-} //fixme need to fix but w inventory drawer
+} //fixme need to fix bug w inventory drawer
 
 function getInitialState() {
     return {

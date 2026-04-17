@@ -174,7 +174,7 @@ body {
     border-right: 32px solid transparent;
     border-top: 42px solid #c9a84c;
     cursor: pointer;
-    z-index: 100;
+    z-index: 99;
     transition: all 0.2s ease;
 }
 
@@ -2949,10 +2949,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #mh-cw-plate-hitbox {
     position: absolute;
-    top: 19%;
-    left: 15%;
-    width: 17%;
-    height: 58%;
+    top: 43%;
+    left: 37%;
+    width: 23%;
+    height: 31%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2962,10 +2962,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #cw-stairs-door-hitbox {
     position: absolute;
-    top: 50%;
-    left: 28%;
-    width: 12%;
-    height: 38%;
+    top: 0%;
+    left: 21%;
+    width: 52%;
+    height: 99%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -3118,10 +3118,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #eh-door-plate-hitbox {
     position: absolute;
-    top: 41%;
-    left: 52%;
-    width: 22%;
-    height: 33%;
+    top: 27%;
+    left: 44%;
+    width: 8%;
+    height: 11%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -3784,11 +3784,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-barnes-hitbox {
     position: absolute;
-    top: 10%;
-    left: 49%;
-    width: 29%;
-    height: 45%;
-
+    top: 7%;
+    left: 35%;
+    width: 40%;
+    height: 70%;
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
@@ -3797,10 +3796,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #li-boulley-hitbox {
     position: absolute;
-    top: 10%;
-    left: 49%;
-    width: 29%;
-    height: 45%;
+    top: 24%;
+    left: 43%;
+    width: 32%;
+    height: 62%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -4741,10 +4740,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #ls-note-hitbox {
     position: absolute;
-    top: 0%;
+    top: 19%;
     left: 20%;
     width: 55%;
-    height: 99%;
+    height: 66%;
 
     background-color: transparent;
     border: 2px solid transparent;
