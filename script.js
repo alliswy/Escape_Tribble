@@ -3109,15 +3109,17 @@ function init() {
             refreshInventorySlots();
         }
         showPage('li-br-page');
+        openOverlay("li-wr", "inv-images/wr.png");
     }
     document.getElementById('li-2r-br-hitbox').onclick = () => {
         state.hasBr = true;
-        const keySlot = document.getElementById('inv-Br');
+        const keySlot = document.getElementById('inv-br');
         if (keySlot) {
             keySlot.classList.remove('hidden');
             refreshInventorySlots();
         }
         showPage('li-wr-page');
+        openOverlay("li-br", "inv-images/br.png");
     }
     document.getElementById('li-wr-hitbox').onclick = () => {
         state.hasWr = true;
@@ -3127,6 +3129,7 @@ function init() {
             refreshInventorySlots();
         }
         showPage('li-nr-page');
+        openOverlay("li-wr", "inv-images/wr.png");
     }
     document.getElementById('li-wr-tvo-hitbox').onclick = () => {
         state.hasWr = true;
@@ -3136,15 +3139,17 @@ function init() {
             refreshInventorySlots();
         }
         showPage('li-nr-tvo-page');
+        openOverlay("li-wr", "inv-images/wr.png");
     }
     document.getElementById('li-br-hitbox').onclick = () => {
         state.hasBr = true;
-        const keySlot = document.getElementById('inv-Br');
+        const keySlot = document.getElementById('inv-br');
         if (keySlot) {
             keySlot.classList.remove('hidden');
             refreshInventorySlots();
         }
         showPage('li-nr-page');
+        openOverlay("li-br", "inv-images/br.png");
     }
     document.getElementById('li-tv-on-hitbox').onclick = async () => {
         await spawnThemedBox("What's up with all these shapes?", "notification-top");
