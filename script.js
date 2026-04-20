@@ -21,6 +21,8 @@ const state = {
     hasWrId: false,
     hasWr: false, //wr here is white remote
     hasBr: false,
+    hasAptKey: false,
+    hasWb: false,
 
     hasLoKey: false,
     hasLrBook: false,
@@ -38,6 +40,7 @@ const state = {
     camrUnlocked: false,
     wrUnlocked: false,
     loUnlocked: false,
+    aptUnlocked: false,
 
     camrDoorOpen: false, //this is the room with the two monitors in the creepy room
     crlDoorOpen: false, //this is the door to the left of the camera room^ in the creepy room. Note: if this door is open, camrDoorOpen = true;
@@ -64,6 +67,7 @@ const state = {
     discoveredOh2: false,
     discoveredOh3: false,
     discoveredPrint: false,
+    discoveredApt: false,
 
     solvedWirePuzzle: false,
     foundPtCode: false,
@@ -679,6 +683,21 @@ const roomLeads = {
     'tu-stairs-page':       {back: 'mh-tu-stairs-door-page'},
     'tu-stairs-ho-page':    {back: 'mh-tu-stairs-door-page'},
 
+
+    //tutorial pages
+    'apt-fd-handle-page':   {back: 'abt-fd-page'},
+    'apt-fd-open-page':     {back: 'apt-fd-page'},
+    'apt-main-water-page':  {back: 'apt-fd-open-page', forward: 'apt-table-page'},
+    'apt-table-water-page': {back: 'apt-main-water-page', left: 'apt-ki-entr-page'},
+    'apt-table-page':       {left: 'apt-ki-entr-page'},
+    'apt-ki-1-page':        {back: 'apt-ki-entr-page', forward: 'apt-ki-2-page'},
+    'apt-ki-2-page':        {back: 'apt-ki-1-page', forward: 'apt-ki-sink-page'},
+    'apt-sink-page':        {back: 'apt-ki-1-page'},
+    'apt-sink-water-page':  {back: 'apt-sink-page'},
+    'apt-sink-water-bottle-page': {back: 'apt-sink-page'},
+    'apt-ki-3-page':        {forward: 'apt-ki-exit-page'},
+    'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page'},
+    'apt-bed-page':         {back: 'apt-ki-exit-page'},
 };
 
 function createSoundClip(sfxEntry, volume = 1, loop = true, startCrop = 0, endCrop = 0) {
@@ -2078,6 +2097,185 @@ function closeSecurityTerminal() {
     }
 }
 
+// ------ INVENTORY INSPECTION -----
+
+const overlay = document.getElementById("item-overlay");
+const closeBtn = document.getElementById("item-close-btn");
+
+// Close overlay
+closeBtn.addEventListener("click", () => {
+    overlay.classList.add("hidden");
+});
+
+// Make ALL inventory items clickable
+const inventoryItems = document.querySelectorAll(".inv-item");
+
+inventoryItems.forEach(item => {
+    item.addEventListener("click", () => {
+        console.log("Clicked:", item.id, "Path:", item.dataset.img, "Name:", item.dataset.item);
+        const imgSrc = item.dataset.img;
+        const itemName = item.dataset.item; // IMPORTANT FIX
+
+        if (!imgSrc || !itemName) return;
+
+        openOverlay(itemName, imgSrc);
+    });
+});
+
+let currentOverlayItem = null;
+
+function openOverlay(itemName, imgSrc) {
+    currentOverlayItem = itemName;
+
+    const overlay = document.getElementById("item-overlay");
+    const img = document.getElementById("item-overlay-img");
+
+    img.src = imgSrc;
+    overlay.classList.remove("hidden");
+
+    setupOverlayHitboxes(itemName, imgSrc);
+}
+
+function setupOverlayHitboxes(itemName, imgSrc) {
+    // reset all first
+    const all = document.querySelectorAll("#overlay-hitbox-layer .hitbox")
+    all.forEach(h => {
+        h.classList.add('hidden');
+        h.onclick = null;
+    });
+
+    if (itemName === "pw-book") {
+        switch (imgSrc) {
+            case 'inv-images/pw-book.png': {
+                document.getElementById('pw-book-hitbox').classList.remove('hidden');
+                document.getElementById("pw-book-hitbox").onclick = () => {
+                    if (state.hasKiKey) {
+                        openOverlay("pw-book", "inv-images/pw-book-open.png");
+                    } else {
+                        openOverlay("pw-book", "inv-images/pw-book-open-key.png");
+                    }
+                };
+            } break;
+            case 'inv-images/pw-book-open-key.png': {
+                document.getElementById('pw-book-key-hitbox').classList.remove('hidden');
+                document.getElementById('pw-book-key-hitbox').onclick = async () => {
+                    state.hasKiKey = true;
+                    const keySlot = document.getElementById('inv-ki-key');
+                    if (keySlot) {
+                        keySlot.classList.remove('hidden');
+                        refreshInventorySlots();
+                    }
+                    document.getElementById("item-overlay").classList.add("hidden");
+                    openOverlay("pw-book", "inv-images/pw-book-open.png"); //fixme will the repeated item name cause issues?
+                    await delay(20);
+                    await spawnThemedBox("Another key.... Which door is this one for ?", "notification-top");
+                }
+            } break;
+            case 'inv-images/pw-book-open.png': {
+                document.getElementById('pw-book-open-hitbox').classList.remove('hidden');
+            } break;
+        }
+    }
+    if (itemName === "sherlock-book") {
+        switch (imgSrc) {
+            case 'inv-images/sherlock-book.png': {
+                document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
+                document.getElementById("sherlock-book-hitbox").onclick = () => {
+                    openOverlay("sherlock-book", "inv-images/sherlock-book-open.png")
+                };
+            } break;
+            case 'inv-images/sherlock-book-open.png': {
+                document.getElementById('sherlock-book-open-hitbox').classList.remove('hidden');
+                document.getElementById("sherlock-book-open-hitbox").onclick = () => {
+                    if (state.hasSkPaper) {
+                        openOverlay("sherlock-book", "inv-images/sherlock-book-open-paper.png");
+                    } else {
+                        console.log('Error with progression has occurred'); //fixme check that they have to get the paper before being able to access the book
+                    }
+                };
+            } break;
+            case 'inv-images/sherlock-book-open-paper.png': {
+                document.getElementById('sherlock-book-open-un-hitbox').classList.remove('hidden')
+                document.getElementById('sherlock-book-open-der-hitbox').classList.remove('hidden');
+                document.getElementById('sherlock-book-open-animals-hitbox').classList.remove('hidden');
+                document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
+                    await spawnThemedBox("un-", "notification-top");
+                }
+                document.getElementById('sherlock-book-open-der-hitbox').onclick = async () => {
+                    await spawnThemedBox("der-", "notification-top");
+                }
+                document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
+                    await spawnThemedBox("animals", "notification-top");
+                }
+                state.foundLiClue = true;
+                //fixme make it so if they click one more time they'll see un-der-animals maybe ?
+            } break;
+        }
+    }
+}
+
+
+function runTutorial() {
+    showPage('apt-fd-page');
+    const keySlot = document.getElementById('inv-apt-key');
+    if (keySlot) {
+        keySlot.classList.remove('hidden');
+        refreshInventorySlots();
+    }
+
+    //hitbox setup
+    document.getElementById('apt-fd-handle-hitbox').onclick = () => {
+        showPage('apt-fd-handle-page');
+        //fixme add feedback
+    }
+    document.getElementById('apt-fd-handle-handle-hitbox').onclick = () => {
+        if (state.aptUnlocked) {
+            showPage('apt-fd-open-page');
+            //fixme add feedback
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('apt-fd-handle-keyhole-hitbox').onclick = () => {
+        if (state.hasAptKey) {
+            state.aptUnlocked = true;
+            const keySlot = document.getElementById('inv-apt-key');
+            if (keySlot) {
+                keySlot.classList.add('hidden');
+                refreshInventorySlots();
+            }
+            triggerSound('unlock');
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('apt-fd-open-hitbox').onclick = () => {
+        showPage("apt-main-water-page");
+        //fixme add feedbakc
+    }
+    document.getElementById('apt-ki-sink-page').onclick = async () => {
+        if (state.hasWb) {
+            showPage('apt-ki-sink-water-bottle-page');
+            setTimeout(() => {
+                showPage('apt-ki-sink-page');
+            }, 5000);
+        } else {
+            //fixme add feedback
+        }
+    }
+    document.getElementById('apt-table-water-hitbox').onclick = () => {
+        showPage("apt-table-page");
+        openOverlay('wb', 'inv-images/wb.png');
+        //fixme add feedback
+        state.hasWb = true;
+    }
+    document.getElementById('apt-bed-hitbox').onclick = () => {
+        //fixme add fade to black then wake up in tribble
+    }
+}
+
+
+
 
 
 // ----- 5. INITIALIZE EVENT LISTENERS -----
@@ -2162,7 +2360,7 @@ function init() {
 
 
     //Exit button fixme temporarily removed exit button. All it does is close the window, and no websites have this bc its unnecessary
-   /* document.getElementById('exit-button').onclick = () => {
+    /* document.getElementById('exit-button').onclick = () => {
         window.close();
     };*/
 
@@ -3367,125 +3565,6 @@ function init() {
     }
     document.getElementById('ls-sk-note-hitbox').onclick = () => {
         openOverlay(''); //fixme take and add image of this page
-    }
-
-
-
-    // ------ INVENTORY INSPECTION -----
-
-    const overlay = document.getElementById("item-overlay");
-    const closeBtn = document.getElementById("item-close-btn");
-
-// Close overlay
-    closeBtn.addEventListener("click", () => {
-        overlay.classList.add("hidden");
-    });
-
-// Make ALL inventory items clickable
-    const inventoryItems = document.querySelectorAll(".inv-item");
-
-    inventoryItems.forEach(item => {
-        item.addEventListener("click", () => {
-            console.log("Clicked:", item.id, "Path:", item.dataset.img, "Name:", item.dataset.item);
-            const imgSrc = item.dataset.img;
-            const itemName = item.dataset.item; // IMPORTANT FIX
-
-            if (!imgSrc || !itemName) return;
-
-            openOverlay(itemName, imgSrc);
-        });
-    });
-
-    let currentOverlayItem = null;
-
-    function openOverlay(itemName, imgSrc) {
-        currentOverlayItem = itemName;
-
-        const overlay = document.getElementById("item-overlay");
-        const img = document.getElementById("item-overlay-img");
-
-        img.src = imgSrc;
-        overlay.classList.remove("hidden");
-
-        setupOverlayHitboxes(itemName, imgSrc);
-    }
-
-    function setupOverlayHitboxes(itemName, imgSrc) {
-        // reset all first
-        const all = document.querySelectorAll("#overlay-hitbox-layer .hitbox")
-        all.forEach(h => {
-            h.classList.add('hidden');
-            h.onclick = null;
-        });
-
-        if (itemName === "pw-book") {
-            switch (imgSrc) {
-                case 'inv-images/pw-book.png': {
-                    document.getElementById('pw-book-hitbox').classList.remove('hidden');
-                    document.getElementById("pw-book-hitbox").onclick = () => {
-                        if (state.hasKiKey) {
-                            openOverlay("pw-book", "inv-images/pw-book-open.png");
-                        } else {
-                            openOverlay("pw-book", "inv-images/pw-book-open-key.png");
-                        }
-                    };
-                } break;
-                case 'inv-images/pw-book-open-key.png': {
-                    document.getElementById('pw-book-key-hitbox').classList.remove('hidden');
-                    document.getElementById('pw-book-key-hitbox').onclick = async () => {
-                        state.hasKiKey = true;
-                        const keySlot = document.getElementById('inv-ki-key');
-                        if (keySlot) {
-                            keySlot.classList.remove('hidden');
-                            refreshInventorySlots();
-                        }
-                        document.getElementById("item-overlay").classList.add("hidden");
-                        openOverlay("pw-book", "inv-images/pw-book-open.png"); //fixme will the repeated item name cause issues?
-                        await delay(20);
-                        await spawnThemedBox("Another key.... Which door is this one for ?", "notification-top");
-                    }
-                } break;
-                case 'inv-images/pw-book-open.png': {
-                    document.getElementById('pw-book-open-hitbox').classList.remove('hidden');
-                } break;
-            }
-        }
-        if (itemName === "sherlock-book") {
-            switch (imgSrc) {
-                case 'inv-images/sherlock-book.png': {
-                    document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
-                    document.getElementById("sherlock-book-hitbox").onclick = () => {
-                        openOverlay("sherlock-book", "inv-images/sherlock-book-open.png")
-                    };
-                } break;
-                case 'inv-images/sherlock-book-open.png': {
-                    document.getElementById('sherlock-book-open-hitbox').classList.remove('hidden');
-                    document.getElementById("sherlock-book-open-hitbox").onclick = () => {
-                        if (state.hasSkPaper) {
-                            openOverlay("sherlock-book", "inv-images/sherlock-book-open-paper.png");
-                        } else {
-                            console.log('Error with progression has occurred'); //fixme check that they have to get the paper before being able to access the book
-                        }
-                    };
-                } break;
-                case 'inv-images/sherlock-book-open-paper.png': {
-                    document.getElementById('sherlock-book-open-un-hitbox').classList.remove('hidden')
-                    document.getElementById('sherlock-book-open-der-hitbox').classList.remove('hidden');
-                    document.getElementById('sherlock-book-open-animals-hitbox').classList.remove('hidden');
-                    document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
-                        await spawnThemedBox("un-", "notification-top");
-                    }
-                    document.getElementById('sherlock-book-open-der-hitbox').onclick = async () => {
-                        await spawnThemedBox("der-", "notification-top");
-                    }
-                    document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
-                        await spawnThemedBox("animals", "notification-top");
-                    }
-                    state.foundLiClue = true;
-                    //fixme make it so if they click one more time they'll see un-der-animals maybe ?
-                } break;
-            }
-        }
     }
 
     document.getElementById("item-close-btn").addEventListener("click", (e) => {

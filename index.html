@@ -63,13 +63,27 @@
         <div id="inventory-tab">Inventory</div>
         <div id="inventory-panel" class="inventory-closed">
             <div id="inventory-content">
+                <div id="inv-apt-key" class="inv-item hidden" title="Apartment Key"
+                     data-item="apt-key"
+                     data-img="inv-images/key.png">
+                    <span class="emoji-icon">🗝️</span>
+                </div>
+
+                <div id="inv-wb" class="inv-item hidden" title="Water Bottle"
+                     data-item="wb"
+                     data-img="inv-images/wb.png">
+                    <span class="emoji-icon">💧</span>
+                </div>
+
                 <div id="inv-bd-key" class="inv-item hidden" title="Book Drop Key"
-                     data-item="bd-key">
+                     data-item="bd-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
                 <div id="inv-pr-key" class="inv-item hidden" title="Fish Book Key"
-                     data-item="pr-key">
+                     data-item="pr-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
@@ -80,42 +94,50 @@
                 </div>
 
                 <div id="inv-ki-key" class="inv-item hidden" title="Orange Book Key"
-                     data-item="ki-key">
+                     data-item="ki-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
                 <div id="inv-camr-key" class="inv-item hidden" title="Couch Key"
-                     data-item="camr-key">
+                     data-item="camr-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
                 <div id="inv-wr-id" class="inv-item hidden" title="ID card"
-                     data-item="wr-id">
+                     data-item="wr-id"
+                     data-img="inv-images/wr-id.png">
                     <span class="emoji-icon">🪪</span>
                 </div>
 
                 <div id="inv-li-key" class="inv-item hidden" title="Key from Classroom"
-                     data-item="li-key">
+                     data-item="li-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
                 <div id="inv-lo-key" class="inv-item hidden" title="Key from library"
-                     data-item="lo-key">
+                     data-item="lo-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
                 <div id="inv-clr-key" class="inv-item hidden" title="Key from Office Dropbox"
-                     data-item="clr-key">
+                     data-item="clr-key"
+                     data-img="inv-images/key.png">
                     <span class="emoji-icon">🗝️</span>
                 </div>
 
                 <div id="inv-br" class="inv-item hidden" title="Black Remote"
-                     data-item="br">
+                     data-item="br"
+                     data-img="inv-images/br.png">
                     <span class="emoji-icon">temp br</span>
                 </div>
 
                 <div id="inv-wr" class="inv-item hidden" title="White Remote"
-                     data-item="wr">
+                     data-item="wr"
+                     data-img="inv-images/wr.png">
                     <span class="emoji-icon">temp wr</span>
                 </div>
 
@@ -1668,6 +1690,78 @@
             <div id="tu-rubble-hitbox" class="hitbox"></div>
             <div id="tu-hatch-hitbox" class="hitbox"></div>
         </div>
+
+
+
+        <!-- TUTORIAL PAGES  FIXME some of these are temp images, and should add more images as well, add apt main page (no water)-->
+        <div id="apt-fd-page" class="fit hidden">
+            <img id="apt-fd" src="tutorial/apt-fd.jpeg" alt="Game Room">
+            <div id="apt-fd-handle-hitbox" class="hitbox"></div>
+        </div>
+
+        <div id="apt-fd-handle-page" class="fit hidden">
+            <img loading="lazy" id="apt-fd-handle" src="tutorial/apt-fd-handle.jpeg" alt="Game Room">
+            <div id="apt-fd-handle-handle-hitbox" class="hitbox"></div>
+            <div id="apt-fd-handle-keyhole-hitbox" class="hitbox"></div>
+        </div>
+
+        <div id="apt-fd-open-page" class="fit hidden">
+            <img loading="lazy" id="apt-fd-open" src="tutorial/apt-fd-open.jpeg" alt="Game Room">
+            <div id="apt-fd-open-hitbox" class="hitbox"></div>
+        </div>
+
+        <div id="apt-main-water-page" class="fit hidden">
+            <img loading="lazy" id="apt-main-water" src="tutorial/apt-main-water.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-table-water-page" class="fit hidden">
+            <img loading="lazy" id="apt-table-water" src="tutorial/apt-table-water.jpeg" alt="Game Room">
+            <div id="apt-table-water-hitbox" class="hitbox"></div>
+        </div>
+
+        <div id="apt-table-page" class="fit hidden">
+            <img loading="lazy" id="apt-table" src="tutorial/apt-table.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-ki-entr-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-entr" src="tutorial/apt-ki-entr.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-ki-1-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-1" src="tutorial/apt-ki-1.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-ki-2-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-2" src="tutorial/apt-ki-2.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-ki-3-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-3" src="tutorial/apt-ki-3.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-ki-sink-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-sink" src="tutorial/apt-ki-sink.jpeg" alt="Game Room">
+            <div id="apt-ki-sink-hitbox" class="hitbox"></div>
+        </div>
+
+        <div id="apt-ki-sink-water-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-sink-water" src="tutorial/apt-ki-sink-water.jpeg" alt="Game Room">
+            <div id="apt-ki-sink-water-hitbox" class="hitbox"></div>
+        </div>
+
+        <div id="apt-ki-sink-water-bottle-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-sink-water-bottle" src="tutorial/apt-ki-sink-water-bottle.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-ki-exit-page" class="fit hidden">
+            <img loading="lazy" id="apt-ki-exit" src="tutorial/apt-ki-exit.jpeg" alt="Game Room">
+        </div>
+
+        <div id="apt-bed-page" class="fit hidden">
+            <img loading="lazy" id="apt-bed" src="tutorial/apt-bed.jpeg" alt="Game Room">
+            <div id="apt-bed-hitbox" class="hitbox"></div>
+        </div>
+
 
 
 

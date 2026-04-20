@@ -4879,6 +4879,114 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#apt-bed-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-fd-handle-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-fd-handle-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-fd-handle-handle-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-fd-handle-keyhole-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-table-water-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-ki-sink-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-ki-sink-water-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#apt-fd-open-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 
 /*--------- flicker animation ----- */
 /* The Animation Definition */
