@@ -299,59 +299,89 @@ body {
     z-index: 10000 !important;
 }
 
-.notification-arrow {
-    position: fixed !important;
-    bottom: 40% !important;    /* Distance from the floor */
-    left: 17% !important;      /* Horizontal center */
-    transform: translateX(-50%) !important;
-
-    /* Force ignore vertical centering */
-    top: auto !important;
-
-    /*width: 30%;*/
-    min-width: 320px;
-    max-width: 800px;
-
-    /* Make sure text looks good */
-    text-align: center;
-    pointer-events: auto; /* Allow clicking if you want to manually close later */
+/* ---- tutorial popups ----- */
+/* Base class for all Tutorial Boxes */
+:root {
+    --tut-blue-bg: #0a192f;
+    --tut-gold-text: #64ffda; /* Teal-Gold or Amber */
+    --tut-border-gold: #fcc200;
 }
 
-/* FIXME there is a bug that if you minimize the screen the notification locations don't adjust correctly*/
-.notification-inventory {
+/* --- 1. The Base Style (Look only) --- */
+.tut-notification-base {
     position: fixed !important;
-    bottom: 90% !important;    /* Distance from the floor */
-    left: 23% !important;      /* Horizontal center */
-    transform: translateX(-50%) !important;
+    display: block !important;
+    background: #0a192f !important;
+    border: 2px solid #fcc200 !important;
+    color: #64ffda !important;
+    padding: 15px 25px;
+    border-radius: 4px;
+    z-index: 99999 !important;
+    width: max-content !important;
+    max-width: 80vw !important;
 
-    /* Force ignore vertical centering */
+    /* Ensure no defaults are messing with positioning */
+    transform: none !important;
     top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+}
 
-    /*width: 22%;*/
-    min-width: 320px;
-    max-width: 800px;
+/* --- 2. Specific Adjustments --- */
+/* These will now work because the JS names match these exactly */
 
-    /* Make sure text looks good */
-    text-align: center;
-    pointer-events: auto; /* Allow clicking if you want to manually close later */
+.notification-inventory {
+    top: 20px !important;
+    left: 150px !important;
 }
 
 .notification-invInspection {
+    top: 70px !important;
+    left: 150px !important;
+}
+
+.notification-closeOverlay {
+    top: 20px !important;
+    right: 180px !important;
+}
+
+.notification-menu {
+    top: 15px !important;
+    right: 200px !important;
+}
+
+.notification-hint {
+    bottom: 20px !important;
+    right: 100px !important;
+}
+
+.notification-mid {
     position: fixed !important;
-    bottom: 85% !important;    /* Distance from the floor */
-    left: 25% !important;      /* Horizontal center */
+    top: 10% !important;    /* Distance from the floor */
+    left: 50% !important;      /* Horizontal center */
     transform: translateX(-50%) !important;
-
     /* Force ignore vertical centering */
-    top: auto !important;
+    bottom: auto !important;
 
-    /*width: 25%;*/
-    min-width: 320px;
-    max-width: 800px;
+    width: max-content;      /* 1. Forces the box to be exactly as wide as the text */
+    max-width: 80vw;         /* 2. Prevents it from going off-screen on mobile */
+    min-width: 0 !important; /* 3. Removes your 320px restriction */
+
+    /* Optional: Add some padding so the text doesn't touch the edges */
+    padding: 15px 25px;
 
     /* Make sure text looks good */
     text-align: center;
-    pointer-events: auto; /* Allow clicking if you want to manually close later */
+    pointer-events: auto; /* Allow clicking if you want to manually close */
+    z-index: 10000 !important;
+}
+
+/* Burgundy Story Box */
+.theme-burgundy-gold.notification-top {
+    top: 10% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
 }
 
 /* Ensure the text inside the themed box looks right */
@@ -515,6 +545,16 @@ body {
     font-size: 11px;
     color: #c9a84c;
     letter-spacing: 1px;
+}
+
+/*--- cinematic fade to black screen ---*/
+#screen-fade {
+    position: fixed;
+    inset: 0;
+    background: black;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
 }
 
 /* ---- MENU SCREEN ---- */
@@ -1864,7 +1904,7 @@ input[type="range"]::-webkit-slider-thumb {
 #item-overlay {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: 400;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1886,6 +1926,12 @@ input[type="range"]::-webkit-slider-thumb {
     background: transparent;
     box-shadow: none;
     padding: 0;
+    pointer-events: none;
+}
+#item-overlay-img,
+#overlay-hitbox-layer,
+#item-close-btn {
+    pointer-events: auto;
 }
 
 /* Item image */
@@ -1903,15 +1949,18 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Close button */
 #item-close-btn {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    background: white;
-    border: none;
-    border-radius: 50%;
+    position: fixed !important; /* Changed from absolute to lock to screen */
+    top: 30px !important;       /* Exactly 50px from top */
+    right: 50px !important;     /* Exactly 50px from right */
+
+    background: white !important;
+    border: none !important;
+    border-radius: 50% !important;
     cursor: pointer;
     font-size: 18px;
     padding: 5px 10px;
+    z-index: 10005 !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
 /* ---- Inventory Item Hitboxes ----*/
@@ -1922,7 +1971,7 @@ input[type="range"]::-webkit-slider-thumb {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10;
+    z-index: 600;
 }
 
 #pw-book-hitbox {
@@ -4881,10 +4930,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-bed-hitbox {
     position: absolute;
-    top: 51%;
-    left: 58%;
-    width: 11%;
-    height: 17%;
+    top: 37%;
+    left: 19%;
+    width: 51%;
+    height: 43%;
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
@@ -4893,22 +4942,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-fd-handle-hitbox {
     position: absolute;
-    top: 51%;
+    top: 54%;
     left: 58%;
-    width: 11%;
-    height: 17%;
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
-#apt-fd-handle-hitbox {
-    position: absolute;
-    top: 51%;
-    left: 58%;
-    width: 11%;
-    height: 17%;
+    width: 5%;
+    height: 11%;
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
@@ -4917,8 +4954,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-fd-handle-handle-hitbox {
     position: absolute;
-    top: 51%;
-    left: 58%;
+    top: 64%;
+    left: 44%;
     width: 11%;
     height: 17%;
     background-color: transparent;
@@ -4929,10 +4966,11 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-fd-handle-keyhole-hitbox {
     position: absolute;
-    top: 51%;
-    left: 58%;
+    top: 27%;
+    left: 44%;
     width: 11%;
-    height: 17%;
+    height: 15%;
+
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
@@ -4941,10 +4979,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-table-water-hitbox {
     position: absolute;
-    top: 51%;
-    left: 58%;
-    width: 11%;
-    height: 17%;
+    top: 22%;
+    left: 48%;
+    width: 12%;
+    height: 28%;
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
@@ -4953,22 +4991,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-ki-sink-hitbox {
     position: absolute;
-    top: 51%;
-    left: 58%;
-    width: 11%;
-    height: 17%;
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
-#apt-ki-sink-water-hitbox {
-    position: absolute;
-    top: 51%;
-    left: 58%;
-    width: 11%;
-    height: 17%;
+    top: 38%;
+    left: 60%;
+    width: 9%;
+    height: 16%;
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
@@ -4977,10 +5003,22 @@ input[type="range"]::-webkit-slider-thumb {
 
 #apt-fd-open-hitbox {
     position: absolute;
-    top: 51%;
-    left: 58%;
-    width: 11%;
-    height: 17%;
+    top: 0%;
+    left: 15%;
+    width: 71%;
+    height: 99%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#wb-hitbox {
+    position: absolute;
+    top: 14%;
+    left: 29%;
+    width: 34%;
+    height: 29%;
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */

@@ -22,6 +22,9 @@
         </div>
     </div>
 
+    <!-- fade to black screen -->
+    <div id="screen-fade"></div>
+
     <!-- How to Play Screen fixme - temp for practice, remove later -->
 <!--    <div id="how-to-play-screen" class="hidden fade-screen">-->
 <!--        <h2>How to Play</h2>-->
@@ -1744,10 +1747,10 @@
             <div id="apt-ki-sink-hitbox" class="hitbox"></div>
         </div>
 
-        <div id="apt-ki-sink-water-page" class="fit hidden">
-            <img loading="lazy" id="apt-ki-sink-water" src="tutorial/apt-ki-sink-water.jpeg" alt="Game Room">
-            <div id="apt-ki-sink-water-hitbox" class="hitbox"></div>
-        </div>
+<!--        <div id="apt-ki-sink-water-page" class="fit hidden">-->
+<!--            <img loading="lazy" id="apt-ki-sink-water" src="tutorial/apt-ki-sink-water.jpeg" alt="Game Room">-->
+<!--            <div id="apt-ki-sink-water-hitbox" class="hitbox"></div>-->
+<!--        </div>-->
 
         <div id="apt-ki-sink-water-bottle-page" class="fit hidden">
             <img loading="lazy" id="apt-ki-sink-water-bottle" src="tutorial/apt-ki-sink-water-bottle.jpeg" alt="Game Room">
@@ -1836,7 +1839,7 @@
 
         <div id="item-overlay" class="hidden">
             <div class="overlay-backdrop"></div>
-
+            <button id="item-close-btn">✕</button>
             <div class="item-container">
                 <img loading="lazy" id="item-overlay-img" src="" alt="Inventory Item">
                 <div id="overlay-hitbox-layer">
@@ -1849,9 +1852,9 @@
                     <div id="sherlock-book-open-un-hitbox" class="hitbox hidden"></div>
                     <div id="sherlock-book-open-der-hitbox" class="hitbox hidden"></div>
                     <div id="sherlock-book-open-animals-hitbox" class="hitbox hidden"></div>
+                    <div id="wb-hitbox" class="hitbox hidden"></div>
 
                 </div>
-                <button id="item-close-btn">✕</button>
             </div>
         </div>
 
