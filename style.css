@@ -51,9 +51,27 @@ body {
     display: none !important;
 }
 
-/* ---- UI POLISH: ELIMINATE BLUE HIGHLIGHT ON FAST CLICKING ---- */
+/* ---- UI POLISH: TOTAL INTERACTIVE FIX blue highlight ---- */
+html, body {
+    /* Prevents the 'pull-to-refresh' gesture on mobile which can break games */
+    overscroll-behavior-y: contain;
+}
+
 * {
+    /* 1. Remove the mobile tap flash */
     -webkit-tap-highlight-color: transparent;
+
+    /* 2. Prohibit text selection globally */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Standard */
+}
+
+/* 3. Re-enable selection for inputs so players can still type names/codes if needed */
+input, textarea {
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 .hitbox,

@@ -4545,54 +4545,55 @@ function init() {
 // Each unit = 10px on canvas. x/y are grid coords, w/h are grid sizes.
 const mapRooms = {
     // A-Wing
-    mh:   { x: 2,  y: 24, w: 38, h: 3,  label: 'Main Hall',    key: 'mh'   },
-    pr:   { x: 16, y: 10,  w: 5,  h: 5, label: 'Projector room',    key: 'pr'   },
-    bd:   { x: 16, y: 16, w: 5,  h: 5,  label: 'Book Drop',     key: 'bd'   },
-    li:   { x: 23, y: 13, w: 11, h: 11, label: 'Library',       key: 'li'   },
-    lo:   { x: 31, y: 5,  w: 7,  h: 7,  label: 'Library Office',    key: 'lo'   },
-    ls:   { x: 10,  y: 5,  w: 24, h: 7, label: 'Library Storage',   key: 'ls'   },
-    stairs:{ x: 41, y: 24, w: 3, h: 3,  label: 'Stairwell',        key: 'stairs'},
-    ki:   { x: 36, y: 28, w: 3,  h: 6,  label: 'Kitchen',       key: 'ki'   },
-    bh:   { x: 14, y: 28, w: 4,  h: 20, label: 'Back Hall',     key: 'bh'   },
-    sh:   { x: 19, y: 43, w: 7,  h: 3,  label: 'Side Hall',     key: 'sh'   },
-    tu:   { x: 26, y: 28, w: 8, h: 3,   label: 'Stairwell',      key: 'tu'  },
-    clr:  { x: 30, y: 32, w: 4, h: 4,   label: 'Counseling Room',   key: 'clr'  },
-    cr:   { x: 15, y: 36, w: 8, h: 8,  label: 'Creepy Room',   key: 'cr'   },
-    camr: { x: 16, y: 46, w: 4,  h: 4,  label: 'Camera Room',   key: 'camr' },
+    mh:   { x: 3,  y: 24, w: 38, h: 3,  label: 'Main Hall',    key: 'mh'   },
+    pr:   { x: 18, y: 14,  w: 4,  h: 4, label: 'Projector room',    key: 'pr'   },
+    bd:   { x: 18, y: 19, w: 4,  h: 4,  label: 'Book Drop',     key: 'bd'   },
+    li:   { x: 23, y: 12, w: 11, h: 11, label: 'Library',       key: 'li'   },
+    lo:   { x: 32, y: 6,  w: 5,  h: 5,  label: 'Library Office',    key: 'lo'   },
+    ls:   { x: 11,  y: 7,  w: 20, h: 4, label: 'Library Storage',   key: 'ls'   },
+    stairs:{ x: 41.5, y: 24, w: 3, h: 3,  label: 'Stairwell',        key: 'stairs'},
+    ki:   { x: 36, y: 28, w: 4,  h: 6,  label: 'Kitchen',       key: 'ki'   },
+    bh:   { x: 14, y: 28, w: 4,  h: 22, label: 'Back Hall',     key: 'bh'   },
+    sh:   { x: 19, y: 44, w: 7,  h: 3,  label: 'Side Hall',     key: 'sh'   },
+    tu:   { x: 28, y: 28, w: 5, h: 5,   label: 'Stairwell',      key: 'tu'  },
+    clr:  { x: 28, y: 35, w: 4, h: 4,   label: 'Counseling Room',   key: 'clr'  },
+    cr:   { x: 19, y: 35, w: 8, h: 8,  label: 'Creepy Room',   key: 'cr'   },
+    camr: { x: 28, y: 40, w: 4,  h: 4,  label: 'Camera Room',   key: 'camr' },
     // C-Wing
-    cw:   { x: 16, y: 5,  w: 4,  h: 35, label: 'C-Wing',        key: 'cw'   },
-    wr:   { x: 14, y: 0,  w: 9,  h: 4,  label: 'Classroom',     key: 'wr'   },
-    bath: { x: 7,  y: 6,  w: 8,  h: 6,  label: 'Bathroom',      key: 'bath' },
-    snh:  { x: 20, y: 6,  w: 10, h: 4,  label: 'Office Hall',    key: 'snh'  },
-    oh1:  { x: 6,  y: 15, w: 4,  h: 15, label: 'Office Hall',   key: 'oh1'  },
-    oh2:  { x: 10, y: 27, w: 9,  h: 3,  label: 'Office Hall',   key: 'oh2'  },
-    oh3:  { x: 19, y: 23, w: 3,  h: 7,  label: 'Office Hall',   key: 'oh3'  },
-    print:{ x: 5,  y: 33, w: 8,  h: 7,  label: 'Printer Room',  key: 'print'},
+    cw:   { x: 16, y: 11, w: 4,  h: 30, label: 'C-Wing',        key: 'cw'   }, // y moved 5->11
+    wr:   { x: 13, y: 0,  w: 10, h: 10, label: 'Classroom',     key: 'wr'   }, // resized to 10x10
+    bath: { x: 11, y: 19, w: 4,  h: 3,  label: 'Bathroom',      key: 'bath' }, // y moved 13->19
+    snh:  { x: 21, y: 15, w: 10, h: 4,  label: 'Office Hall',   key: 'snh'  }, // y moved 9->15
+    oh1:  { x: 11, y: 32, w: 4,  h: 15, label: 'Office Hall',   key: 'oh1'  }, // y moved 26->32
+    oh2:  { x: 21, y: 38, w: 9,  h: 3,  label: 'Office Hall',   key: 'oh2'  }, // y moved 32->38
+    oh3:  { x: 21, y: 42, w: 3,  h: 7,  label: 'Office Hall',   key: 'oh3'  }, // y moved 36->42
+    print:{ x: 16, y: 42, w: 4,  h: 4,  label: 'Printer Room',  key: 'print'}, // y moved 36->42
 };
 
 const mapCorridors = [
     // A-Wing
-    { rooms: ['pr',   'bd'],    dir: 'v', wing: 'a' },
-    { rooms: ['bd',   'mh'],    dir: 'v', wing: 'a' },
-    { rooms: ['lo',   'li'],    dir: 'v', wing: 'a' },
-    { rooms: ['li',   'mh'],    dir: 'v', wing: 'a' },
-    { rooms: ['lo',   'ls'],    dir: 'h', wing: 'a' },
-    { rooms: ['stairs','mh'],   dir: 'h', wing: 'a' },
-    { rooms: ['ki',   'mh'],    dir: 'v', wing: 'a' },
-    { rooms: ['bh',   'mh'],    dir: 'v', wing: 'a' },
-    { rooms: ['bh',   'sh'],    dir: 'h', wing: 'a' },
-    { rooms: ['bh',   'cr'],    dir: 'v', wing: 'a' },
-    { rooms: ['tu', 'mh'],      dir: 'v', wing: 'a'},
-    { rooms: ['clr',  'cr'],    dir: 'h', wing: 'a' },
-    { rooms: ['cr',   'camr'],  dir: 'h', wing: 'a' },
-    // C-Wing
-    { rooms: ['cw',   'wr'],    dir: 'v', wing: 'c' },
-    { rooms: ['cw',   'bath'],  dir: 'h', wing: 'c' },
-    { rooms: ['cw',   'snh'],   dir: 'h', wing: 'c' },
-    { rooms: ['cw',   'oh1'],   dir: 'h', wing: 'c' },
-    { rooms: ['oh1',  'oh2'],   dir: 'v', wing: 'c' },
-    { rooms: ['oh2',  'oh3'],   dir: 'h', wing: 'c' },
-    { rooms: ['oh1',  'print'], dir: 'v', wing: 'c' },
+    { rooms: ['pr', 'bd'], dir: 'v', wing: 'a', door1: {x: 20, y: 18}, door2: {x: 20, y: 19} },
+    { rooms: ['bd', 'mh'], dir: 'v', wing: 'a', door1: {x: 20, y: 23}, door2: {x: 20, y: 24} },
+    { rooms: ['li', 'mh'], dir: 'v', wing: 'a', door1: {x: 25, y: 23}, door2: {x: 25, y: 24} },
+    { rooms: ['lo', 'li'], dir: 'v', wing: 'a', door1: {x: 33, y: 11}, door2: {x: 33, y: 12} },
+    { rooms: ['lo', 'ls'], dir: 'h', wing: 'a', door1: {x: 31, y: 9.5}, door2: {x: 32, y: 9.5} },
+    { rooms: ['stairs','mh'], dir: 'h', wing: 'a', door1: {x: 41.5, y: 25.5}, door2: {x: 41, y: 25.5} },
+    { rooms: ['ki', 'mh'], dir: 'v', wing: 'a', door1: {x: 38, y: 28}, door2: {x: 38, y: 27} },
+    { rooms: ['bh', 'mh'], dir: 'v', wing: 'a', door1: {x: 16, y: 28}, door2: {x: 16, y: 27} },
+    { rooms: ['bh', 'sh'], dir: 'v', wing: 'a', door1: {x: 19, y: 45.5}, door2: {x: 18, y: 45.5} },
+    { rooms: ['sh', 'cr'], dir: 'v', wing: 'a', door1: {x: 23, y: 44}, door2: {x: 23, y: 43} },
+    { rooms: ['tu', 'mh'], dir: 'v', wing: 'a', door1: {x: 30.5, y: 28}, door2: {x: 30.5, y: 27} },
+    { rooms: ['clr', 'cr'], dir: 'h', wing: 'a', door1: {x: 28, y: 37}, door2: {x: 27, y: 37} },
+    { rooms: ['camr', 'cr'], dir: 'h', wing: 'a', door1: {x: 28, y: 42}, door2: {x: 27, y: 42} },
+
+    // C-Wing ...
+    { rooms: ['cw', 'wr'], dir: 'v', wing: 'c', door1: {x: 18, y: 11}, door2: {x: 18, y: 10} },
+    { rooms: ['cw', 'bath'], dir: 'h', wing: 'c', door1: {x: 16, y: 20.5}, door2: {x: 15, y: 20.5} },
+    { rooms: ['cw', 'snh'], dir: 'h', wing: 'c', door1: {x: 20, y: 17}, door2: {x: 21, y: 17} },
+    { rooms: ['cw', 'oh1'], dir: 'h', wing: 'c', door1: {x: 16, y: 39.5}, door2: {x: 15, y: 39.5} },
+    { rooms: ['cw', 'oh2'], dir: 'h', wing: 'c', door1: {x: 20, y: 39.5}, door2: {x: 21, y: 39.5} },
+    { rooms: ['oh2', 'oh3'], dir: 'v', wing: 'c', door1: {x: 22.5, y: 41}, door2: {x: 22.5, y: 42} },
+    { rooms: ['cw', 'print'], dir: 'v', wing: 'c', door1: {x: 18, y: 41}, door2: {x: 18, y: 42} },
 ];
 
 const roomDiscovery = {
@@ -4730,50 +4731,48 @@ function drawMap() {
         const r2Disc = roomDiscovery[c.rooms[1]]?.();
         if (!r1Disc && !r2Disc) return;
 
-        const getEdgePoint = (from, to) => {
-            const fx = from.x * CELL, fy = from.y * CELL, fw = from.w * CELL, fh = from.h * CELL;
-            const tx = (to.x + to.w/2) * CELL, ty = (to.y + to.h/2) * CELL;
-            return {
-                x: Math.max(fx, Math.min(fx + fw, tx)),
-                y: Math.max(fy, Math.min(fy + fh, ty))
-            };
+        // Use specific grid coordinates if provided, otherwise default to center
+        const p1 = {
+            x: (c.door1 ? c.door1.x : r1.x + r1.w / 2) * CELL,
+            y: (c.door1 ? c.door1.y : r1.y + r1.h / 2) * CELL
+        };
+        const p2 = {
+            x: (c.door2 ? c.door2.x : r2.x + r2.w / 2) * CELL,
+            y: (c.door2 ? c.door2.y : r2.y + r2.h / 2) * CELL
         };
 
-        const p1 = getEdgePoint(r1, r2);
-        const p2 = getEdgePoint(r2, r1);
+        // The elbow point:
+        // If 'v', move vertically from door1 to the Y-level of door2.
+        // If 'h', move horizontally from door1 to the X-level of door2.
+        const elbow = c.dir === 'v' ? { x: p1.x, y: p2.y } : { x: p2.x, y: p1.y };
 
-        const drawStub = (start, end, targetDiscovered) => {
-            const distLimit = targetDiscovered ? 0.5 : 0.4;
-            const dx = start.x + (end.x - start.x) * distLimit;
-            const dy = start.y + (end.y - start.y) * distLimit;
+        const drawPath = (start, corner, end, isTargetDiscovered) => {
+            const grad = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
+            grad.addColorStop(0, '#c9a84c');
+            grad.addColorStop(isTargetDiscovered ? 1 : 0.4, isTargetDiscovered ? '#c9a84c' : 'rgba(201, 168, 76, 0)');
 
-            // 1. Draw the "Outer Walls" (Gold)
-            ctx.beginPath();
-            ctx.lineWidth = 14;
-            const wallGrad = ctx.createLinearGradient(start.x, start.y, dx, dy);
-            wallGrad.addColorStop(0, '#c9a84c');
-            wallGrad.addColorStop(1, targetDiscovered ? '#c9a84c' : 'rgba(201, 168, 76, 0)');
+            ctx.lineJoin = "miter"; // Sharp 90-degree turns
 
-            ctx.strokeStyle = wallGrad;
-            ctx.moveTo(start.x, start.y);
-            ctx.lineTo(dx, dy);
-            ctx.stroke();
-
-            // 2. Draw the "Inner Path" (Dark center)
-            ctx.beginPath();
-            ctx.lineWidth = 10; // Slightly thinner than the walls
-            const floorGrad = ctx.createLinearGradient(start.x, start.y, dx, dy);
-            floorGrad.addColorStop(0, '#0a0500'); // Matches your background color
-            floorGrad.addColorStop(1, targetDiscovered ? '#0a0500' : 'rgba(10, 5, 0, 0)');
-
-            ctx.strokeStyle = floorGrad;
-            ctx.moveTo(start.x, start.y);
-            ctx.lineTo(dx, dy);
-            ctx.stroke();
+            [ {w: 14, s: grad}, {w: 10, s: '#0a0500'} ].forEach(style => {
+                ctx.beginPath();
+                ctx.strokeStyle = style.s;
+                ctx.lineWidth = style.w;
+                ctx.moveTo(start.x, start.y);
+                ctx.lineTo(corner.x, corner.y);
+                if (isTargetDiscovered) {
+                    ctx.lineTo(end.x, end.y);
+                } else {
+                    // Draw a small "stub" out of the corner if target hidden
+                    const dx = corner.x + (end.x - corner.x) * 0.3;
+                    const dy = corner.y + (end.y - corner.y) * 0.3;
+                    ctx.lineTo(dx, dy);
+                }
+                ctx.stroke();
+            });
         };
 
-        if (r1Disc) drawStub(p1, p2, r2Disc);
-        if (r2Disc) drawStub(p2, p1, r1Disc);
+        if (r1Disc) drawPath(p1, elbow, p2, r2Disc);
+        if (r2Disc) drawPath(p2, elbow, p1, r1Disc);
     });
 
     // Draw rooms
@@ -4786,6 +4785,7 @@ function drawMap() {
         const rw = room.w * CELL;
         const rh = room.h * CELL;
 
+        // --- Box Styling ---
         ctx.fillStyle = isCurrent ? 'rgba(180,120,0,0.8)' : 'rgba(100,20,30,0.85)';
         ctx.fillRect(rx, ry, rw, rh);
 
@@ -4793,16 +4793,45 @@ function drawMap() {
         ctx.lineWidth = isCurrent ? 2 : 1;
         ctx.strokeRect(rx, ry, rw, rh);
 
-        const fontSize = Math.max(8, Math.min(rw, rh) / 3);
+        // --- REPLACE THE OLD TEXT CODE WITH THIS: ---
+        const padding = 4;
+        const maxWidth = rw - (padding * 2);
+        const words = room.label.split(' ');
+        let lines = [];
+        let currentLine = words[0];
+
+        const fontSize = Math.max(9, Math.min(rw, rh) / 4);
         ctx.font = `${fontSize}px serif`;
         ctx.fillStyle = isCurrent ? '#ffffff' : '#c9a84c';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(room.label, rx + rw / 2, ry + rh / 2);
+
+        // Wrap Logic
+        for (let i = 1; i < words.length; i++) {
+            let testLine = currentLine + " " + words[i];
+            let metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth) {
+                lines.push(currentLine);
+                currentLine = words[i];
+            } else {
+                currentLine = testLine;
+            }
+        }
+        lines.push(currentLine);
+
+        // Center lines vertically
+        const lineHeight = fontSize * 1.1;
+        const totalHeight = lines.length * lineHeight;
+        let startY = (ry + rh / 2) - (totalHeight / 2) + (lineHeight / 2);
+
+        lines.forEach((line, index) => {
+            ctx.fillText(line, rx + rw / 2, startY + (index * lineHeight));
+        });
+        // --- END OF REPLACEMENT ---
 
         if (isCurrent) {
             ctx.beginPath();
-            ctx.arc(rx + rw / 2, ry + rh / 2 - fontSize, 4, 0, Math.PI * 2);
+            ctx.arc(rx + rw / 2, ry + rh / 2 - (totalHeight / 2) - 5, 4, 0, Math.PI * 2);
             ctx.fillStyle = '#ffffff';
             ctx.fill();
         }
