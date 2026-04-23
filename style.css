@@ -2042,9 +2042,9 @@ input[type="range"]::-webkit-slider-thumb {
 #sherlock-book-open-un-hitbox {
     position: absolute;
     top: 16%;
-    left: 10%;
-    width: 16%;
-    height: 71%;
+    left: 47%;
+    width: 3%;
+    height: 9%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2054,10 +2054,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #sherlock-book-open-der-hitbox {
     position: absolute;
-    top: 16%;
-    left: 30%;
-    width: 16%;
-    height: 71%;
+    top: 17%;
+    left: 69%;
+    width: 2%;
+    height: 7%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -2067,10 +2067,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #sherlock-book-open-animals-hitbox {
     position: absolute;
-    top: 56%;
-    left: 50%;
-    width: 16%;
-    height: 71%;
+    top: 83%;
+    left: 39%;
+    width: 8%;
+    height: 8%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -5022,7 +5022,7 @@ input[type="range"]::-webkit-slider-thumb {
     background-color: transparent;
     border: 2px solid transparent;
     cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
+    z-index: 1000;
 }
 
 

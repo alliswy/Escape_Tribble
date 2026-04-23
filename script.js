@@ -113,6 +113,8 @@ const state = {
     isWbOpen: false,
     canPickUpBottle: false,
     currentPage: "",
+    prevPage: "",
+    filledBottle: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -188,13 +190,26 @@ const sfx = {
     doorClose: {audio: new Audio('sounds/door-close.mp3'), baseVol: 0.5},
     steps: {audio: new Audio('sounds/steps.mp3'), baseVol: 0.5},
     markerWhiteboard: {audio: new Audio('sounds/marker-whiteboard.mp3'), baseVol: 0.5},
+    stiffPaper: {audio: new Audio('sounds/paper-1.mp3'), baseVol: 0.5},
+    floppyPaper: {audio: new Audio('sounds/paper-2.mp3'), baseVol: 0.5},
 
     scanner: {audio: new Audio('sounds/scanner.mp3'), baseVol: 0.5},
     keypadBeep: {audio: new Audio('sounds/keypad-beep.mp3'), baseVol: 0.5},
     keycardSwipe: {audio: new Audio('sounds/keycard-swipe.mp3'), baseVol: 0.5},
     accessBeep: {audio: new Audio('sounds/access-beep.mp3'), baseVol: 0.5},
     errorBeep: {audio: new Audio('sounds/error-beep.mp3'), baseVol: 0.5},
-    ambientNoise: {audio: new Audio('sounds/ambient-noise.m4a'), baseVol: 1},
+    lightFlicker: {audio: new Audio('sounds/light-flicker.mp3'), baseVol: 0.5},
+
+    //apartment sfx
+    aptDoor: {audio: new Audio('sounds/apt-door.mp3'), baseVol: 0.5},
+    fillBottle: {audio: new Audio('sounds/fill-bottle.mp3'), baseVol: 0.5},
+    ambientNoise: {audio: new Audio('sounds/ambient-noise.m4a'), baseVol: 0.8},
+    aptAmbience: {audio: new Audio('sounds/apt-ambience.mp3'), baseVol: 0.5},
+
+    //book drop and pr sounds
+    hatch: {audio: new Audio('sounds/hatch.mp3'), baseVol: 1},
+    grabBook: {audio: new Audio('sounds/grab-book.mp3'), baseVol: 0.5},
+    bdBook: {audio: new Audio('sounds/bd-book.mp3'), baseVol: 0.5},
 
 }; //fixme add more sounds
 
@@ -332,6 +347,376 @@ function syncMusicSystems(val) {
             data.clip.volume = Math.min(Math.max(data.volume * multiplier, 0), 1);
         }
     }
+}
+
+
+function createSoundClip(
+    sfxEntry,
+    volume = 1,
+    loop = true,
+    startCrop = 0,
+    endCrop = 0
+) {
+    return {
+        clip: sfxEntry.audio,
+        volume,
+        loop,
+        startCrop,
+        endCrop
+    };
+}
+
+const pageSounds = {
+    globalAmbience: {
+        ...createSoundClip(sfx.ambientNoise, 0.8, true, 1.5, 1.5),
+        type: 'music',
+        isGlobal: true
+    },
+    tutorialAmbience: {   // NEW
+        ...createSoundClip(sfx.aptAmbience, 0.08, true, 1.5, 1),
+        type: 'music',
+        isGlobal: true
+    },
+
+    'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
+    'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
+
+    unlock: createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
+    doorClose: createSoundClip(sfx.doorClose, 0.7, false, 1.03, 0),
+    keycardSwipe: createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
+    accessBeep: createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
+    steps: createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
+    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45),
+    lightFlicker: createSoundClip(sfx.lightFlicker, 0.5, false, 8, 11),
+
+    //apartment sounds
+    aptDoorOpen: createSoundClip(sfx.aptDoor, 0.5, false, 0.2, 3.8),
+    aptDoorClose: createSoundClip(sfx.aptDoor, 0.5, false, 3, 1),
+    fillBottle: createSoundClip(sfx.fillBottle, 0.5, false, 1, 20.5), //fixme make it fade out nice
+
+    //bd and pr sounds
+    bdBookOpen: createSoundClip(sfx.bdBook, 0.5, false, 0, 7.5),
+    bdBookClose: createSoundClip(sfx.bdBook, 0.5, false, 7.5, 0),
+    hatchOpen: createSoundClip(sfx.hatch, 1, false, 0, 0.3),
+    hatchClose: createSoundClip(sfx.hatch, 1, false, 0.3, 0),
+};
+
+let activeGlobalLoop = null;
+let activeRoomLoop = null;
+
+let currentGlobalId = null;
+let currentRoomId = null;
+
+function startGlobalAudio() {
+    if (state.isTutorialActive) {
+        triggerSound('tutorialAmbience', { fadeIn: 2000 });
+    } else {
+        triggerSound('globalAmbience', { fadeIn: 2000 });
+    }
+}
+
+function setVolume(id, newVolume) {
+    const sound = pageSounds[id];
+    if (!sound?.clip) return;
+
+    const multiplier =
+        sound.type === 'music'
+            ? getMusicMultiplier()
+            : getSFXMultiplier();
+
+    sound.clip.volume = Math.min(
+        Math.max(newVolume * multiplier, 0),
+        1
+    );
+}
+
+function setRoomAudio(pageId) {
+    const sound = pageSounds[pageId];
+    const ambience = pageSounds.globalAmbience.clip;
+
+    if (pageId === 'bath-page') {
+        ambience.volume = getMusicMultiplier() * 0.3;
+    } else if (pageId === 'bath-sink-page') {
+        ambience.volume = getMusicMultiplier() * 0.2;
+    } else {
+        ambience.volume = getMusicMultiplier();
+    }
+
+    if (currentRoomId && currentRoomId !== pageId) {
+        stopSound(currentRoomId);
+    }
+
+    if (!sound) {
+        currentRoomId = null;
+        return;
+    }
+
+    if (sound.isGlobal) return;
+
+    triggerSound(pageId);
+}
+
+function triggerSound(id, options = {}) {
+    const fadeInDuration = options.fadeIn || 0;
+    const sound = pageSounds[id];
+
+    if (sound) {
+        const {
+            clip,
+            volume,
+            loop,
+            startCrop,
+            endCrop,
+            type,
+            isGlobal
+        } = sound;
+
+        const multiplier =
+            type === 'music'
+                ? getMusicMultiplier()
+                : getSFXMultiplier();
+
+        const targetVolume = Math.min(
+            Math.max(volume * multiplier, 0),
+            1
+        );
+
+        if (clip.activeFade) {
+            clearInterval(clip.activeFade);
+            clip.activeFade = null;
+        }
+
+        if (clip.actionTimer) {
+            clearTimeout(clip.actionTimer);
+            clip.actionTimer = null;
+        }
+
+        const startPlayback = () => {
+            clip.pause();
+            clip.currentTime = startCrop;
+            clip.play();
+        };
+
+        const applyFadeIn = () => {
+            if (fadeInDuration <= 0) {
+                clip.volume = targetVolume;
+                return;
+            }
+
+            clip.volume = 0;
+
+            const steps = 30;
+            const interval = fadeInDuration / steps;
+            let step = 0;
+
+            clip.activeFade = setInterval(() => {
+                step++;
+
+                clip.volume = Math.min(
+                    targetVolume * (step / steps),
+                    targetVolume
+                );
+
+                if (step >= steps) {
+                    clearInterval(clip.activeFade);
+                    clip.activeFade = null;
+                }
+            }, interval);
+        };
+
+        clip.loop = false;
+
+        if (loop) {
+            if (isGlobal) {
+                if (currentGlobalId === id) return;
+
+                if (activeGlobalLoop) {
+                    cancelAnimationFrame(activeGlobalLoop);
+                    activeGlobalLoop = null;
+                }
+
+                currentGlobalId = id;
+            } else {
+                if (currentRoomId === id) return;
+
+                if (activeRoomLoop) {
+                    cancelAnimationFrame(activeRoomLoop);
+                    activeRoomLoop = null;
+                }
+
+                currentRoomId = id;
+            }
+
+            startPlayback();
+            applyFadeIn();
+
+            const monitorLoop = () => {
+                if (isGlobal) {
+                    if (currentGlobalId !== id) return;
+                } else {
+                    if (currentRoomId !== id) return;
+                }
+
+                if (
+                    clip.duration &&
+                    clip.currentTime >= clip.duration - endCrop
+                ) {
+                    clip.currentTime = startCrop;
+                }
+
+                if (isGlobal) {
+                    activeGlobalLoop =
+                        requestAnimationFrame(monitorLoop);
+                } else {
+                    activeRoomLoop =
+                        requestAnimationFrame(monitorLoop);
+                }
+            };
+
+            if (isGlobal) {
+                activeGlobalLoop =
+                    requestAnimationFrame(monitorLoop);
+            } else {
+                activeRoomLoop =
+                    requestAnimationFrame(monitorLoop);
+            }
+
+            return;
+        }
+
+        startPlayback();
+        applyFadeIn();
+
+        const playDuration =
+            (clip.duration - startCrop - endCrop) * 1000;
+
+        if (playDuration > 0) {
+            clip.actionTimer = setTimeout(() => {
+                clip.pause();
+                clip.currentTime = startCrop;
+            }, playDuration);
+        }
+
+        return;
+    }
+
+    if (sfx[id]) {
+        const entry = sfx[id];
+        const audio = entry.audio;
+
+        const targetVolume = Math.min(
+            Math.max(
+                entry.baseVol * getSFXMultiplier(),
+                0
+            ),
+            1
+        );
+
+        audio.pause();
+        audio.currentTime = 0;
+        audio.play();
+        audio.volume = targetVolume;
+    }
+}
+
+function stopSound(id, fadeDuration = 50) {
+    const sound = pageSounds[id];
+    if (!sound?.clip) return;
+    if (sound.isGlobal) return;
+
+    const audio = sound.clip;
+
+    const startVolume = audio.volume;
+    const steps = 20;
+    const interval = fadeDuration / steps;
+
+    let step = 0;
+
+    if (audio.activeFade) {
+        clearInterval(audio.activeFade);
+    }
+
+    audio.activeFade = setInterval(() => {
+        step++;
+
+        audio.volume = Math.max(
+            0,
+            startVolume * (1 - step / steps)
+        );
+
+        if (step >= steps) {
+            clearInterval(audio.activeFade);
+            audio.activeFade = null;
+
+            audio.pause();
+            audio.currentTime = 0;
+        }
+    }, interval);
+
+    if (currentRoomId === id) {
+        currentRoomId = null;
+    }
+}
+function stopAllAudio() {
+    // 1. Kill the loops immediately so they don't trigger a restart
+    if (activeGlobalLoop) {
+        cancelAnimationFrame(activeGlobalLoop);
+        activeGlobalLoop = null;
+    }
+    if (activeRoomLoop) {
+        cancelAnimationFrame(activeRoomLoop);
+        activeRoomLoop = null;
+    }
+
+    currentGlobalId = null;
+    currentRoomId = null;
+
+    Object.values(pageSounds).forEach(sound => {
+        if (!sound?.clip) return;
+
+        // REMOVED: if (sound.isGlobal) return;
+        // We want global sounds to stop now too.
+
+        const audio = sound.clip;
+
+        // 2. Clear all active logic/fades
+        if (audio.activeFade) {
+            clearInterval(audio.activeFade);
+            audio.activeFade = null;
+        }
+        if (audio.actionTimer) {
+            clearTimeout(audio.actionTimer);
+            audio.actionTimer = null;
+        }
+
+        // 3. Hard Stop
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 0; // Silences any hardware buffer trails
+    });
+
+    // 4. Also stop the raw SFX library sounds just in case
+    Object.values(sfx).forEach(entry => {
+        if (entry.audio) {
+            entry.audio.pause();
+            entry.audio.currentTime = 0;
+        }
+    });
+}
+
+function isPlaying(id) {
+    // Check pageSounds first
+    let sound = pageSounds[id]?.clip;
+
+    // Fallback to sfx library if not in pageSounds
+    if (!sound) {
+        sound = sfx[id]?.audio;
+    }
+
+    if (!sound) return false;
+
+    // A sound is playing if it's not paused AND not finished
+    return !sound.paused && !sound.ended;
 }
 
 
@@ -693,7 +1078,7 @@ const roomLeads = {
     //tutorial pages
     'apt-fd-handle-page':   {back: 'apt-fd-page'},
     'apt-fd-open-page':     {back: 'apt-fd-page'},
-    'apt-main-water-page':  {back: 'apt-fd-open-page', forward: 'apt-table-water-page'},
+    'apt-main-water-page':  {forward: 'apt-table-water-page'},
     'apt-table-water-page': {back: 'apt-main-water-page', left: 'apt-ki-entr-page'},
     'apt-table-page':       {left: 'apt-ki-entr-page'},
     'apt-ki-entr-page':     {forward: 'apt-ki-1-page', right: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
@@ -706,328 +1091,6 @@ const roomLeads = {
     'apt-bed-page':         {back: 'apt-ki-exit-page'},
 };
 
-
-function createSoundClip(
-    sfxEntry,
-    volume = 1,
-    loop = true,
-    startCrop = 0,
-    endCrop = 0
-) {
-    return {
-        clip: sfxEntry.audio,
-        volume,
-        loop,
-        startCrop,
-        endCrop
-    };
-}
-
-const pageSounds = {
-    globalAmbience: {
-        ...createSoundClip(sfx.ambientNoise, 1, true, 1.5, 1.5),
-        type: 'music',
-        isGlobal: true
-    },
-
-    'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
-    'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
-
-    unlock: createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
-    doorClose: createSoundClip(sfx.doorClose, 0.7, false, 1.03, 0),
-    keycardSwipe: createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
-    accessBeep: createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
-    steps: createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
-    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45)
-};
-
-let activeGlobalLoop = null;
-let activeRoomLoop = null;
-
-let currentGlobalId = null;
-let currentRoomId = null;
-
-function startGlobalAudio() {
-    triggerSound('globalAmbience', { fadeIn: 2000 });
-}
-
-function setVolume(id, newVolume) {
-    const sound = pageSounds[id];
-    if (!sound?.clip) return;
-
-    const multiplier =
-        sound.type === 'music'
-            ? getMusicMultiplier()
-            : getSFXMultiplier();
-
-    sound.clip.volume = Math.min(
-        Math.max(newVolume * multiplier, 0),
-        1
-    );
-}
-
-function setRoomAudio(pageId) {
-    const sound = pageSounds[pageId];
-    const ambience = pageSounds.globalAmbience.clip;
-
-    if (pageId === 'bath-page') {
-        ambience.volume = getMusicMultiplier() * 0.5;
-    } else if (pageId === 'bath-sink-page') {
-        ambience.volume = getMusicMultiplier() * 0.3;
-    } else {
-        ambience.volume = getMusicMultiplier();
-    }
-
-    if (currentRoomId && currentRoomId !== pageId) {
-        stopSound(currentRoomId);
-    }
-
-    if (!sound) {
-        currentRoomId = null;
-        return;
-    }
-
-    if (sound.isGlobal) return;
-
-    triggerSound(pageId);
-}
-
-function triggerSound(id, options = {}) {
-    const fadeInDuration = options.fadeIn || 0;
-    const sound = pageSounds[id];
-
-    if (sound) {
-        const {
-            clip,
-            volume,
-            loop,
-            startCrop,
-            endCrop,
-            type,
-            isGlobal
-        } = sound;
-
-        const multiplier =
-            type === 'music'
-                ? getMusicMultiplier()
-                : getSFXMultiplier();
-
-        const targetVolume = Math.min(
-            Math.max(volume * multiplier, 0),
-            1
-        );
-
-        if (clip.activeFade) {
-            clearInterval(clip.activeFade);
-            clip.activeFade = null;
-        }
-
-        if (clip.actionTimer) {
-            clearTimeout(clip.actionTimer);
-            clip.actionTimer = null;
-        }
-
-        const startPlayback = () => {
-            clip.pause();
-            clip.currentTime = startCrop;
-            clip.play();
-        };
-
-        const applyFadeIn = () => {
-            if (fadeInDuration <= 0) {
-                clip.volume = targetVolume;
-                return;
-            }
-
-            clip.volume = 0;
-
-            const steps = 30;
-            const interval = fadeInDuration / steps;
-            let step = 0;
-
-            clip.activeFade = setInterval(() => {
-                step++;
-
-                clip.volume = Math.min(
-                    targetVolume * (step / steps),
-                    targetVolume
-                );
-
-                if (step >= steps) {
-                    clearInterval(clip.activeFade);
-                    clip.activeFade = null;
-                }
-            }, interval);
-        };
-
-        clip.loop = false;
-
-        if (loop) {
-            if (isGlobal) {
-                if (currentGlobalId === id) return;
-
-                if (activeGlobalLoop) {
-                    cancelAnimationFrame(activeGlobalLoop);
-                    activeGlobalLoop = null;
-                }
-
-                currentGlobalId = id;
-            } else {
-                if (currentRoomId === id) return;
-
-                if (activeRoomLoop) {
-                    cancelAnimationFrame(activeRoomLoop);
-                    activeRoomLoop = null;
-                }
-
-                currentRoomId = id;
-            }
-
-            startPlayback();
-            applyFadeIn();
-
-            const monitorLoop = () => {
-                if (isGlobal) {
-                    if (currentGlobalId !== id) return;
-                } else {
-                    if (currentRoomId !== id) return;
-                }
-
-                if (
-                    clip.duration &&
-                    clip.currentTime >= clip.duration - endCrop
-                ) {
-                    clip.currentTime = startCrop;
-                }
-
-                if (isGlobal) {
-                    activeGlobalLoop =
-                        requestAnimationFrame(monitorLoop);
-                } else {
-                    activeRoomLoop =
-                        requestAnimationFrame(monitorLoop);
-                }
-            };
-
-            if (isGlobal) {
-                activeGlobalLoop =
-                    requestAnimationFrame(monitorLoop);
-            } else {
-                activeRoomLoop =
-                    requestAnimationFrame(monitorLoop);
-            }
-
-            return;
-        }
-
-        startPlayback();
-        applyFadeIn();
-
-        const playDuration =
-            (clip.duration - startCrop - endCrop) * 1000;
-
-        if (playDuration > 0) {
-            clip.actionTimer = setTimeout(() => {
-                clip.pause();
-                clip.currentTime = startCrop;
-            }, playDuration);
-        }
-
-        return;
-    }
-
-    if (sfx[id]) {
-        const entry = sfx[id];
-        const audio = entry.audio;
-
-        const targetVolume = Math.min(
-            Math.max(
-                entry.baseVol * getSFXMultiplier(),
-                0
-            ),
-            1
-        );
-
-        audio.pause();
-        audio.currentTime = 0;
-        audio.play();
-        audio.volume = targetVolume;
-    }
-}
-
-function stopSound(id, fadeDuration = 50) {
-    const sound = pageSounds[id];
-    if (!sound?.clip) return;
-    if (sound.isGlobal) return;
-
-    const audio = sound.clip;
-
-    const startVolume = audio.volume;
-    const steps = 20;
-    const interval = fadeDuration / steps;
-
-    let step = 0;
-
-    if (audio.activeFade) {
-        clearInterval(audio.activeFade);
-    }
-
-    audio.activeFade = setInterval(() => {
-        step++;
-
-        audio.volume = Math.max(
-            0,
-            startVolume * (1 - step / steps)
-        );
-
-        if (step >= steps) {
-            clearInterval(audio.activeFade);
-            audio.activeFade = null;
-
-            audio.pause();
-            audio.currentTime = 0;
-        }
-    }, interval);
-
-    if (currentRoomId === id) {
-        currentRoomId = null;
-    }
-}
-
-function stopAllAudio() {
-    if (activeGlobalLoop) {
-        cancelAnimationFrame(activeGlobalLoop);
-        activeGlobalLoop = null;
-    }
-
-    if (activeRoomLoop) {
-        cancelAnimationFrame(activeRoomLoop);
-        activeRoomLoop = null;
-    }
-
-    currentGlobalId = null;
-    currentRoomId = null;
-
-    Object.values(pageSounds).forEach(sound => {
-        if (!sound?.clip) return;
-        if (sound.isGlobal) return;
-
-        const audio = sound.clip;
-
-        audio.pause();
-        audio.currentTime = 0;
-
-        if (audio.activeFade) {
-            clearInterval(audio.activeFade);
-            audio.activeFade = null;
-        }
-
-        if (audio.actionTimer) {
-            clearTimeout(audio.actionTimer);
-            audio.actionTimer = null;
-        }
-    });
-}
 
 
 
@@ -1292,8 +1355,7 @@ async function showPage(pageId, useFade = false) {
         if (!target) return;
 
         state.currentPage = pageId;
-
-        const previousPageId = lastPage ? lastPage.id : null;
+        state.prevPage = previousPageId = lastPage ? lastPage.id : null;;
 
         if (lastPage) {
             lastPage.classList.add('hidden');
@@ -1550,7 +1612,14 @@ async function triggerNotification(pageId) {
             }
         } break;
         case 'cw-bath-door-page': {
-            setVolume('globalAmbience', 1);
+            if (!isPlaying('ambientNoise')) {
+                triggerSound('ambientNoise');
+            }
+        } break;
+        case 'bd-books-page': {
+            if (state.prevPage ==='bd-fb-open-page' || state.prevPage==='bd-fb-open-key-page') {
+                triggerSound('bdBookClose');
+            }
         }
 
     }
@@ -2414,6 +2483,7 @@ finalInput.addEventListener('keyup', async (e) => {
             await delay(500);
             playHatchSequence();
             setTimeout(() => {
+                triggerSound('lightFlicker');
                 // Flickering the page container
                 triggerFlicker('lo-monitor-drive-page');
 
@@ -2720,8 +2790,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                 document.getElementById('pw-book-open-hitbox').classList.remove('hidden');
             } break;
         }
-    }
-    if (itemName === "sherlock-book") {
+    } else if (itemName === "sherlock-book") {
         switch (imgSrc) {
             case 'inv-images/sherlock-book.png': {
                 document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
@@ -2733,31 +2802,30 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                 document.getElementById('sherlock-book-open-hitbox').classList.remove('hidden');
                 document.getElementById("sherlock-book-open-hitbox").onclick = () => {
                     if (state.hasSkPaper) {
-                        openOverlay("sherlock-book", "inv-images/sherlock-book-open-paper.png");
+                        openOverlay("sherlock-book", "inv-images/sherlock-book-paper.png");
                     } else {
                         console.log('Error with progression has occurred'); //fixme check that they have to get the paper before being able to access the book
                     }
                 };
             } break;
-            case 'inv-images/sherlock-book-open-paper.png': {
+            case 'inv-images/sherlock-book-paper.png': {
                 document.getElementById('sherlock-book-open-un-hitbox').classList.remove('hidden')
                 document.getElementById('sherlock-book-open-der-hitbox').classList.remove('hidden');
                 document.getElementById('sherlock-book-open-animals-hitbox').classList.remove('hidden');
                 document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
-                    await spawnThemedBox("un-", "notification-top");
+                    await spawnThemedBox("und-", "notification-top");
                 }
                 document.getElementById('sherlock-book-open-der-hitbox').onclick = async () => {
-                    await spawnThemedBox("der-", "notification-top");
+                    await spawnThemedBox("er-", "notification-top");
                 }
-                document.getElementById('sherlock-book-open-un-hitbox').onclick = async () => {
+                document.getElementById('sherlock-book-open-animals-hitbox').onclick = async () => {
                     await spawnThemedBox("animals", "notification-top");
                 }
                 state.foundLiClue = true;
                 //fixme make it so if they click one more time they'll see un-der-animals maybe ?
             } break;
         }
-    }
-    if (itemName === 'inv-wb') {
+    } else if (itemName === 'inv-wb') {
         if (imgSrc==='inv-images/wb.png') {
             document.getElementById('wb-hitbox').classList.remove('hidden');
             document.getElementById('wb-hitbox').onclick = () => {
@@ -2841,6 +2909,7 @@ async function advanceTutorial() {
             break;
         case 'enter-apartment':
             if (state.aptUnlocked) {
+                triggerSound('aptDoorOpen');
                 showPage('apt-fd-open-page');
             }
             await delay(20);
@@ -2879,13 +2948,14 @@ async function advanceTutorial() {
                 keySlot2.classList.add('hidden');
                 refreshInventorySlots();
             }
-            await delay(20);
+            await delay(4000);
             await spawnThemedBox("I'm so tired, I'm going straight to bed now", "notification-top");
             await delay(50);
             await spawnThemedBox('Find the bed and go to sleep', "notification-mid");
             break;
         case 'asleep':
             state.isTutorialActive = false;
+            stopAllAudio();
             await showPage("mh-bd-main-page", true);
             break;
         // case 'menu-map':
@@ -2951,11 +3021,13 @@ async function tutorialHitboxInit() {
         showPage("apt-main-water-page");
     }
     document.getElementById('apt-ki-sink-hitbox').onclick = async () => {
-        if (state.hasWb && state.isWbOpen) {
+        if (state.hasWb && state.isWbOpen && !state.filledBottle) {
+            triggerSound('fillBottle');
             showPage('apt-ki-sink-water-bottle-page');
             setTimeout(() => {
                 showPage('apt-ki-sink-page');
             }, 5000);
+            state.filledBottle = true;
         } else {
             //fixme add feedback
         }
@@ -3017,6 +3089,7 @@ async function tutorialHitboxInit() {
             state.currTutorialStep='enter-apartment';
             advanceTutorial();
         } else if (state.currTutorialStep==='enter-apartment' && clickedId==='apt-fd-open-hitbox') {
+            triggerSound('aptDoorClose');
             state.currTutorialStep='in-apartment';
             advanceTutorial();
         } else if(state.currTutorialStep==='in-apartment' && clickedId==='master-forward-arrow') {
@@ -3110,13 +3183,15 @@ function init() {
         prepareGameUI(); // Shows the game screens
 
         requestAnimationFrame(() => {
-            triggerSound('globalAmbience');
+            stopAllAudio(); startGlobalAudio();
             showPage('mh-bd-main-page'); // Teleport to start
         }); //fixme change this to below code to start with tutorial
 
         // requestAnimationFrame(async () => {
         //     state.isTutorialActive=true;
         //     showPage('apt-fd-page');
+        //     stopAllAudio();
+        //     startGlobalAudio();
         //     document.getElementById('apt-fd-handle-hitbox').classList.add('hidden');
         //     await delay(20);
         //     await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
@@ -3364,6 +3439,7 @@ function init() {
 
     // Inside the Slot
     document.getElementById('bd-closed-hitbox').onclick = () => {
+        triggerSound('hatchOpen');
         state.hasBdKey ? showPage('mh-bd-slot-open-page') : showPage('mh-bd-slot-open-key-page');
     };
     document.getElementById('bd-key-hitbox').onclick = async () => {
@@ -3377,7 +3453,10 @@ function init() {
         await delay(20);
         await spawnThemedBox('A key!', "notification-top");
     };
-    document.getElementById('bd-slot-open-hitbox').onclick = () => showPage('mh-bd-slot-closed-page');
+    document.getElementById('bd-slot-open-hitbox').onclick = () => {
+        triggerSound('hatchClose');
+        showPage('mh-bd-slot-closed-page');
+    }
 
     // bd Door Handle & Locking
     document.getElementById('bd-door-keyhole-hitbox').onclick = async () => {
@@ -3412,6 +3491,7 @@ function init() {
 
     // Fish Book (FB)
     document.getElementById('bd-fb-hitbox').onclick = () => {
+        triggerSound('bdBookOpen');
         state.hasPrKey ? showPage('bd-fb-open-page') : showPage('bd-fb-open-key-page');
     };
     document.getElementById('bd-fb-key-hitbox').onclick = async () => {
@@ -3722,7 +3802,7 @@ function init() {
             refreshInventorySlots();
         }
         showPage('clr-main-page');
-        openOverlay('wr-id', 'inv-items/wr-id.png');
+        openOverlay('inv-wr-id', 'inv-images/wr-id.png');
         await spawnThemedBox("The Demon Decon's ID card. It's huge !!", "notification-top");
     }
 
@@ -3956,16 +4036,19 @@ function init() {
     }
     document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
     document.getElementById('wr-papers-tu-hitbox').onclick = async () => {
+        triggerSound('stiffPaper');
         openOverlay('wr-tu', "wr-images/wr-tu.png");
         await delay(20);
         await spawnThemedBox("A cutout of a newspaper article about underground tunnels", "notification-top");
     }
     document.getElementById('wr-papers-ogb-hitbox').onclick = async () => {
+        triggerSound('stiffPaper');
         openOverlay('wr-ogb', 'wr-images/wr-ogb.png');
         await delay(20);
         await spawnThemedBox("The old gold and black. That's the school newspaper", "notification-top");
     }
     document.getElementById('wr-papers-reddit-hitbox').onclick = async () =>  {
+        triggerSound('stiffPaper');
         openOverlay('wr-reddit', 'wr-images/wr-reddit.png');
         await delay (20);
         await spawnThemedBox("A printout of some random reddit post ?", "notification-top");
@@ -4050,6 +4133,7 @@ function init() {
         state.hasLorBook ? showPage('li-mw-books-nb-page') : showPage('li-mw-books-page');
     }
     document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
+        triggerSound('stiffPaper');
         state.hasSkPaper = true;
         const keySlot = document.getElementById('inv-sk-paper')
         if (keySlot) {
@@ -4057,6 +4141,7 @@ function init() {
             refreshInventorySlots();
         }
         showPage('li-lt-sk-page');
+        openOverlay('inv-sk-paper', 'inv-images/sk-paper.png');
     }
     document.getElementById('li-entrance-lw-hitbox').onclick = () => showPage('li-main-lw-page');
     document.getElementById('li-entrance-nb-lw-hitbox').onclick = () => showPage('li-main-lw-page');
@@ -4374,6 +4459,7 @@ function init() {
         openOverlay('ls-10-note', 'inv-images/ls-10-note.png');
     }
     document.getElementById('ls-10-sk-note-hitbox').onclick = () => {
+        triggerSound('floppyPaper');
         state.hasLs10note = true;
         const keySlot = document.getElementById('inv-ls-note')
         if (keySlot) {
