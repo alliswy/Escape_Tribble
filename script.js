@@ -1652,6 +1652,11 @@ function move(dir) {
 
     // 3. Navigate
     if (dest) showPage(dest);
+
+    // add sounds based on prev page
+    if (state.prevPage ==='mh-bd-slot-open-page' || state.prevPage==='mh-bd-slot-open-key-page') {
+        triggerSound('hatchClose');
+    }
 }
 
 //this function makes it look like the lights in the room flicker
