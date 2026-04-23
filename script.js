@@ -60,6 +60,7 @@ const state = {
     discoveredClr: false,
     discoveredStairs: false,
     discoveredCw: false,
+    discoveredTu: false,
     discoveredWr: false,
     discoveredBath: false,
     discoveredSnh: false,
@@ -4544,25 +4545,25 @@ function init() {
 // Each unit = 10px on canvas. x/y are grid coords, w/h are grid sizes.
 const mapRooms = {
     // A-Wing
-    mh:   { x: 4,  y: 24, w: 43, h: 3,  label: 'Main Hall',    key: 'mh'   },
-    pr:   { x: 11, y: 8,  w: 6,  h: 6,  label: 'Projector',    key: 'pr'   },
-    bd:   { x: 11, y: 16, w: 6,  h: 7,  label: 'Book Drop',     key: 'bd'   },
-    li:   { x: 18, y: 13, w: 11, h: 10, label: 'Library',       key: 'li'   },
-    lo:   { x: 24, y: 4,  w: 7,  h: 7,  label: 'Lib Office',    key: 'lo'   },
-    ls:   { x: 3,  y: 4,  w: 20, h: 6,  label: 'Lib Storage',   key: 'ls'   },
-    stairs:{ x: 41, y: 20, w: 5, h: 4,  label: 'Stairs',        key: 'stairs'},
-    ki:   { x: 41, y: 27, w: 5,  h: 8,  label: 'Kitchen',       key: 'ki'   },
-    bh:   { x: 3,  y: 27, w: 4,  h: 17, label: 'Back Hall',     key: 'bh'   },
-    sh:   { x: 3,  y: 45, w: 4,  h: 5,  label: 'Side Hall',     key: 'sh'   },
-    cre:  { x: 8,  y: 36, w: 8,  h: 3,  label: 'Entrance',      key: 'cre'  },
-    clr:  { x: 9,  y: 38, w: 5,  h: 5,  label: 'Camera L Rm',   key: 'clr'  },
-    cr:   { x: 15, y: 36, w: 10, h: 9,  label: 'Creepy Room',   key: 'cr'   },
-    camr: { x: 16, y: 46, w: 8,  h: 5,  label: 'Camera Room',   key: 'camr' },
+    mh:   { x: 2,  y: 24, w: 38, h: 3,  label: 'Main Hall',    key: 'mh'   },
+    pr:   { x: 16, y: 10,  w: 5,  h: 5, label: 'Projector room',    key: 'pr'   },
+    bd:   { x: 16, y: 16, w: 5,  h: 5,  label: 'Book Drop',     key: 'bd'   },
+    li:   { x: 23, y: 13, w: 11, h: 11, label: 'Library',       key: 'li'   },
+    lo:   { x: 31, y: 5,  w: 7,  h: 7,  label: 'Library Office',    key: 'lo'   },
+    ls:   { x: 10,  y: 5,  w: 24, h: 7, label: 'Library Storage',   key: 'ls'   },
+    stairs:{ x: 41, y: 24, w: 3, h: 3,  label: 'Stairwell',        key: 'stairs'},
+    ki:   { x: 36, y: 28, w: 3,  h: 6,  label: 'Kitchen',       key: 'ki'   },
+    bh:   { x: 14, y: 28, w: 4,  h: 20, label: 'Back Hall',     key: 'bh'   },
+    sh:   { x: 19, y: 43, w: 7,  h: 3,  label: 'Side Hall',     key: 'sh'   },
+    tu:   { x: 26, y: 28, w: 8, h: 3,   label: 'Stairwell',      key: 'tu'  },
+    clr:  { x: 30, y: 32, w: 4, h: 4,   label: 'Counseling Room',   key: 'clr'  },
+    cr:   { x: 15, y: 36, w: 8, h: 8,  label: 'Creepy Room',   key: 'cr'   },
+    camr: { x: 16, y: 46, w: 4,  h: 4,  label: 'Camera Room',   key: 'camr' },
     // C-Wing
     cw:   { x: 16, y: 5,  w: 4,  h: 35, label: 'C-Wing',        key: 'cw'   },
     wr:   { x: 14, y: 0,  w: 9,  h: 4,  label: 'Classroom',     key: 'wr'   },
     bath: { x: 7,  y: 6,  w: 8,  h: 6,  label: 'Bathroom',      key: 'bath' },
-    snh:  { x: 20, y: 6,  w: 10, h: 4,  label: 'Snack Hall',    key: 'snh'  },
+    snh:  { x: 20, y: 6,  w: 10, h: 4,  label: 'Office Hall',    key: 'snh'  },
     oh1:  { x: 6,  y: 15, w: 4,  h: 15, label: 'Office Hall',   key: 'oh1'  },
     oh2:  { x: 10, y: 27, w: 9,  h: 3,  label: 'Office Hall',   key: 'oh2'  },
     oh3:  { x: 19, y: 23, w: 3,  h: 7,  label: 'Office Hall',   key: 'oh3'  },
@@ -4573,17 +4574,17 @@ const mapCorridors = [
     // A-Wing
     { rooms: ['pr',   'bd'],    dir: 'v', wing: 'a' },
     { rooms: ['bd',   'mh'],    dir: 'v', wing: 'a' },
-    { rooms: ['ls',   'li'],    dir: 'v', wing: 'a' },
-    { rooms: ['li',   'mh'],    dir: 'v', wing: 'a' },
     { rooms: ['lo',   'li'],    dir: 'v', wing: 'a' },
-    { rooms: ['stairs','mh'],   dir: 'v', wing: 'a' },
+    { rooms: ['li',   'mh'],    dir: 'v', wing: 'a' },
+    { rooms: ['lo',   'ls'],    dir: 'h', wing: 'a' },
+    { rooms: ['stairs','mh'],   dir: 'h', wing: 'a' },
     { rooms: ['ki',   'mh'],    dir: 'v', wing: 'a' },
     { rooms: ['bh',   'mh'],    dir: 'v', wing: 'a' },
-    { rooms: ['bh',   'sh'],    dir: 'v', wing: 'a' },
-    { rooms: ['bh',   'cre'],   dir: 'h', wing: 'a' },
-    { rooms: ['cre',  'cr'],    dir: 'h', wing: 'a' },
+    { rooms: ['bh',   'sh'],    dir: 'h', wing: 'a' },
+    { rooms: ['bh',   'cr'],    dir: 'v', wing: 'a' },
+    { rooms: ['tu', 'mh'],      dir: 'v', wing: 'a'},
     { rooms: ['clr',  'cr'],    dir: 'h', wing: 'a' },
-    { rooms: ['cr',   'camr'],  dir: 'v', wing: 'a' },
+    { rooms: ['cr',   'camr'],  dir: 'h', wing: 'a' },
     // C-Wing
     { rooms: ['cw',   'wr'],    dir: 'v', wing: 'c' },
     { rooms: ['cw',   'bath'],  dir: 'h', wing: 'c' },
@@ -4605,7 +4606,7 @@ const roomDiscovery = {
     ki:    () => state.discoveredKi,
     bh:    () => state.discoveredBh,
     sh:    () => state.discoveredSh,
-    cre:   () => state.discoveredCr,
+    tu:   () => state.discoveredTu,
     cr:    () => state.discoveredCr,
     clr:   () => state.discoveredClr,
     camr:  () => state.discoveredCamr,
@@ -4627,12 +4628,12 @@ function getRoomKeyFromPage(pageId) {
     if (pageId.startsWith('pr-'))     return 'pr';
     if (pageId.startsWith('mh-'))     return 'mh';
     if (pageId.startsWith('ki-'))     return 'ki';
-    if (pageId.startsWith('bh-sh-'))  return 'sh';
     if (pageId.startsWith('bh-'))     return 'bh';
     if (pageId.startsWith('sh-'))     return 'sh';
     if (pageId.startsWith('clr-'))    return 'clr';
     if (pageId.startsWith('camr-'))   return 'camr';
     if (pageId.startsWith('cr-'))     return 'cr';
+    if (pageId.startsWith('tu-'))     return 'tu';
     if (pageId.startsWith('stairs-')) return 'stairs';
     if (pageId.startsWith('cw-'))     return 'cw';
     if (pageId.startsWith('wr-'))     return 'wr';
@@ -4653,8 +4654,7 @@ function isInCWing(pageId) {
         pageId.startsWith('oh1-')   ||
         pageId.startsWith('oh2-')   ||
         pageId.startsWith('oh3-')   ||
-        pageId.startsWith('print-') ||
-        pageId.startsWith('stairs-');
+        pageId.startsWith('print-')
 }
 
 let currentMapRoom = null;
@@ -4676,17 +4676,31 @@ function drawMap() {
     const CELL = 14;
 
     const aRooms = {
-        mh:    mapRooms.mh,   pr:   mapRooms.pr,  bd:   mapRooms.bd,
-        li:    mapRooms.li,   lo:   mapRooms.lo,  ls:   mapRooms.ls,
-        stairs:mapRooms.stairs, ki: mapRooms.ki,  bh:   mapRooms.bh,
-        sh:    mapRooms.sh,   cre:  mapRooms.cre, clr:  mapRooms.clr,
-        cr:    mapRooms.cr,   camr: mapRooms.camr,
+        mh:    mapRooms.mh,
+        pr:   mapRooms.pr,
+        bd:   mapRooms.bd,
+        li:    mapRooms.li,
+        lo:   mapRooms.lo,
+        ls:   mapRooms.ls,
+        stairs:mapRooms.stairs,
+        ki: mapRooms.ki,
+        bh:   mapRooms.bh,
+        sh:    mapRooms.sh,
+        clr:  mapRooms.clr,
+        cr:    mapRooms.cr,
+        camr: mapRooms.camr,
+        tu: mapRooms.tu,
     };
 
     const cRooms = {
-        cw:   mapRooms.cw,  wr:    mapRooms.wr,  bath:  mapRooms.bath,
-        snh:  mapRooms.snh, oh1:   mapRooms.oh1, oh2:   mapRooms.oh2,
-        oh3:  mapRooms.oh3, print: mapRooms.print,
+        cw:   mapRooms.cw,
+        wr:    mapRooms.wr,
+        bath:  mapRooms.bath,
+        snh:  mapRooms.snh,
+        oh1:   mapRooms.oh1,
+        oh2:   mapRooms.oh2,
+        oh3:  mapRooms.oh3,
+        print: mapRooms.print,
     };
 
     const rooms = wing === 'c' ? cRooms : aRooms;
@@ -4706,35 +4720,60 @@ function drawMap() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw corridors
+    // --- Inside drawMap(), replace the corridors.forEach block ---
     corridors.forEach(c => {
-        const bothDiscovered = c.rooms.every(key => roomDiscovery[key]?.());
-        if (!bothDiscovered) return;
-
         const r1 = rooms[c.rooms[0]];
         const r2 = rooms[c.rooms[1]];
         if (!r1 || !r2) return;
 
-        let x1, y1, x2, y2;
-        if (c.dir === 'v') {
-            const top    = r1.y < r2.y ? r1 : r2;
-            const bottom = r1.y < r2.y ? r2 : r1;
-            const cx = (bottom.x + bottom.w / 2) * CELL;
-            x1 = cx; y1 = (top.y + top.h) * CELL;
-            x2 = cx; y2 = bottom.y * CELL;
-        } else {
-            const left  = r1.x < r2.x ? r1 : r2;
-            const right = r1.x < r2.x ? r2 : r1;
-            const cy = (left.y + left.h / 2) * CELL;
-            x1 = (left.x + left.w) * CELL; y1 = cy;
-            x2 = right.x * CELL;           y2 = cy;
-        }
+        const r1Disc = roomDiscovery[c.rooms[0]]?.();
+        const r2Disc = roomDiscovery[c.rooms[1]]?.();
+        if (!r1Disc && !r2Disc) return;
 
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.strokeStyle = '#c9a84c';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        const getEdgePoint = (from, to) => {
+            const fx = from.x * CELL, fy = from.y * CELL, fw = from.w * CELL, fh = from.h * CELL;
+            const tx = (to.x + to.w/2) * CELL, ty = (to.y + to.h/2) * CELL;
+            return {
+                x: Math.max(fx, Math.min(fx + fw, tx)),
+                y: Math.max(fy, Math.min(fy + fh, ty))
+            };
+        };
+
+        const p1 = getEdgePoint(r1, r2);
+        const p2 = getEdgePoint(r2, r1);
+
+        const drawStub = (start, end, targetDiscovered) => {
+            const distLimit = targetDiscovered ? 0.5 : 0.4;
+            const dx = start.x + (end.x - start.x) * distLimit;
+            const dy = start.y + (end.y - start.y) * distLimit;
+
+            // 1. Draw the "Outer Walls" (Gold)
+            ctx.beginPath();
+            ctx.lineWidth = 14;
+            const wallGrad = ctx.createLinearGradient(start.x, start.y, dx, dy);
+            wallGrad.addColorStop(0, '#c9a84c');
+            wallGrad.addColorStop(1, targetDiscovered ? '#c9a84c' : 'rgba(201, 168, 76, 0)');
+
+            ctx.strokeStyle = wallGrad;
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(dx, dy);
+            ctx.stroke();
+
+            // 2. Draw the "Inner Path" (Dark center)
+            ctx.beginPath();
+            ctx.lineWidth = 10; // Slightly thinner than the walls
+            const floorGrad = ctx.createLinearGradient(start.x, start.y, dx, dy);
+            floorGrad.addColorStop(0, '#0a0500'); // Matches your background color
+            floorGrad.addColorStop(1, targetDiscovered ? '#0a0500' : 'rgba(10, 5, 0, 0)');
+
+            ctx.strokeStyle = floorGrad;
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(dx, dy);
+            ctx.stroke();
+        };
+
+        if (r1Disc) drawStub(p1, p2, r2Disc);
+        if (r2Disc) drawStub(p2, p1, r1Disc);
     });
 
     // Draw rooms
@@ -5144,6 +5183,7 @@ function getInitialState() {
         discoveredBh: false,
         discoveredCr: false,
         discoveredCamr: false,
+        discoveredTu: false,
         discoveredSh: false,
         discoveredLs: false,
         discoveredClr: false,
