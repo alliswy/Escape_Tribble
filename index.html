@@ -42,7 +42,6 @@
     <!-- Setting Screen -->
     <div id="settings-screen" class="hidden fade-screen">
         <h2>Settings</h2>
-        <!-- FIXME add (?) sound for the game: eg. sound when clicking on buttons, door opening sound, key sound, etc. -->
         <div class="setting-row">
             <label for="music-slider">Music</label>
             <input type="range" id="music-slider" min="0" max="100" value="50">
@@ -59,6 +58,198 @@
         </div>
         <div class="menu-btn" id="language-button">Language</div>
         <div class="menu-btn" id="settings-back-button">Back</div>
+    </div>
+
+    <div id="info-screen" class="hidden fade-screen">
+        <div class="info-header-bar">
+            <h2 class="info-title">Information</h2>
+
+            <div class="info-nav">
+                <button class="tab-btn active" data-target="credits">Credits</button>
+                <button class="tab-btn" data-target="sources">Sources</button>
+                <button class="tab-btn" data-target="contact">Contact</button>
+                <button class="tab-btn" data-target="facts">About the Game/Tribble</button>
+
+                <button class="tab-btn exit-btn" id="info-back-button">Main Menu</button>
+            </div>
+        </div>
+
+        <div class="info-body">
+<!--            <div id="credits" class="info-tab-content">-->
+
+<!--                <h3 style="color: #ffcc00; font-size: 2.8rem; margin-bottom: 5px;">Primary Developer</h3>-->
+<!--                <p style="color: #fff1aa; font-size: 2.2rem; margin: 0;"><strong>Alli Swyt</strong></p>-->
+<!--                <p style="color: #e6b800; font-size: 1.1rem; margin-bottom: 20px; line-height: 1.4;">-->
+<!--                    Original Concept, Research & Narrative, Lead Programming, <br>-->
+<!--                    Systems Architecture, & Full Game Implementation-->
+<!--                </p>-->
+
+<!--                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.5;">-->
+
+<!--                <h3 style="color: #ffcc00; font-size: 1.4rem; margin-top: 15px;">Secondary Collaborator</h3>-->
+<!--                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 15px;">-->
+<!--                    <strong>Stephen Neill:</strong> UI color theme; wire puzzle design; initial menu/button frameworks; initial map logic.-->
+<!--                </p>-->
+
+<!--                <h3 style="color: #ffcc00; font-size: 1.4rem;">Production & Talent</h3>-->
+
+<!--                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 8px;">-->
+<!--                    <strong>Avelina Axonov:</strong> Featured Actor (She's the "Ghost")-->
+<!--                </p>-->
+
+<!--                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 8px;">-->
+<!--                    <strong>Alicia Lemar:</strong> Production Support & Location Access-->
+<!--                </p>-->
+
+<!--                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.3; width: 50%; margin: 20px 0 10px 0;">-->
+
+<!--                <h3 style="color: #ffcc00; font-size: 1.3rem;">Special Thanks</h3>-->
+<!--                <p style="color: #e6b800; font-size: 1rem;">-->
+<!--                    To everyone who supported the research and development of this project.-->
+<!--                </p>-->
+
+<!--            </div>-->
+
+            <div id="sources" class="info-tab-content hidden">
+                <h3>Research & Clippings</h3>
+                <!-- fixme add the correct citations-->
+                <p><strong>Newspapers and other Clippings:</strong> Featured articles from <em>WFU Old Gold and Black</em>, <em>The Washington Post</em>, and <em>The Guardian</em>.</p>
+
+                <p><strong>Social Media:</strong> Community discussions and posts curated from <em>r/Programming</em> and <em>r/GameDev</em> on Reddit.</p>
+
+                <hr class="menu-divider">
+                <p><strong>SFX:</strong> Provided by Pixabay</p>
+                <p><strong>Built With:</strong> HTML5, CSS3, & Vanilla JavaScript</p>
+            </div>
+
+            <div id="contact" class="info-tab-content hidden">
+
+                <h3 style="color: #ffcc00; font-size: 2.5rem; margin-bottom: 20px; line-height: 1.2;">
+                    Questions ? Feedback ? <br> Feel free to reach out !
+                </h3>
+
+                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.5; margin-bottom: 25px;">
+
+                <div style="margin-bottom: 20px;">
+                    <p style="color: #fff1aa; font-size: 1.5rem; margin-bottom: 10px;">
+                        <strong style="color: #ffcc00;">Email:</strong> alli.swyt@gmail.com
+                    </p>
+
+                    <p style="color: #fff1aa; font-size: 1.5rem; margin-bottom: 10px;">
+                        <strong style="color: #ffcc00;">Github:</strong> [link to my github]
+                    </p>
+
+                    <p style="color: #fff1aa; font-size: 1.5rem; margin-bottom: 10px;">
+                        <strong style="color: #ffcc00;">Other source of media:</strong> (instagram ?)
+                    </p>
+                </div>
+
+                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.3; width: 50%; margin-left: 0;">
+            </div>
+
+            <div id="facts" class="info-tab-content hidden">
+
+                <h3 style="color: #ffcc00; font-size: 3rem; margin-bottom: 5px;">Fun Facts</h3>
+                <p style="color: #fff1aa; font-size: 2.4rem; margin: 0;"><strong>Alli Swyt</strong></p>
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Behind the scenes, development secrets, <br>
+                    and project insights.
+                </p>
+
+                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.5;">
+
+                <!-- SECTION 1 -->
+                <h3 style="color: #ffcc00; font-size: 1.6rem; margin-top: 18px;">Development</h3>
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Images:<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    All photos used in this game are REAL photos that I took, aside from the fact that some are slightly edited (or heavily edited in the case of the stairwell images). The tutorial images were taken in my old apartment, and the game images were indeed taken in Tribble Hall, in the Spring of 2026. The images of the tunnels are also real, but I did not take them – they were available online.
+                </p>
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Ambient Noise:<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    While most of the audio was taken from pixabay, the ambient noise in the Tribble Hall pages is REAL ambient noise from the Tribble Hall basement. While taking images in Tribble Hall late at night, the real ambient noise on its own was so unnerving that I decided to include it.
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Newspaper clippings and others:<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    The newspaper and reddit clippings in the classroom are real, which I found on the internet and are referenced in the sources page. Additionally, the nuclear apocalypse warning posted in the c-wing was also a real image.
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Easter Egg:<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    The gigantic Demon Decon card was actually a photoshop mistake, but it was so funny that I decided to leave it.
+                </p>
+
+                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.5;">
+                <!-- SECTION 2 -->
+                <h3 style="color: #ffcc00; font-size: 1.6rem; margin-top: 18px;">More on Tribble’s history: Real or Rumor ?</h3>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Tribble Hall – C-Wing Fun Facts<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    A lot of information about the C-wing’s history as a nuclear fallout shelter is still unknown. While Tribble was not the only shelter on Wake Forest’s campus in the 1960s—others existed in ZSR, the gym, and additional buildings with assigned emergency plans—the C-wing stood apart for one key reason: it was never publicly announced and remained inaccessible.
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    A Hidden Cold War Bunker<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    According to Wake Forest Magazine’s 2014 post, “How to Survive a Nuclear War,” the Department of the Navy funded the construction of a secret lowest-basement level in the C-wing.  <br> <br>
+                    “the Department of the Navy, looking to decentralize its radio facilities in case of a nuclear attack, paid to hastily add the lowest-basement level in the “C” wing. Behind two sets of heavy steel doors, a bunker was built with its own phone hookups, utilities, water supply and special biochemical filers on the air conditioning system.”  <br> <br>
+                    This bunker was self-sustaining and sealed off, designed to operate independently during a nuclear emergency. Its hidden location and restricted access made it one of the most secretive spaces on campus. <br><br>
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    A Bunker No One Saw<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    In a 1994 Wake Forest Magazine article, Tom Phillips described how little activity the space actually saw:<br>
+                    “No Navy personnel were ever seen entering or leaving the room — just a single civilian employee who kept it in readiness for a day of doom that never came.”<br> <br>
+                    By 1969, the bunker had already been converted into faculty offices.
+
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Strange Design Features<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    Some sources, including the Old Gold and Black, claim that metal plates on the C-wing basement doors were intended for gun barrels—suggesting the bunker may have been designed with defensive capabilities. However, there is no confirmed evidence of this purpose.
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    The Tunnel System Below<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    The tunnels beneath Wake Forest’s campus are one of its largest points of speculation. While often rumored to have stored emergency rations or supported the shelter system during a nuclear crisis, their original full purpose remains unclear.<br><br>
+                    The system includes multiple branching corridors, and there are documented images of bolted or heavily secured doors along certain sections. However, there is no publicly available information confirming what these doors lead to or what their purpose was, adding to ongoing speculation about sealed-off rooms or restricted utility spaces within the network.<br><br>
+                    Today, access is restricted primarily due to safety hazards such as low oxygen levels and exposed hot pipes, but the sense of hidden infrastructure continues to fuel curiosity about what remains behind these barriers.<br><br>
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Not Just History—Still Used Today<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    Despite restrictions, tunnels near Wait Chapel have been used in recent years. According to “The Secret Life of Wake Forest” by Betsy Chapman (2015): <br>
+                    “When Michelle Obama came to campus to speak at the memorial service for Maya Angelou, she was whisked in and out of Wait Chapel via the tunnels. And of course Secret Service was down there with her.”
+                </p>
+
+                <p style="color: #e6b800; font-size: 1.25rem; margin-bottom: 22px; line-height: 1.5;">
+                    Unauthorized Tunnel Exploration<br>
+                </p>
+                <p style="color: #fff1aa; font-size: 1.25rem; margin-bottom: 10px;">
+                    Student groups such as Operation Black Mask and the Seductive Elephants became known for sneaking into these restricted tunnels, adding to the mystery surrounding what lies beneath campus. Another article on unauthorized access into the tunnels may be found in the game !
+                </p>
+
+            </div>
+        </div>
     </div>
 
     <!-- Inventory -->

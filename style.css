@@ -664,6 +664,170 @@ input, textarea {
     to   { opacity: 1; }
 }
 
+/* ----- INFO PAGES ----*/
+/* 1. Push the whole screen content to the very top */
+/* 1. Push the whole screen to the top */
+#info-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 20px;
+    height: 100vh;
+}
+
+/* 2. The Header Bar (Title + Buttons in a row) */
+.info-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 40px;
+    padding: 10px 40px;
+    border-bottom: 3px solid #ffcc00;
+}
+
+/* 3. The Big Yellow Title */
+.info-title {
+    color: #ffcc00;
+    font-size: 2.8rem;
+    margin: 0;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px #000;
+}
+
+/* 4. Restored "Nice" Tab Buttons */
+.tab-btn {
+    background: #333;           /* Back to the dark look */
+    color: white;
+    border: 2px solid #555;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0; /* Folder-tab shape */
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background: #444;
+    border-color: #ffcc00;
+}
+
+.tab-btn.active {
+    background: #ffcc00;        /* Yellow only when active */
+    color: #000;                /* Black text for contrast */
+    border-color: #ffcc00;
+    font-weight: bold;
+}
+
+/* 5. Large Visibility Text */
+.info-body {
+    padding: 40px;
+}
+
+.info-tab-content {
+    max-height: 70vh;
+    overflow-y: auto;
+
+    width: min(700px, 50vw);
+    margin: 0 auto;
+
+    padding: 24px;
+    border-radius: 12px;
+
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+}
+
+
+.info-tab-content h3 {
+    color: #ffcc00;
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.info-tab-content p, .info-tab-content li {
+    color: #fff1aa;             /* Pale yellow for high visibility */
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+}
+
+/* This makes the scrollbar yellow to match your game */
+.info-tab-content::-webkit-scrollbar {
+    width: 8px;
+}
+.info-tab-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+.info-tab-content::-webkit-scrollbar-thumb {
+    background: #ffcc00;
+    border-radius: 10px;
+}
+
+.exit-btn {
+    margin-left: 50px; /* Separates the back button from the info tabs */
+    background-color: #442222 !important; /* Subtle dark red */
+    border-color: #aa4444 !important;
+}
+
+.exit-btn:hover {
+    background-color: #aa4444 !important;
+    color: white;
+}
+
+/* Styling to match the 'Credits' reference precisely */
+
+/* Header (like 'Primary Developer') */
+.facts-section-title {
+    color: #ffcc00; /* Darker Yellow/Gold */
+    font-size: 2.8rem;
+    margin-bottom: 5px;
+    margin-top: 0;
+}
+
+/* Your Name (like 'Alli Swyt' sub-heading) */
+.facts-sub-header {
+    color: #fff1aa; /* Paler Yellow */
+    font-size: 2.2rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+/* Byline (like 'Original Concept' list) */
+.facts-byline {
+    color: #e6b800; /* Medium Gold */
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* Standard Fact Entries (Matches Secondary/Production styles) */
+.facts-entry {
+    color: #fff1aa; /* Paler Yellow */
+    font-size: 1.1rem;
+    margin-bottom: 8px; /* Compact spacing */
+    margin-top: 0;
+    line-height: 1.4;
+}
+
+/* Bold Labels (like 'Stephen Neill:') */
+.facts-entry strong {
+    color: #ffcc00; /* Darker Yellow/Gold */
+}
+
+/* Dividing Lines */
+.menu-divider {
+    border: none;
+    border-top: 1px solid #ffcc00;
+    opacity: 0.5;
+    margin: 20px 0;
+}
+
+.menu-divider.short-divider {
+    opacity: 0.3;
+    width: 50%;
+    margin: 20px 0 10px 0;
+}
+
+
 .fade-screen h2 {
     font-family: 'Special Elite', cursive;
     font-size: 50px;

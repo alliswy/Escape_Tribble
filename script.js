@@ -139,6 +139,7 @@ const rightArrow = document.getElementById('master-right-arrow');
 const menu = document.getElementById('menu-screen');
 
 const startButton = document.getElementById('start-button');
+const infoButton = document.getElementById('info-button');
 const loadSaveButton = document.getElementById('load-save-button');
 const play = document.getElementById('play');
 const allPages = document.querySelectorAll('.fit');
@@ -3171,10 +3172,7 @@ function fadeTransition(callback) {
 }
 
 
-
-
-
-// ----- 5. INITIALIZE EVENT LISTENERS -----
+// ----- INITIALIZE EVENT LISTENERS -----
 
 function init() {
     //Menu System
@@ -3233,6 +3231,55 @@ function init() {
                 showPage('mh-bd-main-page');
             }
         });
+    };
+    infoButton.onclick = () => {
+        // 1. Show the info screen
+        const infoScreen = document.getElementById('info-screen');
+        infoScreen.classList.remove('hidden');
+
+        // 2. Optional: Reset to the "Credits" tab every time it opens
+        // This prevents the screen from opening on a random tab you left it on
+        const allTabs = document.querySelectorAll('.info-tab-content');
+        const allButtons = document.querySelectorAll('.tab-btn');
+
+        // Hide everything
+        allTabs.forEach(tab => tab.classList.add('hidden'));
+        allButtons.forEach(btn => btn.classList.remove('active'));
+
+        // Show the first one (Credits)
+        document.getElementById('credits').classList.remove('hidden');
+        document.querySelector('[data-target="credits"]').classList.add('active');
+    };
+
+    // 1. Logic for switching between Info Tabs
+    document.querySelectorAll('.tab-btn[data-target]').forEach(button => {
+        button.addEventListener('click', () => {
+            const targetId = button.getAttribute('data-target');
+
+            // Remove active class from all buttons and hide all sections
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.info-tab-content').forEach(section => section.classList.add('hidden'));
+
+            // Add active class to clicked button and show the target section
+            button.classList.add('active');
+            document.getElementById(targetId).classList.remove('hidden');
+        });
+    });
+
+// 2. Logic for the Main Menu (Back) Button
+    document.getElementById('info-back-button').onclick = () => {
+        document.getElementById('info-screen').classList.add('hidden');
+        // If you have a main menu screen to show, add it here:
+        // mainMenu.classList.remove('hidden');
+    };
+
+// 3. Opening the Info Screen (Triggered from your Main Menu)
+    infoButton.onclick = () => {
+        document.getElementById('info-screen').classList.remove('hidden');
+
+        // Always start on the Credits tab for a clean look
+        const defaultTab = document.querySelector('.tab-btn[data-target="credits"]');
+        if (defaultTab) defaultTab.click();
     };
 
     //Settings button
