@@ -586,9 +586,19 @@ input, textarea {
     height: 100vh;
     background-color: #1a0f00;
     background-image: radial-gradient(ellipse at center, rgba(180,120,0,0.35) 0%, transparent 70%);
-    position: absolute;
+    position: relative; /* important so child absolute positioning works */
     top: 0;
     left: 0;
+}
+
+#copyright {
+    position: absolute;
+    bottom: 10px;
+    right: 15px; /* change to 'left' or 'center' if you prefer */
+    font-size: 0.9rem;
+    color: #cccccc;
+    opacity: 0.8;
+    pointer-events: none;
 }
 
 /* ---- TITLE ---- */

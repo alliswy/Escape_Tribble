@@ -3269,8 +3269,6 @@ function init() {
 // 2. Logic for the Main Menu (Back) Button
     document.getElementById('info-back-button').onclick = () => {
         document.getElementById('info-screen').classList.add('hidden');
-        // If you have a main menu screen to show, add it here:
-        // mainMenu.classList.remove('hidden');
     };
 
 // 3. Opening the Info Screen (Triggered from your Main Menu)
