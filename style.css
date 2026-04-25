@@ -3783,19 +3783,6 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
-#li-main-lw-lw-hitbox {
-    position: absolute;
-    top: 10%;
-    left: 38%;
-    width: 25%;
-    height: 45%;
-
-    background-color: transparent;
-    border: 2px solid transparent;
-    cursor: pointer; /* makes 'hand' icon so players know to click */
-    z-index: 10;
-}
-
 #li-mw-tolkein-hitbox {
     position: absolute;
     top: 22%;
@@ -3919,6 +3906,19 @@ input[type="range"]::-webkit-slider-thumb {
     left: 26%;
     width: 40%;
     height: 68%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-alston-hitbox {
+    position: absolute;
+    top: 23%;
+    left: 22%;
+    width: 58%;
+    height: 53%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -5117,6 +5117,30 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #tu-hatch-hitbox {
+    position: absolute;
+    top: 51%;
+    left: 58%;
+    width: 11%;
+    height: 17%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#tu-ho-rubble-hitbox {
+    position: absolute;
+    top: 7%;
+    left: 10%;
+    width: 29%;
+    height: 64%;
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#tu-ho-hitbox {
     position: absolute;
     top: 51%;
     left: 58%;

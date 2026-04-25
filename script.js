@@ -245,6 +245,9 @@ const sfx = {
     grabBook: {audio: new Audio('sounds/grab-book.mp3'), baseVol: 0.5},
     bdBook: {audio: new Audio('sounds/bd-book.mp3'), baseVol: 0.5},
 
+    //library sounds
+    bones: {audio: new Audio('sounds/bones.mp3'), baseVol: 1},
+
 }; //fixme add more sounds
 
 
@@ -407,7 +410,7 @@ const pageSounds = {
         isGlobal: true
     },
     tutorialAmbience: {   // NEW
-        ...createSoundClip(sfx.aptAmbience, 0.08, true, 1.5, 1),
+        ...createSoundClip(sfx.aptAmbience, 0.12, true, 1.5, 1),
         type: 'music',
         isGlobal: true
     },
@@ -417,10 +420,10 @@ const pageSounds = {
 
     unlock: createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
     doorClose: createSoundClip(sfx.doorClose, 0.7, false, 1.03, 0),
-    keycardSwipe: createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
+    keycardSwipe: createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.9),
     accessBeep: createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
     steps: createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
-    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45), //fixme check boundaries on this one, and add it to the desired page
+    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 53), //fixme check boundaries on this one, and add it to the desired page
     lightFlicker: createSoundClip(sfx.lightFlicker, 0.5, false, 8, 11),
 
     //apartment sounds
@@ -433,6 +436,9 @@ const pageSounds = {
     bdBookClose: createSoundClip(sfx.bdBook, 0.5, false, 7.5, 0),
     hatchOpen: createSoundClip(sfx.hatch, 1, false, 0, 0.3),
     hatchClose: createSoundClip(sfx.hatch, 1, false, 0.3, 0),
+
+    //library sounds
+    bones: createSoundClip(sfx.bones, 1, false, 1, 3),
 };
 
 let activeGlobalLoop = null;
@@ -818,7 +824,7 @@ const roomLeads = {
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page', forward: 'bh-4-page' },
     'bh-4-page':            { back: 'bh-3-page', forward: 'bh-end-page', left: 'bh-sh-entrance-page'},
-    'bh-sh-entrance-page':   {back: 'bh-4-page', forward: 'bh-sh-cr-dc-page', left: 'bh-rev-1-page'},
+    'bh-sh-entrance-page':   {back: 'bh-4-page', forward: () => state.crDoorOpen ? 'bh-sh-cr-do-page':'bh-sh-cr-dc-page', left: 'bh-rev-1-page'},
     'bh-rev-1-page':            {forward: 'bh-rev-2-page', right: 'bh-sh-entrance-page'},
     'bh-rev-2-page':            {back: 'bh-rev-1-page', forward: 'bh-rev-3-page'},
     'bh-rev-3-page':            {back: 'bh-rev-2-page', forward: 'bh-rev-4-page'},
@@ -826,7 +832,7 @@ const roomLeads = {
     //fixme add another imgae here coming out of the bh but curr in mh
     'bh-sh-cr-dc-page':      {back: 'bh-sh-entrance-page'},
     'bh-end-page':          {back: 'bh-4-page'},
-    'bh-sh-cr-do-page':      {back: 'bh-sh-cr-dc-page' },
+    'bh-sh-cr-do-page':      {back: 'bh-sh-entrance-page'},
     'sh-cr-door-open-page':    {back: 'bh-sh-cr-do-page'},
     'bh-sh-cr-door-closed-page':   {back: 'bh-sh-cr-dc-page'},
     'bh-sh-cr-door-handle-page':    {back: 'bh-sh-cr-door-closed-page'},
@@ -935,8 +941,8 @@ const roomLeads = {
     'eh-door-page':             {back: 'cw-eh-entrance-page'},
     'eh-door-plate-page':       {back: 'eh-door-page'},
     'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', right: 'cw-left-2-page', forward: 'oh1-left-1-page'},
-    'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page'}, //fixme add forward (?)
-    'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left or back
+    'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page', forward: 'oh1-left-3-page'},
+    'oh1-left-1-page':          {back: 'cw-oh1-entrance-page', forward: 'oh1-left-2-page'}, //fixme add left (?)
     'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
     'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-left-4-page':          {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
@@ -1024,7 +1030,7 @@ const roomLeads = {
     'li-lt-page':           {back: 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
     'li-laptop-star-page':  {back: 'li-lt-star-page'},
-    'li-lt-star-page':      {back: () => (state.scannedBook && !state.hasSkPaper) ? 'li-lt-sk-paper-page' : 'li-left-lt-page'},
+    'li-lt-star-page':      {back: () => state.scannedBook ? !state.hasSkPaper ? 'li-lt-sk-paper-page': 'li-lt-...-page' : 'li-left-lt-page'}, //fixme add another check/page
     'li-lt-sk-paper-page':  {}, //they're forced to take the paper
     'li-lt-sk-page':        {back: 'li-main-lw-sk-page'},
     'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add check for doors open
@@ -1056,9 +1062,9 @@ const roomLeads = {
     'li-office-door-closed-page':   {back: 'li-2dc-page'}, 
     'li-office-door-open-page':     {back: 'li-office-door-closed-page'}, 
     'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
-    'lo-main-left-page':            {back: 'lo-main-page' },
+    'lo-main-left-page':            {right: 'lo-main-page'},
     'lo-storage-entrance-page':     {back: 'lo-main-left-page', forward: 'ls-in-1-page' },
-    'lo-main-right-page':           {back: 'ls-lo-entrance-page' }, //fixme may need to fix navigation in this back room, it's a little weird (but difficult bc of how library images are)
+    'lo-main-right-page':           {back: 'ls-lo-entrance-page' },
     'lo-desk-page':                 {back: 'lo-main-page', forward: 'lo-desk-2-page'},
     'lo-desk-2-page':               {back: 'lo-desk-page'},
     'lo-monitor-page':              {back: 'lo-desk-2-page'},
@@ -1111,17 +1117,17 @@ const roomLeads = {
 
     //tutorial pages
     'apt-fd-handle-page':   {back: 'apt-fd-page'},
-    'apt-fd-open-page':     {back: 'apt-fd-page'},
+    //'apt-fd-open-page':     {back: 'apt-fd-page'},
     'apt-main-water-page':  {forward: 'apt-table-water-page'},
     'apt-table-water-page': {back: 'apt-main-water-page', left: 'apt-ki-entr-page'},
-    'apt-table-page':       {left: 'apt-ki-entr-page'},
+    'apt-table-page':       {left: 'apt-ki-entr-page', right: 'apt-bed-page'},
     'apt-ki-entr-page':     {forward: 'apt-ki-1-page', right: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
     'apt-ki-1-page':        {back: 'apt-ki-entr-page', forward: 'apt-ki-2-page'},
     'apt-ki-2-page':        {back: 'apt-ki-1-page', forward: 'apt-ki-sink-page'},
     'apt-ki-sink-page':        {back: 'apt-ki-1-page', left: 'apt-ki-3-page'},
     'apt-sink-water-bottle-page': {back: 'apt-sink-page'},
     'apt-ki-3-page':        {forward: 'apt-ki-exit-page', right: 'apt-ki-sink-page'},
-    'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page'},
+    'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page', left: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
     'apt-bed-page':         {back: 'apt-ki-exit-page'},
 };
 
@@ -1186,93 +1192,6 @@ async function showPage(pageId, useFade = false) {
         await run();
     }
 }
-
-// async function showPage(pageId, useFade = false) {
-//     const run = async () => {
-//
-//         const target = document.getElementById(pageId);
-//         state.currentPage = pageId;
-//         if (!target) return;
-//
-//         const previousPageId = lastPage ? lastPage.id : null;
-//
-//         if (lastPage) {
-//             lastPage.classList.add('hidden');
-//         } else {
-//             allPages.forEach(p => p.classList.add('hidden'));
-//         }
-//
-//         target.classList.remove('hidden');
-//         lastPage = target;
-//
-//         setTimeout(() => {
-//             const currentPaths = roomLeads[pageId] || {};
-//
-//             arrows.back.classList.toggle('hidden', !currentPaths.back);
-//             arrows.forward.classList.toggle('hidden', !currentPaths.forward);
-//             arrows.left.classList.toggle('hidden', !currentPaths.left);
-//             arrows.right.classList.toggle('hidden', !currentPaths.right);
-//
-//             updateMap(pageId);
-//             preloadWholeRoom(pageId);
-//
-//             triggerNotification(pageId);
-//
-//             if (
-//                 previousPageId &&
-//                 pageSounds[previousPageId] &&
-//                 pageSounds[previousPageId].type !== 'music'
-//             ) {
-//                 stopSound(previousPageId);
-//             }
-//             triggerSound(pageId);
-//
-//         }, 0);
-//
-//         saveGame(pageId);
-//     };
-//
-//     // 👇 optional fade behavior
-//     if (useFade) {
-//         await fadeTransition(run);
-//     } else {
-//         await run();
-//     }
-// }
-
-// function preloadWholeRoom(pageId) {
-//     // 1. Figure out the "prefix" (e.g., 'camr', 'li', 'mh-bd')
-//     // This splits the ID at the first dash and takes the first part
-//     const prefix = pageId.split('-')[0];
-//
-//     // 2. Find all images that belong to this room
-//     // This looks for any ID that starts with your prefix (e.g., id^="camr")
-//     const roomImages = document.querySelectorAll(`[id^="${prefix}-"] img, img[id^="${prefix}-"]`);
-//
-//     roomImages.forEach(img => {
-//         if (img.getAttribute('loading') === 'lazy') {
-//             img.removeAttribute('loading');
-//             // Setting the src to itself tells the browser: "Download this NOW."
-//             img.src = img.src;
-//         }
-//     });
-// }
-//
-// function warmUpGame() {
-//     console.log("Warming up entry pages...");
-//     entryPages.forEach(pageId => {
-//         const container = document.getElementById(pageId);
-//         if (container) {
-//             const img = container.tagName === 'IMG' ? container : container.querySelector('img');
-//             if (img) {
-//                 img.removeAttribute('loading');
-//                 img.fetchPriority = "high";
-//                 // Setting src to itself forces the "lazy" status to break
-//                 img.src = img.src;
-//             }
-//         }
-//     });
-// }
 
 async function triggerNotification(pageId) {
     //spawn textbox when certain page is shown !
@@ -1401,6 +1320,28 @@ async function triggerNotification(pageId) {
         case 'bd-books-page': {
             if (state.prevPage ==='bd-fb-open-page' || state.prevPage==='bd-fb-open-key-page') {
                 triggerSound('bdBookClose');
+            }
+        } break;
+        case 'wr-right-note-page': {
+            if (!state.notificationsSeen['wr-right-note-init']) {
+                await delay(20);
+                await spawnThemedBox("Wait, there's writing on the whiteboard. I don't think that was there a minute ago", "notification-top");
+                state.notificationsSeen['wr-right-note-init']=true;
+            }
+        } break;
+        case 'wr-note-page': {
+            if (!state.notificationsSeen['wr-note-init']) {
+                await delay(20);
+                await spawnThemedBox("Who wrote this note ? Someone else is definitely down here with me...", "notification-top");
+                state.notificationsSeen['wr-note-init']=true;
+            }
+        } break;
+        case 'ls-archives-sk-2-page': {
+            if (!state.notificationsSeen['ls-archives-sk-2-init']) {
+                await delay(20);
+                await spawnThemedBox("The fact that this skeleton keeps moving around is freaking me out", 'notification-top');
+                await delay(20);
+                await spawnThemedBox('At least it seems that this ghost is trying to help me', 'notification-top');
             }
         }
 
@@ -2121,7 +2062,7 @@ const termFeedback = document.getElementById('terminal-feedback');
 const loginHeader = document.querySelector('#terminal-window .terminal-content div:first-child');
 
 // Called when clicking the monitor hitbox
-function openTerminal() {
+async function openTerminal() {
     termPage.classList.remove('hidden');
     document.getElementById('lo-monitor-hitbox').classList.add('hidden');
 
@@ -2147,6 +2088,14 @@ function openTerminal() {
         termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
         document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
     } else {
+        if (!state.notificationsSeen['lo-monitor-4dig-hint']) {
+            await spawnThemedBox("I need another code, 4 digits this time...", 'notification-top');
+            await delay(20);
+            await spawnThemedBox("Wait--I've found 4 different shapes, and the read sign in the library has the same colors as those shapes", 'notification-top');
+            await delay(20);
+            await spawnThemedBox("I wonder if the shapes, the colors, and this code are related...", 'notification-top');
+            state.notificationsSeen['li-monitor-4dig-hint'] = true;
+        } //fixme test this
         termInput.style.display = "block";
         if (loginHeader) loginHeader.style.display = "block";
         // Reset font size for typing mode
@@ -2783,48 +2732,25 @@ async function tutorialHitboxInit() {
 
     //fixme check the following so that the user can't soft-lock themselves; Note: it should be all good if I just move the hitbox logic to the tutorial step section
 
-    //hitbox setup
-    document.getElementById('apt-fd-handle-hitbox').onclick = () => {
-        showPage('apt-fd-handle-page');
-    }
-    document.getElementById('apt-fd-handle-handle-hitbox').onclick = () => {
-        if (state.aptUnlocked) {
-            showPage('apt-fd-open-page');
-        } else {
-            //fixme add feedback
-        }
-    }
-    document.getElementById('apt-fd-handle-keyhole-hitbox').onclick = () => {
-        if (state.hasAptKey) {
-            state.aptUnlocked = true;
-            const keySlot = document.getElementById('inv-apt-key');
-            if (keySlot) {
-                keySlot.classList.add('hidden');
-                refreshInventorySlots();
-            }
-            triggerSound('unlock');
-        } else {
-            //fixme add feedback
-        }
-    }
-    document.getElementById('apt-fd-open-hitbox').onclick = () => {
-        showPage("apt-main-water-page");
-    }
-    document.getElementById('apt-ki-sink-hitbox').onclick = async () => {
-        if (state.hasWb && state.isWbOpen && !state.filledBottle) {
-            triggerSound('fillBottle');
-            showPage('apt-ki-sink-water-bottle-page');
-            setTimeout(() => {
-                showPage('apt-ki-sink-page');
-            }, 5000);
-            state.filledBottle = true;
-        } else {
-            //fixme add feedback
-        }
-    }
-    document.getElementById('apt-bed-hitbox').onclick = () => {
-        //fixme add fade to black then wake up in tribble
-    }
+    //fixme remove the following, changed it for avoiding soft-locking
+    // document.getElementById('apt-fd-handle-handle-hitbox').onclick = () => {
+    //     if (!state.aptUnlocked) {
+    //         //fixme add feedback
+    //     }
+    // }
+    // document.getElementById('apt-fd-handle-keyhole-hitbox').onclick = () => {
+    //     if (!state.hasAptKey) {
+    //         //fixme add feedback
+    //     }
+    // }
+    // document.getElementById('apt-ki-sink-hitbox').onclick = async () => {
+    //     if (!(state.hasWb && state.isWbOpen && !state.filledBottle)) {
+    //         //fixme add feedback
+    //     }
+    // }
+    // document.getElementById('apt-bed-hitbox').onclick = () => {
+    //     //fixme add fade to black then wake up in tribble
+    // }
 
     window.addEventListener('click', async (event) => {
         if (!state.isTutorialActive) return;
@@ -2857,28 +2783,48 @@ async function tutorialHitboxInit() {
         } else if (state.currTutorialStep ==="inv-close-key" && clickedId ==="inventory-tab") {
             state.currTutorialStep = 'hint-view';
             advanceTutorial();
-        } else if(state.currTutorialStep==="hint-view" && clickedId==='hint-btn') {
-            state.currTutorialStep='hint-close';
+        } else if (state.currTutorialStep === "hint-view" && clickedId === 'hint-btn') {
+            state.currTutorialStep = 'hint-close';
             advanceTutorial();
-        } else if (state.currTutorialStep==='hint-close' && clickedId==='hint-btn') {
-            state.currTutorialStep='menu-open';
+            return;
+        } else if (state.currTutorialStep === 'hint-close' && clickedId === 'hint-btn') {
+            state.currTutorialStep = 'menu-open';
             advanceTutorial();
-        } else if (state.currTutorialStep==='menu-open' && clickedId==='hamburger-icon'){
-            state.currTutorialStep='menu-close';
+            return;
+        } else if (state.currTutorialStep === 'menu-open' && clickedId === 'hamburger-icon') {
+            state.currTutorialStep = 'menu-close';
             advanceTutorial();
-        } else if (state.currTutorialStep==='menu-close' && clickedId==='hamburger-icon') {
-            state.currTutorialStep='view-handle';
+            return;
+        } else if (state.currTutorialStep === 'menu-close' && clickedId === 'hamburger-icon') {
+            state.currTutorialStep = 'view-handle';
             advanceTutorial();
+            return;
         } else if(state.currTutorialStep==='view-handle' && clickedId==='apt-fd-handle-hitbox') {
+            showPage('apt-fd-handle-page');
             state.currTutorialStep='use-key';
             advanceTutorial();
         } else if (state.currTutorialStep==='use-key' && clickedId==='apt-fd-handle-keyhole-hitbox') {
-            state.currTutorialStep='open-door';
-            advanceTutorial();
+            if (state.hasAptKey) {
+                state.aptUnlocked = true;
+                const keySlot = document.getElementById('inv-apt-key');
+                if (keySlot) {
+                    keySlot.classList.add('hidden');
+                    refreshInventorySlots();
+                }
+                triggerSound('unlock');
+                state.currTutorialStep='open-door';
+                advanceTutorial();
+            }
         } else if (state.currTutorialStep==='open-door' && clickedId==='apt-fd-handle-handle-hitbox') {
-            state.currTutorialStep='enter-apartment';
-            advanceTutorial();
+            if (state.aptUnlocked) {
+                showPage('apt-fd-open-page');
+                state.currTutorialStep='enter-apartment';
+                advanceTutorial();
+            } else {
+                //fixme add feedback
+            }
         } else if (state.currTutorialStep==='enter-apartment' && clickedId==='apt-fd-open-hitbox') {
+            showPage("apt-main-water-page");
             triggerSound('aptDoorClose');
             state.currTutorialStep='in-apartment';
             advanceTutorial();
@@ -2904,9 +2850,19 @@ async function tutorialHitboxInit() {
                 state.currTutorialStep='find-sink';
                 advanceTutorial();
             }
-        } else if (state.currTutorialStep==='found-sink' && clickedId==='apt-ki-sink-hitbox') {
-            state.currTutorialStep='filled-bottle';
-            advanceTutorial();
+        }
+        //find-sink step is located in the triggerNotifications function, for when the user gets to the sink page
+        else if (state.currTutorialStep==='found-sink' && clickedId==='apt-ki-sink-hitbox') {
+            if (state.hasWb && state.isWbOpen && !state.filledBottle) {
+                triggerSound('fillBottle');
+                showPage('apt-ki-sink-water-bottle-page');
+                setTimeout(() => {
+                    showPage('apt-ki-sink-page');
+                }, 5000);
+                state.filledBottle = true;
+                state.currTutorialStep='filled-bottle';
+                advanceTutorial();
+            }
         } else if (state.currTutorialStep==='filled-bottle' && clickedId==='apt-bed-hitbox') {
             state.currTutorialStep='asleep';
             advanceTutorial();
@@ -3080,6 +3036,30 @@ async function loadEverything() {
     if (didShowLoadingScreen) {
         loadingScreen.style.display = 'none';
     }
+}
+
+//restart confirmation
+async function showThemedConfirm(message, subMessage = "") {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;";
+
+        overlay.innerHTML = `
+            <div class="click-popup" style="position:relative; transform:none; animation:none;">
+                <p style="margin-bottom:10px;">${message}</p>
+                ${subMessage ? `<p style="font-size:16px; margin-bottom:20px; opacity:0.8;">${subMessage}</p>` : ''}
+                <div style="display:flex; gap:20px; justify-content:center; margin-top:15px;">
+                    <button id="confirm-yes" class="theme-clickable" style="background:rgba(130, 30, 40, 0.95); border:1px solid #c9a84c; color:#c9a84c; padding:8px 20px; border-radius:4px;">Yes</button>
+                    <button id="confirm-no" class="theme-clickable" style="background:rgba(60, 10, 15, 0.95); border:1px solid #c9a84c; color:#c9a84c; padding:8px 20px; border-radius:4px;">No</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('#confirm-yes').onclick = () => { overlay.remove(); resolve(true); };
+        overlay.querySelector('#confirm-no').onclick = () => { overlay.remove(); resolve(false); };
+    });
 }
 
 
@@ -3377,40 +3357,92 @@ function init() {
     });
 
     //Restart button
-    document.getElementById('restart-btn').onclick = () => {
-        stopAllAudio();
-        hamburgerDropdown.classList.remove('dropdown-open');
+    // document.getElementById('restart-btn').onclick = async () => {
+    //     // stopAllAudio();
+    //     // hamburgerDropdown.classList.remove('dropdown-open');
+    //     //
+    //     // // Reset all state flags
+    //     // Object.keys(state).forEach(key => {
+    //     //     state[key] = false;
+    //     // });
+    //     //
+    //     // // Hide all inventory items
+    //     // document.querySelectorAll('.inv-item').forEach(item => {
+    //     //     if (!item.classList.contains('empty')) {
+    //     //         item.classList.add('hidden');
+    //     //     }
+    //     // });
+    //     //
+    //     // // Close hint box if open
+    //     // document.getElementById('hint-box').classList.remove('hint-open');
+    //     //
+    //     // // Reset wire puzzle
+    //     // wirePuzzleInitialized = false;
+    //     // document.getElementById('wire-solved-popup').classList.add('hidden');
+    //     //
+    //     // // Clear save so a fresh game starts next time
+    //     // clearSave();
+    //     //
+    //     // // Return to start of game
+    //     // startGlobalAudio();
+    //     // const currentMusicVol = document.getElementById('music-slider').value;
+    //     // const currentSFXVol = document.getElementById('sfx-slider').value;
+    //     // syncMusicSystems(currentMusicVol);
+    //     // syncSFXSystems(currentSFXVol);
+    //     //
+    //     // showPage('mh-bd-main-page');
+    // };
+    document.getElementById('restart-btn').onclick = async () => {
+        // 1. Themed confirmation to restart
+        const confirmRestart = await showThemedConfirm("Are you sure you want to restart?", "All current progress will be lost.");
+        if (!confirmRestart) return;
 
-        // Reset all state flags
-        Object.keys(state).forEach(key => {
-            state[key] = false;
-        });
+        // 2. Wait for everything to load
+        await loadEverything();
 
-        // Hide all inventory items
-        document.querySelectorAll('.inv-item').forEach(item => {
-            if (!item.classList.contains('empty')) {
-                item.classList.add('hidden');
-            }
-        });
+        // 3. Check for tutorial skip eligibility
+        const hasFinishedTutorial = localStorage.getItem('tutorialCompleted') === 'true';
+        let wantToSkip = false;
 
-        // Close hint box if open
-        document.getElementById('hint-box').classList.remove('hint-open');
+        if (hasFinishedTutorial) {
+            wantToSkip = await showThemedConfirm("Tutorial completed previously.", "Would you like to skip straight to the game?");
+        }
 
-        // Reset wire puzzle
-        wirePuzzleInitialized = false;
-        document.getElementById('wire-solved-popup').classList.add('hidden');
-
-        // Clear save so a fresh game starts next time
+        // 4. Reset the save data
         clearSave();
+        prepareGameUI();
 
-        // Return to start of game
-        startGlobalAudio();
-        const currentMusicVol = document.getElementById('music-slider').value;
-        const currentSFXVol = document.getElementById('sfx-slider').value;
-        syncMusicSystems(currentMusicVol);
-        syncSFXSystems(currentSFXVol);
+        // 5. Branching Start
+        if (wantToSkip) {
+            requestAnimationFrame(async () => {
+                state.isTutorialActive = false;
 
-        showPage('mh-bd-main-page');
+                // Go to Main Game Start (Main Hall / Back Door)
+                await showPage('mh-bd-main-page');
+
+                stopAllAudio();
+                startGlobalAudio();
+
+                console.log("Game started without tutorial.");
+            });
+        } else {
+            requestAnimationFrame(async () => {
+                state.isTutorialActive = true;
+
+                // Go to Apartment Front Door
+                await showPage('apt-fd-page');
+
+                stopAllAudio();
+                startGlobalAudio();
+
+                const handle = document.getElementById('apt-fd-handle-hitbox');
+                if (handle) handle.classList.add('hidden');
+
+                await delay(20);
+                await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
+                runTutorial();
+            });
+        }
     };
 
  //fixme test for bugs
@@ -3725,6 +3757,7 @@ function init() {
     document.getElementById('bh-sh-cr-door-closed-hitbox').onclick = () => showPage('bh-sh-cr-door-handle-page');
     document.getElementById('bh-sh-cr-door-handle-handle-hitbox').onclick = async () => {
         if (state.crUnlocked) {
+            state.crDoorOpen = true;
             showPage('sh-cr-door-open-page');
         } else {
             await spawnThemedBox('I need to unlock the door first', 'notification-top');
@@ -3978,7 +4011,7 @@ function init() {
         await spawnThemedBox("It's not working", "notification-top");
     }
     document.getElementById('cw-wr-locked-handle-hitbox').onclick = async () => {
-        spawnThemedBox("I need to unlock the door first", "notification-top");
+        await spawnThemedBox("I need to unlock the door first", "notification-top");
     }
     document.getElementById('cw-wr-unlocked-handle-hitbox').onclick = () => {
         triggerSound('doorOpenClose')
@@ -4059,7 +4092,7 @@ function init() {
             }
     }
     document.getElementById('wr-desk-hitbox').onclick = async () => {
-        await spawnThemedBox("I don't see anything else useful here", "notification-bottom");
+        await spawnThemedBox("I don't see anything else useful here", "notification-top");
     }
     document.getElementById('wr-left-desk-hitbox').onclick = () => showPage('wr-desk-page');
     document.getElementById('wr-right-papers-hitbox').onclick = async () => {
@@ -4067,6 +4100,7 @@ function init() {
         await delay(20);
         await spawnThemedBox("who left these papers here ?", "notification-top");
         state.foundWrPapers = true;
+        triggerSound('markerWhiteboard');
     }
     document.getElementById('wr-right-note-papers-hitbox').onclick = () => showPage('wr-papers-page');
     document.getElementById('wr-papers-tu-hitbox').onclick = async () => {
@@ -4090,8 +4124,6 @@ function init() {
     document.getElementById('wr-right-note-note-hitbox').onclick = async () => {
         state.foundWrNote = true;
         showPage('wr-note-page');
-        await delay(20);
-        await spawnThemedBox("Who wrote this note ? Someone else is definitely down here with me...", "notification-top");
     }
     document.getElementById('wr-note-hitbox').onclick = () => {
         //fixme allow them to read wr-note more easily,, do same thing w the tu, ogb, and reddit
@@ -4150,6 +4182,7 @@ function init() {
                 refreshInventorySlots();
             }
             showPage('li-lt-star-page');
+            triggerSound('bones');
         } else {
             await spawnThemedBox('I need to find a book to scan', "notification-top");
         }
@@ -4160,13 +4193,13 @@ function init() {
         await spawnThemedBox('I should look around and see if I can find it.', 'notification-top');
         state.foundScanner = true;
     }
-    document.getElementById('li-laptop-star-hitbox').onclick = async() => {
-        spawnThemedBox("A yellow star...", "notification-top");
+    document.getElementById('li-lt-star-laptop-hitbox').onclick = async() => {
+        await spawnThemedBox("A yellow star...", "notification-top");
     }
     document.getElementById('li-main-lw-mw-hitbox').onclick = () => {
         state.hasLorBook ? showPage('li-mw-books-nb-page') : showPage('li-mw-books-page');
     }
-    document.getElementById('li-lt-sk-paper-hitbox').onclick = () => {
+    document.getElementById('li-lt-sk-paper-hitbox').onclick = async () => {
         triggerSound('stiffPaper');
         state.hasSkPaper = true;
         const keySlot = document.getElementById('inv-sk-paper')
@@ -4176,6 +4209,10 @@ function init() {
         }
         showPage('li-lt-sk-page');
         openOverlay('inv-sk-paper', 'inv-images/sk-paper.png');
+        await delay(20);
+        await spawnThemedBox('A piece of paper with holes in it ? It looks like the same size as the page in a novel', 'notification-top');
+        await delay(20);
+        await spawnThemedBox('This ghost must be trying to tell me something. I should try to find a book that stands out', 'notification-top');
     }
     document.getElementById('li-entrance-lw-hitbox').onclick = () => showPage('li-main-lw-page');
     document.getElementById('li-entrance-nb-lw-hitbox').onclick = () => showPage('li-main-lw-page');
@@ -4191,8 +4228,17 @@ function init() {
     document.getElementById('li-mw-nb-esme-hitbox').onclick    = () => showPage('li-esme-page');
     document.getElementById('li-mw-nb-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
     document.getElementById('li-mw-nb-russo-hitbox').onclick   = () => showPage('li-russo-page');
-    //fixme document.getElementById('li-rw-smith-hitbox').onclick   = () => showPage('li-smith-page');
-    document.getElementById('li-tolkein-hitbox').onclick = () => {
+    document.getElementById('li-esme-hitbox').onclick = async () => {
+        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+    }
+    document.getElementById('li-ruta-hitbox').onclick = async () => {
+        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+    }
+    document.getElementById('li-russo-hitbox').onclick = async () => {
+        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+    }
+    //fixme add feedback for after they took the lor book -- should be connected with finding a second book, but the book doesn't look of any interest or smthn like that
+    document.getElementById('li-tolkein-hitbox').onclick = async () => {
         state.hasLorBook = true;
         const keySlot = document.getElementById('inv-lor-book')
         if (keySlot) {
@@ -4200,6 +4246,9 @@ function init() {
             refreshInventorySlots();
         }
         showPage('li-tolkein-nb-page');
+        openOverlay('li-lor-book', 'li-images/li-lor-book.png');
+        await delay(20);
+        await spawnThemedBox('I wonder what will happen if I scan this book', 'notification-top');
     }
 
     //mid wall section
@@ -4373,6 +4422,15 @@ function init() {
     document.getElementById('li-rw-alston-hitbox').onclick  = () => showPage('li-alston-page');
     document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
     document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');
+    document.getElementById('li-alston-hitbox').onclick = async () => {
+        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+    }
+    document.getElementById('li-barnes-hitbox').onclick = async () => {
+        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+    }
+    document.getElementById('li-boulley-hitbox').onclick = async () => {
+        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+    }
     document.getElementById('li-rw-books-birb-hitbox').onclick = () => showPage('li-birb-book-page');
     document.getElementById('li-birb-book-hitbox').onclick = async () => {
         state.hasSherlockBook = true;
@@ -4465,19 +4523,19 @@ function init() {
     document.getElementById('ls-archives-note-hitbox').onclick = () => showPage('ls-archives-note-page');
     document.getElementById('ls-archives-mcduffie-hitbox').onclick = () => showPage('ls-mcduffie-1993-page');
     document.getElementById('ls-mcduffie-1993-hitbox').onclick = async () => {
-        spawnThemedBox("McDuffie, '93", "notification-top");
+        await spawnThemedBox("McDuffie, '93", "notification-top");
     }
     document.getElementById('ls-archives-black-hitbox').onclick = () => showPage('ls-black-1997-page');
     document.getElementById('ls-black-1997-hitbox').onclick = async () => {
-        spawnThemedBox("Black, '97", "notification-top");
+        await spawnThemedBox("Black, '97", "notification-top");
     }
     document.getElementById('ls-archives-keser-hitbox').onclick = () => showPage('ls-keser-1994-page');
     document.getElementById('ls-keser-1994-hitbox').onclick = async () => {
-        spawnThemedBox("Keser, '94", "notification-top");
+        await spawnThemedBox("Keser, '94", "notification-top");
     }
     document.getElementById('ls-archives-harrell-hitbox').onclick = () => showPage('ls-harrell-1993-page');
     document.getElementById('ls-harrell-1993-hitbox').onclick = async () => {
-        spawnThemedBox("Harrell, '93", "notification-top");
+        await spawnThemedBox("Harrell, '93", "notification-top");
     }
 
     document.getElementById('ls-in-10-sk-nd-sk-hitbox').onclick = () => showPage('ls-10-sk-nd-page');
@@ -4559,6 +4617,9 @@ function init() {
         }
     }
     document.getElementById('tu-rubble-hitbox').onclick = async () => {
+        await spawnThemedBox("The stairs are completely blocked.", "notification-top");
+    }
+    document.getElementById('tu-ho-rubble-hitbox').onclick = async () => {
         await spawnThemedBox("The stairs are completely blocked.", "notification-top");
     }
     document.getElementById('tu-hatch-hitbox').onclick = async () => {
