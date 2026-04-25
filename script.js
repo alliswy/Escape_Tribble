@@ -3000,6 +3000,8 @@ async function tutorialHitboxInit() {
         currentOverlayItem = null;
     });
 
+    //fixme check the following so that the user can't soft-lock themselves
+
     //hitbox setup
     document.getElementById('apt-fd-handle-hitbox').onclick = () => {
         showPage('apt-fd-handle-page');
@@ -3307,11 +3309,6 @@ async function loadEverything() {
 function init() {
     //Menu System
     runMenuTypewriter();
-    // window.addEventListener('load', () => {
-    //     setTimeout(() => {
-    //         warmUpGame();
-    //     }, 1000); // Wait 1 second after the page is visible to start background loading
-    // });
 
     startButton.onclick = async () => {
         // 1. Wait for everything to load (Images + SFX)
@@ -3355,27 +3352,6 @@ function init() {
         });
         */
     };
-    // startButton.onclick = () => {
-    //     clearSave(); // Resets everything
-    //     prepareGameUI(); // Shows the game screens
-    //
-    //     // requestAnimationFrame(() => {
-    //     //     stopAllAudio(); startGlobalAudio();
-    //     //     showPage('mh-bd-main-page'); // Teleport to start
-    //     // }); //fixme change this to below code to start with tutorial
-    //
-    //     requestAnimationFrame(async () => {
-    //         state.isTutorialActive=true;
-    //         showPage('apt-fd-page');
-    //         stopAllAudio();
-    //         startGlobalAudio();
-    //         document.getElementById('apt-fd-handle-hitbox').classList.add('hidden');
-    //         await delay(20);
-    //         await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
-    //         runTutorial();
-    //     }); //fixme change to this to start tutorial; make sure to change the buttons' clickability if desired
-    //
-    // };
 
     loadSaveButton.onclick = async () => {
         const raw = localStorage.getItem(SAVE_KEY);
@@ -3656,20 +3632,7 @@ function init() {
         showPage('mh-bd-main-page');
     };
 
-    // //Quit to main menu button
-    // document.getElementById('quit-btn').onclick = () => {
-    //     stopAllAudio();
-    //     //saveGame('') //fixme add some way to read current page to save on the current screen
-    //     hamburgerDropdown.classList.remove('dropdown-open');
-    //     play.classList.add('hidden');
-    //     document.getElementById('inventory-drawer').classList.add('hidden');
-    //     document.getElementById('hamburger-menu').classList.add('hidden');
-    //     document.getElementById('hint-btn').classList.add('hidden');
-    //     document.getElementById('hint-box').classList.add('hidden');
-    //     menu.classList.remove('hidden');
-    //     runMenuTypewriter();
-    // };
- //fixme add something to save game before u leave, fix the bug that's here
+ //fixme test for bugs
     document.getElementById('quit-btn').onclick = () => {
         // 1. SAVE THE STATE BEFORE WIPING THE UI
         if (typeof saveGame === "function") {
