@@ -295,6 +295,14 @@ input, textarea {
 }
 
 /* --- POPUP MESSAGES --- */
+
+body.menu-mode .notification-top,
+body.menu-mode .notification-mid,
+body.menu-mode .tut-notification-base,
+body.menu-mode .theme-burgundy-gold {
+    display: none !important;
+}
+
 /* Bottom Popup */
 .notification-top {
     position: fixed !important;

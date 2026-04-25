@@ -26,20 +26,6 @@
     <!-- fade to black screen -->
     <div id="screen-fade"></div>
 
-    <!-- How to Play Screen fixme - temp for practice, remove later -->
-<!--    <div id="how-to-play-screen" class="hidden fade-screen">-->
-<!--        <h2>How to Play</h2>-->
-<!--        <ul>-->
-<!--            <li>Click on highlighted objects to interact with them</li>-->
-<!--            <li>Collect items and use them to unlock doors</li>-->
-<!--            <li>Use the inventory drawer on the left to view collected items</li>-->
-<!--            <li>Click the back arrow to return to the previous view</li>-->
-<!--            <li>Click the phone in the starting room for hints if you get stuck</li>-->
-<!--            <li>Find your way out of the Tribble basement to escape!</li>-->
-<!--        </ul>-->
-<!--        <div class="menu-btn" id="htp-back-button">Back</div>-->
-<!--    </div>-->
-
     <!-- Setting Screen -->
     <div id="settings-screen" class="hidden fade-screen">
         <h2>Settings</h2>
@@ -2133,5 +2119,67 @@
     </div>
 
     <script src="script.js"></script>
+
+    <div id="loading-screen" style="
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: #1a0f0f; /* Deep Spooky Brown/Black */
+    background-image: radial-gradient(circle, #2c1a1a 0%, #1a0f0f 100%); /* Subtle Vignette */
+    z-index: 10000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #d4af37; /* WFU Gold/Yellow */
+    font-family: 'Courier New', Courier, monospace;
+    text-shadow: 2px 2px 4px #000;
+">
+
+        <h2 id="loading-text" style="
+        letter-spacing: 5px;
+        margin-bottom: 30px;
+        animation: pulse 2s infinite;
+        color: #d4af37;
+    ">INITIALIZING...</h2>
+
+        <div style="
+        width: 350px;
+        height: 12px;
+        border: 2px solid #4a0404; /* Deep Maroon Border */
+        background: #000;
+        border-radius: 2px;
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(74, 4, 4, 0.5);
+    ">
+            <div id="loading-bar" style="
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #800000 0%, #d4af37 100%); /* Maroon to Gold Gradient */
+            transition: width 0.3s ease-out;
+            box-shadow: 0 0 10px #d4af37;
+        "></div>
+        </div>
+
+        <p id="loading-subtext" style="
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #8e7979;
+        font-style: italic;
+    ">Summoning assets from the tunnels...</p>
+
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); color: #800000; }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+    </style>
+
+
 </body>
 </html>

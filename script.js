@@ -1088,11 +1088,11 @@ const roomLeads = {
     'apt-ki-2-page':        {back: 'apt-ki-1-page', forward: 'apt-ki-sink-page'},
     'apt-ki-sink-page':        {back: 'apt-ki-1-page', left: 'apt-ki-3-page'},
     'apt-sink-water-bottle-page': {back: 'apt-sink-page'},
-    'apt-ki-3-page':        {forward: 'apt-ki-exit-page'},
+    'apt-ki-3-page':        {forward: 'apt-ki-exit-page', right: 'apt-ki-sink-page'},
     'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page'},
     'apt-bed-page':         {back: 'apt-ki-exit-page'},
 };
-
+//fixme save system with tutorial is still broken
 
 
 
@@ -1391,7 +1391,6 @@ async function showPage(pageId, useFade = false) {
         );
 
         updateMap(pageId);
-        preloadWholeRoom(pageId);
         triggerNotification(pageId);
 
         // IMPORTANT: play audio immediately
@@ -1460,39 +1459,39 @@ async function showPage(pageId, useFade = false) {
 //     }
 // }
 
-function preloadWholeRoom(pageId) {
-    // 1. Figure out the "prefix" (e.g., 'camr', 'li', 'mh-bd')
-    // This splits the ID at the first dash and takes the first part
-    const prefix = pageId.split('-')[0];
-
-    // 2. Find all images that belong to this room
-    // This looks for any ID that starts with your prefix (e.g., id^="camr")
-    const roomImages = document.querySelectorAll(`[id^="${prefix}-"] img, img[id^="${prefix}-"]`);
-
-    roomImages.forEach(img => {
-        if (img.getAttribute('loading') === 'lazy') {
-            img.removeAttribute('loading');
-            // Setting the src to itself tells the browser: "Download this NOW."
-            img.src = img.src;
-        }
-    });
-}
-
-function warmUpGame() {
-    console.log("Warming up entry pages...");
-    entryPages.forEach(pageId => {
-        const container = document.getElementById(pageId);
-        if (container) {
-            const img = container.tagName === 'IMG' ? container : container.querySelector('img');
-            if (img) {
-                img.removeAttribute('loading');
-                img.fetchPriority = "high";
-                // Setting src to itself forces the "lazy" status to break
-                img.src = img.src;
-            }
-        }
-    });
-}
+// function preloadWholeRoom(pageId) {
+//     // 1. Figure out the "prefix" (e.g., 'camr', 'li', 'mh-bd')
+//     // This splits the ID at the first dash and takes the first part
+//     const prefix = pageId.split('-')[0];
+//
+//     // 2. Find all images that belong to this room
+//     // This looks for any ID that starts with your prefix (e.g., id^="camr")
+//     const roomImages = document.querySelectorAll(`[id^="${prefix}-"] img, img[id^="${prefix}-"]`);
+//
+//     roomImages.forEach(img => {
+//         if (img.getAttribute('loading') === 'lazy') {
+//             img.removeAttribute('loading');
+//             // Setting the src to itself tells the browser: "Download this NOW."
+//             img.src = img.src;
+//         }
+//     });
+// }
+//
+// function warmUpGame() {
+//     console.log("Warming up entry pages...");
+//     entryPages.forEach(pageId => {
+//         const container = document.getElementById(pageId);
+//         if (container) {
+//             const img = container.tagName === 'IMG' ? container : container.querySelector('img');
+//             if (img) {
+//                 img.removeAttribute('loading');
+//                 img.fetchPriority = "high";
+//                 // Setting src to itself forces the "lazy" status to break
+//                 img.src = img.src;
+//             }
+//         }
+//     });
+// }
 
 async function triggerNotification(pageId) {
     //spawn textbox when certain page is shown !
@@ -2985,6 +2984,7 @@ function runTutorial() {
     tutorialHitboxInit();
         //give the user the key
         const keySlot = document.getElementById('inv-apt-key');
+        state.hasAptKey = true;
         if (keySlot) {
             keySlot.classList.remove('hidden');
             refreshInventorySlots();
@@ -3172,38 +3172,212 @@ function fadeTransition(callback) {
 }
 
 
+// --------- LOADING LOGIC --------//
+async function loadEverything() {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingBar = document.getElementById('loading-bar');
+    const loadingText = document.getElementById('loading-text');
+
+    const imageElements = Array.from(document.querySelectorAll('img'));
+
+    const audioEntries = Object.values(sfx)
+        .filter(entry => entry && entry.audio instanceof Audio)
+        .map(entry => entry.audio);
+
+    let didShowLoadingScreen = false;
+
+    const total = imageElements.length + audioEntries.length;
+    let count = 0;
+
+    if (total === 0) {
+        console.warn("Loader found 0 assets.");
+        return;
+    }
+
+    // SHOW loader ONLY if there is something to load
+    if (total > 0) {
+        loadingScreen.style.display = 'flex';
+        didShowLoadingScreen = true;
+    }
+
+    console.log(`Loader detected: ${imageElements.length} images and ${audioEntries.length} sounds. Total: ${total}`);
+
+    if (total === 0) {
+        console.warn("Loader found 0 assets.");
+        loadingScreen.style.display = 'none';
+        return;
+    }
+
+    const tick = () => {
+        count++;
+        const percent = Math.floor((count / total) * 100);
+        loadingBar.style.width = percent + "%";
+        loadingText.textContent = `LOADING... ${percent}%`;
+    };
+
+    const makeSafePromise = (setupFn, name) => {
+        return new Promise(resolve => {
+            let done = false;
+
+            const finish = (type) => {
+                if (done) return;
+                done = true;
+
+                if (type === 'error') {
+                    console.warn(`⚠️ Failed to load: ${name}`);
+                }
+                if (type === 'timeout') {
+                    console.warn(`⏱️ Timeout loading: ${name}`);
+                }
+
+                tick();
+                resolve();
+            };
+
+            // fallback timeout (optional but safer)
+            const timeout = setTimeout(() => finish('timeout'), 5000);
+
+            setupFn({
+                success: () => {
+                    clearTimeout(timeout);
+                    finish('success');
+                },
+                error: () => {
+                    clearTimeout(timeout);
+                    finish('error');
+                }
+            });
+        });
+    };
+
+    const imagePromises = imageElements.map(img => {
+        return makeSafePromise(({ success, error }) => {
+
+            // 🔥 THIS IS THE KEY LINE
+            img.loading = "eager";
+
+            if (img.complete && img.naturalWidth !== 0) {
+                success();
+                return;
+            }
+
+            img.addEventListener('load', success, { once: true });
+            img.addEventListener('error', error, { once: true });
+
+            // 🔥 FORCE the browser to re-evaluate loading
+            img.src = img.src;
+
+        }, img.src || '[no src]');
+    });
+
+    const audioPromises = audioEntries.map(audio => {
+        return makeSafePromise(({ success, error }) => {
+
+            if (audio.readyState >= 3) {
+                success();
+                return;
+            }
+
+            audio.preload = "auto";
+            audio.addEventListener('canplaythrough', success, { once: true });
+            audio.addEventListener('error', error, { once: true });
+
+            audio.load();
+
+        }, audio.src || '[unknown audio]');
+    });
+
+    await Promise.all([...imagePromises, ...audioPromises]);
+
+    loadingText.textContent = "DONE!";
+    loadingBar.style.width = "100%";
+
+    await new Promise(r => setTimeout(r, 400));
+
+    if (didShowLoadingScreen) {
+        loadingScreen.style.display = 'none';
+    }
+}
+
+
+
+
 // ----- INITIALIZE EVENT LISTENERS -----
 
 function init() {
     //Menu System
     runMenuTypewriter();
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            warmUpGame();
-        }, 1000); // Wait 1 second after the page is visible to start background loading
-    });
-    startButton.onclick = () => {
-        clearSave(); // Resets everything
-        prepareGameUI(); // Shows the game screens
+    // window.addEventListener('load', () => {
+    //     setTimeout(() => {
+    //         warmUpGame();
+    //     }, 1000); // Wait 1 second after the page is visible to start background loading
+    // });
 
-        requestAnimationFrame(() => {
-            stopAllAudio(); startGlobalAudio();
-            showPage('mh-bd-main-page'); // Teleport to start
-        }); //fixme change this to below code to start with tutorial
+    startButton.onclick = async () => {
+        // 1. Wait for everything to load (Images + SFX)
+        await loadEverything();
 
-        // requestAnimationFrame(async () => {
-        //     state.isTutorialActive=true;
-        //     showPage('apt-fd-page');
-        //     stopAllAudio();
-        //     startGlobalAudio();
-        //     document.getElementById('apt-fd-handle-hitbox').classList.add('hidden');
-        //     await delay(20);
-        //     await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
-        //     runTutorial();
-        // }); //fixme change to this to start tutorial; make sure to change the buttons' clickability if desired
+        // 2. Reset the save data for a fresh start
+        clearSave();
+        prepareGameUI();
 
+        // --- OPTION A: START IN TUTORIAL (ACTIVE) ---
+        requestAnimationFrame(async () => {
+            state.isTutorialActive = true;
+
+            // Go to Apartment Front Door
+            await showPage('apt-fd-page');
+
+            stopAllAudio();
+            startGlobalAudio();
+
+            // Hide the handle hitbox initially per tutorial logic
+            const handle = document.getElementById('apt-fd-handle-hitbox');
+            if (handle) handle.classList.add('hidden');
+
+            await delay(20);
+            await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
+            runTutorial();
+        });
+
+        /* // --- OPTION B:fixme START WITHOUT TUTORIAL (COMMENTED OUT) ---
+        requestAnimationFrame(async () => {
+            state.isTutorialActive = false;
+
+            // Go to Main Game Start (Main Hall / Back Door)
+            await showPage('mh-bd-main-page');
+
+            stopAllAudio();
+            startGlobalAudio();
+
+            // Add any non-tutorial intro text here if needed
+            console.log("Game started without tutorial.");
+        });
+        */
     };
-    loadSaveButton.onclick = () => {
+    // startButton.onclick = () => {
+    //     clearSave(); // Resets everything
+    //     prepareGameUI(); // Shows the game screens
+    //
+    //     // requestAnimationFrame(() => {
+    //     //     stopAllAudio(); startGlobalAudio();
+    //     //     showPage('mh-bd-main-page'); // Teleport to start
+    //     // }); //fixme change this to below code to start with tutorial
+    //
+    //     requestAnimationFrame(async () => {
+    //         state.isTutorialActive=true;
+    //         showPage('apt-fd-page');
+    //         stopAllAudio();
+    //         startGlobalAudio();
+    //         document.getElementById('apt-fd-handle-hitbox').classList.add('hidden');
+    //         await delay(20);
+    //         await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
+    //         runTutorial();
+    //     }); //fixme change to this to start tutorial; make sure to change the buttons' clickability if desired
+    //
+    // };
+
+    loadSaveButton.onclick = async () => {
         const raw = localStorage.getItem(SAVE_KEY);
 
         if (!raw) {
@@ -3211,27 +3385,59 @@ function init() {
             return;
         }
 
-        // 1. Show the UI Skeleton
-        prepareGameUI();
+        // --- NEW: Wait for all assets to be ready before doing anything ---
+        await loadEverything();
 
-        requestAnimationFrame(() => {
-            // 2. Load the data
-            const saveData = loadGame();
+        // 1. LOAD DATA FIRST
+        // This updates the global 'state' object immediately
+        const saveData = loadGame();
 
-            // 3. FORCE the page to render
-            if (saveData && saveData.currentPage) {
+        if (saveData && saveData.currentPage) {
+            // 2. NOW PREPARE UI
+            // Because 'state' is now updated, prepareGameUI()
+            // will see the correct tutorial flag!
+            prepareGameUI();
+
+            requestAnimationFrame(() => {
+                // Restore global ambience now that we are in the game
                 triggerSound('globalAmbience');
 
-                // This is the "Light Switch" that fixes the black screen
+                // 3. Update the Page to the saved location
                 showPage(saveData.currentPage);
 
+                // 4. Force the UI to reflect the loaded inventory
+                if (typeof updateInventoryUI === "function") {
+                    updateInventoryUI();
+                }
+
+                // 5. Force the map to reflect discovered rooms
+                updateMap(saveData.currentPage);
+                drawMap();
+
                 console.log("Loaded room:", saveData.currentPage);
-            } else {
-                // Safety fallback
-                showPage('mh-bd-main-page');
+            });
+        } else {
+            // --- YOUR ORIGINAL FALLBACK ---
+            // Fallback if load fails or data is corrupted
+            prepareGameUI();
+            showPage('mh-bd-main-page');
+            if (typeof updateInventoryUI === "function") {
+                updateInventoryUI();
             }
-        });
+        }
     };
+    function updateInventoryUI() {
+        // Hide everything first
+        document.querySelectorAll('.inv-item').forEach(item => item.classList.add('hidden'));
+
+        // Only show what is in the state.inventory array
+        state.inventory.forEach(itemId => {
+            const el = document.getElementById(itemId);
+            if (el) el.classList.remove('hidden');
+        });
+
+        if (typeof refreshInventorySlots === "function") refreshInventorySlots();
+    }
     infoButton.onclick = () => {
         // 1. Show the info screen
         const infoScreen = document.getElementById('info-screen');
@@ -3450,19 +3656,52 @@ function init() {
         showPage('mh-bd-main-page');
     };
 
-    //Quit to main menu button
+    // //Quit to main menu button
+    // document.getElementById('quit-btn').onclick = () => {
+    //     stopAllAudio();
+    //     //saveGame('') //fixme add some way to read current page to save on the current screen
+    //     hamburgerDropdown.classList.remove('dropdown-open');
+    //     play.classList.add('hidden');
+    //     document.getElementById('inventory-drawer').classList.add('hidden');
+    //     document.getElementById('hamburger-menu').classList.add('hidden');
+    //     document.getElementById('hint-btn').classList.add('hidden');
+    //     document.getElementById('hint-box').classList.add('hidden');
+    //     menu.classList.remove('hidden');
+    //     runMenuTypewriter();
+    // };
+ //fixme add something to save game before u leave, fix the bug that's here
     document.getElementById('quit-btn').onclick = () => {
+        // 1. SAVE THE STATE BEFORE WIPING THE UI
+        if (typeof saveGame === "function") {
+            saveGame(state.currentPage);
+            console.log("Game saved manually before quitting.");
+        }
+
         stopAllAudio();
-        //saveGame('') //fixme add some way to read current page to save on the current screen
+
+        document.body.classList.add('menu-mode'); // <--- ADD THIS
+
         hamburgerDropdown.classList.remove('dropdown-open');
         play.classList.add('hidden');
+
+        // Hide the persistent HUD elements
         document.getElementById('inventory-drawer').classList.add('hidden');
         document.getElementById('hamburger-menu').classList.add('hidden');
         document.getElementById('hint-btn').classList.add('hidden');
         document.getElementById('hint-box').classList.add('hidden');
+
         menu.classList.remove('hidden');
         runMenuTypewriter();
     };
+
+    function enterGameMode() {
+        // Reveal all hidden notifications instantly
+        document.body.classList.remove('menu-mode');
+
+        // Ensure the game container is visible
+        play.classList.remove('hidden');
+    }
+
 
     // ---- HINT BUTTON ----
     const hintBtn = document.getElementById('hint-btn');
@@ -4618,6 +4857,9 @@ const mapRooms = {
     oh2:  { x: 21, y: 38, w: 9,  h: 3,  label: 'Office Hall',   key: 'oh2'  }, // y moved 32->38
     oh3:  { x: 21, y: 42, w: 3,  h: 7,  label: 'Office Hall',   key: 'oh3'  }, // y moved 36->42
     print:{ x: 16, y: 42, w: 4,  h: 4,  label: 'Printer Room',  key: 'print'}, // y moved 36->42
+    // Apartment (Tutorial)
+    apt_ki: { x: 4,  y: 7, w: 6, h: 12, label: 'Kitchen',     key: 'apt_ki' },
+    apt_li: { x: 11, y: 5, w: 15, h: 14, label: 'Living Room', key: 'apt_li' }
 };
 
 const mapCorridors = [
@@ -4644,6 +4886,8 @@ const mapCorridors = [
     { rooms: ['cw', 'oh2'], dir: 'h', wing: 'c', door1: {x: 20, y: 39.5}, door2: {x: 21, y: 39.5} },
     { rooms: ['oh2', 'oh3'], dir: 'v', wing: 'c', door1: {x: 22.5, y: 41}, door2: {x: 22.5, y: 42} },
     { rooms: ['cw', 'print'], dir: 'v', wing: 'c', door1: {x: 18, y: 41}, door2: {x: 18, y: 42} },
+
+    { rooms: ['apt_ki', 'apt_li'], dir: 'h', wing: 'apt', door1: {x: 10, y: 10}, door2: {x: 11, y: 10} }
 ];
 
 const roomDiscovery = {
@@ -4669,9 +4913,13 @@ const roomDiscovery = {
     oh2:   () => state.discoveredOh2,
     oh3:   () => state.discoveredOh3,
     print: () => state.discoveredPrint,
+    apt_ki: () => true, // Always show in tutorial
+    apt_li: () => true,
 };
 
 function getRoomKeyFromPage(pageId) {
+    if (pageId.startsWith('apt-ki')) return 'apt_ki';
+    if (pageId.startsWith('apt-li')) return 'apt_li';
     if (pageId.startsWith('ls-'))     return 'ls';
     if (pageId.startsWith('lo-'))     return 'lo';
     if (pageId.startsWith('li-'))     return 'li';
@@ -4722,40 +4970,38 @@ function updateMap(pageId) {
 }
 
 function drawMap() {
-    const wing = currentWing === 'c' ? 'c' : 'a';
     const canvas = document.getElementById('map-canvas');
     const CELL = 14;
 
-    const aRooms = {
-        mh:    mapRooms.mh,
-        pr:   mapRooms.pr,
-        bd:   mapRooms.bd,
-        li:    mapRooms.li,
-        lo:   mapRooms.lo,
-        ls:   mapRooms.ls,
-        stairs:mapRooms.stairs,
-        ki: mapRooms.ki,
-        bh:   mapRooms.bh,
-        sh:    mapRooms.sh,
-        clr:  mapRooms.clr,
-        cr:    mapRooms.cr,
-        camr: mapRooms.camr,
-        tu: mapRooms.tu,
-    };
+    let rooms = {};
+    let corridors = [];
 
-    const cRooms = {
-        cw:   mapRooms.cw,
-        wr:    mapRooms.wr,
-        bath:  mapRooms.bath,
-        snh:  mapRooms.snh,
-        oh1:   mapRooms.oh1,
-        oh2:   mapRooms.oh2,
-        oh3:  mapRooms.oh3,
-        print: mapRooms.print,
-    };
+    // --- LOGIC SWITCH ---
+    if (state.isTutorialActive) {
+        // Filter for apartment rooms/corridors only
+        rooms = {
+            apt_ki: mapRooms.apt_ki,
+            apt_li: mapRooms.apt_li
+        };
+        corridors = mapCorridors.filter(c => c.wing === 'apt');
+    } else {
+        const wing = currentWing === 'c' ? 'c' : 'a';
 
-    const rooms = wing === 'c' ? cRooms : aRooms;
-    const corridors = mapCorridors.filter(c => c.wing === wing);
+        const aRooms = {
+            mh: mapRooms.mh, pr: mapRooms.pr, bd: mapRooms.bd, li: mapRooms.li,
+            lo: mapRooms.lo, ls: mapRooms.ls, stairs: mapRooms.stairs, ki: mapRooms.ki,
+            bh: mapRooms.bh, sh: mapRooms.sh, clr: mapRooms.clr, cr: mapRooms.cr,
+            camr: mapRooms.camr, tu: mapRooms.tu,
+        };
+
+        const cRooms = {
+            cw: mapRooms.cw, wr: mapRooms.wr, bath: mapRooms.bath, snh: mapRooms.snh,
+            oh1: mapRooms.oh1, oh2: mapRooms.oh2, oh3: mapRooms.oh3, print: mapRooms.print,
+        };
+
+        rooms = wing === 'c' ? cRooms : aRooms;
+        corridors = mapCorridors.filter(c => c.wing === wing);
+    }
 
     // Calculate canvas size from room extents
     let maxX = 0, maxY = 0;
@@ -4763,6 +5009,8 @@ function drawMap() {
         maxX = Math.max(maxX, r.x + r.w);
         maxY = Math.max(maxY, r.y + r.h);
     });
+
+    // Set dynamic canvas size with padding
     canvas.width  = (maxX + 2) * CELL;
     canvas.height = (maxY + 2) * CELL;
 
@@ -4770,8 +5018,7 @@ function drawMap() {
     ctx.fillStyle = '#0a0500';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw corridors
-    // --- Inside drawMap(), replace the corridors.forEach block ---
+    // --- DRAW CORRIDORS ---
     corridors.forEach(c => {
         const r1 = rooms[c.rooms[0]];
         const r2 = rooms[c.rooms[1]];
@@ -4781,7 +5028,6 @@ function drawMap() {
         const r2Disc = roomDiscovery[c.rooms[1]]?.();
         if (!r1Disc && !r2Disc) return;
 
-        // Use specific grid coordinates if provided, otherwise default to center
         const p1 = {
             x: (c.door1 ? c.door1.x : r1.x + r1.w / 2) * CELL,
             y: (c.door1 ? c.door1.y : r1.y + r1.h / 2) * CELL
@@ -4791,9 +5037,6 @@ function drawMap() {
             y: (c.door2 ? c.door2.y : r2.y + r2.h / 2) * CELL
         };
 
-        // The elbow point:
-        // If 'v', move vertically from door1 to the Y-level of door2.
-        // If 'h', move horizontally from door1 to the X-level of door2.
         const elbow = c.dir === 'v' ? { x: p1.x, y: p2.y } : { x: p2.x, y: p1.y };
 
         const drawPath = (start, corner, end, isTargetDiscovered) => {
@@ -4801,7 +5044,7 @@ function drawMap() {
             grad.addColorStop(0, '#c9a84c');
             grad.addColorStop(isTargetDiscovered ? 1 : 0.4, isTargetDiscovered ? '#c9a84c' : 'rgba(201, 168, 76, 0)');
 
-            ctx.lineJoin = "miter"; // Sharp 90-degree turns
+            ctx.lineJoin = "miter";
 
             [ {w: 14, s: grad}, {w: 10, s: '#0a0500'} ].forEach(style => {
                 ctx.beginPath();
@@ -4812,7 +5055,6 @@ function drawMap() {
                 if (isTargetDiscovered) {
                     ctx.lineTo(end.x, end.y);
                 } else {
-                    // Draw a small "stub" out of the corner if target hidden
                     const dx = corner.x + (end.x - corner.x) * 0.3;
                     const dy = corner.y + (end.y - corner.y) * 0.3;
                     ctx.lineTo(dx, dy);
@@ -4825,7 +5067,7 @@ function drawMap() {
         if (r2Disc) drawPath(p2, elbow, p1, r1Disc);
     });
 
-    // Draw rooms
+    // --- DRAW ROOMS ---
     Object.values(rooms).forEach(room => {
         if (!roomDiscovery[room.key]?.()) return;
 
@@ -4835,15 +5077,13 @@ function drawMap() {
         const rw = room.w * CELL;
         const rh = room.h * CELL;
 
-        // --- Box Styling ---
         ctx.fillStyle = isCurrent ? 'rgba(180,120,0,0.8)' : 'rgba(100,20,30,0.85)';
         ctx.fillRect(rx, ry, rw, rh);
-
         ctx.strokeStyle = isCurrent ? '#c9a84c' : 'rgba(180,140,40,0.6)';
         ctx.lineWidth = isCurrent ? 2 : 1;
         ctx.strokeRect(rx, ry, rw, rh);
 
-        // --- REPLACE THE OLD TEXT CODE WITH THIS: ---
+        // Text Wrapping Logic
         const padding = 4;
         const maxWidth = rw - (padding * 2);
         const words = room.label.split(' ');
@@ -4856,11 +5096,9 @@ function drawMap() {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // Wrap Logic
         for (let i = 1; i < words.length; i++) {
             let testLine = currentLine + " " + words[i];
-            let metrics = ctx.measureText(testLine);
-            if (metrics.width > maxWidth) {
+            if (ctx.measureText(testLine).width > maxWidth) {
                 lines.push(currentLine);
                 currentLine = words[i];
             } else {
@@ -4869,7 +5107,6 @@ function drawMap() {
         }
         lines.push(currentLine);
 
-        // Center lines vertically
         const lineHeight = fontSize * 1.1;
         const totalHeight = lines.length * lineHeight;
         let startY = (ry + rh / 2) - (totalHeight / 2) + (lineHeight / 2);
@@ -4877,8 +5114,8 @@ function drawMap() {
         lines.forEach((line, index) => {
             ctx.fillText(line, rx + rw / 2, startY + (index * lineHeight));
         });
-        // --- END OF REPLACEMENT ---
 
+        // Current Location Indicator (Dot)
         if (isCurrent) {
             ctx.beginPath();
             ctx.arc(rx + rw / 2, ry + rh / 2 - (totalHeight / 2) - 5, 4, 0, Math.PI * 2);
@@ -5112,6 +5349,7 @@ function setupWireCanvasEvents() {
 const SAVE_KEY = 'escapeTribble_save';
 
 function prepareGameUI() {
+    document.body.classList.remove('menu-mode'); // <--- ADD THIS
     menu.classList.add('hidden');
     play.classList.remove('hidden');
     document.getElementById('inventory-drawer').classList.remove('hidden');
@@ -5145,54 +5383,60 @@ function saveGame(currentPageId) {
 }
 
 function loadGame() {
-    if (hasSaveFile()) {
-        try {
-            const raw = localStorage.getItem(SAVE_KEY);
-            if (!raw) {
-                console.warn("No save data found in localStorage.");
-                return false;
-            }
-
-            const saveData = JSON.parse(raw);
-
-            // 1. Restore the state variables (all your booleans, flags, and keys)
-            // This overwrites your 'const state' with the saved values
-            Object.assign(state, saveData.state);
-
-            // 2. Restore Inventory Visuals
-            // First, hide all inventory items to create a clean slate
-            document.querySelectorAll('.inv-item').forEach(item => {
-                item.classList.add('hidden');
-            });
-
-            // Then, loop through the list of IDs we saved and un-hide them
-            if (saveData.inventory && Array.isArray(saveData.inventory)) {
-                saveData.inventory.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        el.classList.remove('hidden');
-                    }
-                });
-            }
-            refreshInventorySlots();
-
-            // 3. Handle specific puzzle cleanups / UI synchronization
-            // Since the wire puzzle isn't saved in detail, we just check if it was finished
-            if (state.solvedWirePuzzle) {
-                const popup = document.getElementById('wire-solved-popup');
-                if (popup) popup.classList.add('hidden');
-            }
-
-            // 4. Return the data so the calling function knows where to send the player
-            console.log("Game Loaded Successfully. Last page:", saveData.currentPage);
-            return saveData;
-
-        } catch (e) {
-            console.error('Load failed:', e);
-            return false;
-        }
-    } else {
+    if (!hasSaveFile()) {
         console.log("No save file exists");
+        return false;
+    }
+
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+
+        const saveData = JSON.parse(raw);
+
+        // 1. FIXED: Do NOT reassign 'state'.
+        // Instead, clear the current state and pour the new data into it.
+        // This keeps the reference alive for the rest of your app.
+        Object.keys(state).forEach(key => delete state[key]);
+        Object.assign(state, getInitialState(), saveData.state);
+
+        // 2. Sync the Tutorial Flag based on the page ID
+        // This is the "Master Switch" that keeps you in the apartment
+        state.isTutorialActive = saveData.currentPage && saveData.currentPage.startsWith('apt-');
+
+        // 3. Restore Inventory Data
+        if (saveData.inventory) {
+            state.inventory = [...saveData.inventory];
+        }
+
+        // 4. UI Sync: Update the visual inventory tray
+        if (typeof updateInventoryUI === "function") {
+            updateInventoryUI();
+        } else {
+            // Fallback: manually show items if the function isn't globally available
+            document.querySelectorAll('.inv-item').forEach(item => {
+                if (state.inventory && state.inventory.includes(item.id)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // 5. Handle Puzzle UI Cleanups
+        if (state.solvedWirePuzzle) {
+            const popup = document.getElementById('wire-solved-popup');
+            if (popup) popup.classList.add('hidden');
+        }
+
+        console.log("Game Loaded Successfully. Last page:", saveData.currentPage);
+
+        // Return the whole object so the Load Button knows the currentPage
+        return saveData;
+
+    } catch (e) {
+        console.error('Load failed:', e);
+        return false;
     }
 }
 
@@ -5221,6 +5465,7 @@ function clearSave() {
 
 function getInitialState() {
     return {
+        // Keys & Items
         hasBdKey: false,
         hasPrKey: false,
         hasKiKey: false,
@@ -5229,9 +5474,10 @@ function getInitialState() {
         hasCamrKey: false,
         hasClrKey: false,
         hasWrId: false,
-        hasWr: false,
+        hasWr: false, // white remote
         hasBr: false,
-
+        hasAptKey: false,
+        hasWb: false,
         hasLoKey: false,
         hasLrBook: false,
         hasSkPaper: false,
@@ -5240,6 +5486,7 @@ function getInitialState() {
         hasLorBook: false,
         hasSherlockBook: false,
 
+        // Unlocks
         bdUnlocked: false,
         bdBackDoorUnlocked: false,
         kiUnlocked: false,
@@ -5248,11 +5495,14 @@ function getInitialState() {
         camrUnlocked: false,
         wrUnlocked: false,
         loUnlocked: false,
+        aptUnlocked: false,
 
+        // Doors
         camrDoorOpen: false,
         crlDoorOpen: false,
         crDoorOpen: false,
 
+        // Discovery Flags
         discoveredBd: false,
         discoveredPr: false,
         discoveredMh: false,
@@ -5262,12 +5512,12 @@ function getInitialState() {
         discoveredBh: false,
         discoveredCr: false,
         discoveredCamr: false,
-        discoveredTu: false,
         discoveredSh: false,
         discoveredLs: false,
         discoveredClr: false,
         discoveredStairs: false,
         discoveredCw: false,
+        discoveredTu: false,
         discoveredWr: false,
         discoveredBath: false,
         discoveredSnh: false,
@@ -5275,7 +5525,9 @@ function getInitialState() {
         discoveredOh2: false,
         discoveredOh3: false,
         discoveredPrint: false,
+        discoveredApt: false,
 
+        // Puzzles & Clues
         solvedWirePuzzle: false,
         foundPtCode: false,
         foundWrNote: false,
@@ -5285,9 +5537,9 @@ function getInitialState() {
         foundLoMonitor: false,
         foundArchives: false,
         foundWrPapers: false,
-
         foundWp: false,
 
+        // Object States
         isProjectorOn: false,
         isLeftMonitorOn: false,
         isRightMonitorOn: false,
@@ -5296,22 +5548,33 @@ function getInitialState() {
         isLiReadOn: false,
         isPrinterCalibrated: false,
 
+        // Codes & Logic
         wonWordle: false,
         foundWordle: false,
         foundml: false,
-
-        savedKey: "",
+        savedKey: "", // password for left monitor
         enteredCode: "",
         correctCode: "3672",
 
+        // Library / Misc
         movedAnimals: false,
         scannedBook: false,
         loMonitorUnlocked: false,
         usedDrive: false,
         hatchOpen: false,
 
+        // Tracking
         visitedPages: {},
         notificationsSeen: {},
+
+        // Tutorial & Flow
+        currTutorialStep: "init",
+        isTutorialActive: false,
+        isWbOpen: false,
+        canPickUpBottle: false,
+        currentPage: "",
+        prevPage: "",
+        filledBottle: false,
     };
 }
 
