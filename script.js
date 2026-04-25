@@ -6,6 +6,38 @@
 //
 // console.log("God Mode Activated: All keys obtained and doors unlocked.");
 
+/* TODO
+    - add missing pages/fix temp pages:
+        - projector page
+        - cw temp page
+        - cw missing connection pages
+        - etc.
+    - make sure save system is localized, since Stephen made it and idk how it works
+    - finish adding sounds (just go through the game and add them as needed)
+    - finish the cr ghost interactions
+    - check that everything desired in the library is added
+    - tutorial
+        - add hints
+        - move hitbox logic into state updating functions
+    - make sure all sound volumes are balanced
+    - add final pages in the game (tunnels, escape) -- figure out how I want to do this
+    - connect end of game to the credits/thank you for playing page
+    - add photo of outside of tribble somewhere in the game
+    - add emojis for the temp inv items
+    - check all png's work
+    - make sure game will work if a lot of people go to play it at once
+    - add better page transitions in the menu and loading screen
+    - add credits/contact pages
+    - Before loading, or while loading I want a memo saying:
+        1)    This game is designed for desktop use. Mobile devices may not display or function correctly. For the best experience, please play on a computer.
+        2)    If you're a student, for the best experience, play while sitting alone in the Tribble basement late in the evening.
+    - launch the game on google !!
+ */
+
+
+
+
+
 // 1. UTILITIES
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -388,7 +420,7 @@ const pageSounds = {
     keycardSwipe: createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
     accessBeep: createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
     steps: createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
-    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45),
+    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45), //fixme check boundaries on this one, and add it to the desired page
     lightFlicker: createSoundClip(sfx.lightFlicker, 0.5, false, 8, 11),
 
     //apartment sounds
@@ -1092,259 +1124,8 @@ const roomLeads = {
     'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page'},
     'apt-bed-page':         {back: 'apt-ki-exit-page'},
 };
-//fixme save system with tutorial is still broken
 
 
-
-// fixme function createSoundClip(sfxEntry, volume = 1, loop = true, startCrop = 0, endCrop = 0) {
-//     return {
-//         clip: sfxEntry.audio, // Add .audio here!
-//         volume: volume,
-//         loop: loop,
-//         startCrop: startCrop,
-//         endCrop: endCrop
-//     };
-// }
-//
-// const pageSounds = {
-//     //ambient noise throughout the whole game (music)
-//     'globalAmbience': {
-//         ...createSoundClip(sfx.ambientNoise, 1, true, 1.5, 1.5),
-//         type: 'music',
-//         isGlobal: true
-//     },
-//
-//     'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
-//     'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
-//
-//     //action sounds
-//     'unlock': createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
-//     'doorClose': createSoundClip(sfx.doorClose, 0.7, false, 1.03,0),
-//     'keycardSwipe': createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.7),
-//     'accessBeep': createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
-//     'steps': createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
-//     'markerWhiteboard': createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 45), //fixme check boundaries on this one, and add it to the desired page
-// }
-//
-// let activeLoop = null; // To stop the loop when we change pages
-// // Variable to track the currently playing LOOPING sound
-// let currentlyPlayingId = null;
-//
-// function triggerSound(id, options = {}) {
-//     const fadeInDuration = options.fadeIn || 0;
-//
-//     const data = pageSounds[id];
-//
-//     if (data) {
-//         const { clip, volume, loop, startCrop, endCrop, type } = data;
-//
-//         if (loop && id === currentlyPlayingId) return;
-//
-//         // cleanup only what already existed
-//         if (clip.activeFade) {
-//             clearInterval(clip.activeFade);
-//             clip.activeFade = null;
-//         }
-//         if (clip.actionTimer) {
-//             clearTimeout(clip.actionTimer);
-//             clip.actionTimer = null;
-//         }
-//         if (loop && activeLoop) {
-//             cancelAnimationFrame(activeLoop);
-//             activeLoop = null;
-//         }
-//
-//         const m = (type === 'music')
-//             ? getMusicMultiplier()
-//             : getSFXMultiplier();
-//
-//         const targetVolume = Math.min(Math.max(volume * m, 0), 1);
-//
-//         clip.loop = false;
-//
-//         // IMPORTANT: keep original behavior
-//         const startPlayback = () => {
-//             clip.currentTime = startCrop;
-//             clip.play();
-//         };
-//
-//         // --- FADE-IN ONLY (non-invasive) ---
-//         const applyFadeIn = () => {
-//             if (fadeInDuration <= 0) {
-//                 clip.volume = targetVolume;
-//                 return;
-//             }
-//
-//             clip.volume = 0;
-//
-//             const steps = 30;
-//             const stepTime = fadeInDuration / steps;
-//             let i = 0;
-//
-//             clip.activeFade = setInterval(() => {
-//                 i++;
-//                 clip.volume = Math.min(
-//                     targetVolume * (i / steps),
-//                     targetVolume
-//                 );
-//
-//                 if (i >= steps) {
-//                     clearInterval(clip.activeFade);
-//                     clip.activeFade = null;
-//                 }
-//             }, stepTime);
-//         };
-//
-//         // ---- LOOPED AUDIO (UNCHANGED LOGIC) ----
-//         if (loop) {
-//             currentlyPlayingId = id;
-//
-//             startPlayback();
-//             applyFadeIn();
-//
-//             const checkTime = () => {
-//                 if (currentlyPlayingId !== id) return;
-//
-//                 if (clip.currentTime >= (clip.duration - endCrop)) {
-//                     clip.currentTime = startCrop;
-//                 }
-//
-//                 activeLoop = requestAnimationFrame(checkTime);
-//             };
-//
-//             activeLoop = requestAnimationFrame(checkTime);
-//         }
-//
-//         // ---- ONE SHOT (UNCHANGED LOGIC) ----
-//         else {
-//             startPlayback();
-//             applyFadeIn();
-//
-//             const playDuration =
-//                 (clip.duration - startCrop - endCrop) * 1000;
-//
-//             if (playDuration > 0) {
-//                 clip.actionTimer = setTimeout(() => {
-//                     clip.pause();
-//                     clip.currentTime = startCrop;
-//                 }, playDuration);
-//             }
-//         }
-//     }
-//
-//     // ---- FALLBACK SFX (unchanged structure, only fade added safely) ----
-//     else if (sfx[id]) {
-//         const entry = sfx[id];
-//         const m = getSFXMultiplier();
-//
-//         const targetVolume = Math.min(
-//             Math.max(entry.baseVol * m, 0),
-//             1
-//         );
-//
-//         entry.audio.currentTime = 0;
-//         entry.audio.play();
-//
-//         if (fadeInDuration > 0) {
-//             entry.audio.volume = 0;
-//
-//             const steps = 30;
-//             const stepTime = fadeInDuration / steps;
-//             let i = 0;
-//
-//             const fade = setInterval(() => {
-//                 i++;
-//                 entry.audio.volume = Math.min(
-//                     targetVolume * (i / steps),
-//                     targetVolume
-//                 );
-//
-//                 if (i >= steps) clearInterval(fade);
-//             }, stepTime);
-//         } else {
-//             entry.audio.volume = targetVolume;
-//         }
-//     }
-// }
-//
-// function fadeInAudio(audio, targetVolume, duration = 1200) {
-//     const steps = 30;
-//     const stepTime = duration / steps;
-//
-//     audio.volume = 0;
-//
-//     let i = 0;
-//
-//     const interval = setInterval(() => {
-//         i++;
-//
-//         audio.volume = Math.min(
-//             targetVolume,
-//             (i / steps) * targetVolume
-//         );
-//
-//         if (i >= steps) {
-//             clearInterval(interval);
-//         }
-//     }, stepTime);
-// }
-//
-// function stopAllAudio() {
-//     if (activeLoop) {
-//         cancelAnimationFrame(activeLoop);
-//         activeLoop = null;
-//     }
-//
-//     currentlyPlayingId = null;
-//
-//     Object.values(pageSounds).forEach(sound => {
-//         if (!sound?.clip) return;
-//
-//         const audio = sound.clip;
-//         audio.pause();
-//         audio.currentTime = 0;
-//
-//         if (audio.activeFade) {
-//             clearInterval(audio.activeFade);
-//             audio.activeFade = null;
-//         }
-//     });
-// }
-//
-// function stopSound(pageId, fadeDuration = 50) {
-//     const soundData = pageSounds[pageId];
-//     console.log("STOP SOUND TRIGGERED:", pageId, pageSounds[pageId]);
-//
-//     if (!soundData?.clip) return;
-//     if (soundData.type === 'music') return; // EXTRA SAFETY
-//
-//     // 🚫 never touch global audio
-//     if (soundData.isGlobal) return;
-//
-//     const audio = soundData.clip;
-//
-//     const startVol = audio.volume;
-//     const steps = 20;
-//     const interval = fadeDuration / steps;
-//     let currentStep = 0;
-//
-//     if (audio.activeFade) clearInterval(audio.activeFade);
-//
-//     audio.activeFade = setInterval(() => {
-//         currentStep++;
-//
-//         audio.volume = Math.max(0, startVol * (1 - currentStep / steps));
-//
-//         if (currentStep >= steps) {
-//             clearInterval(audio.activeFade);
-//             audio.activeFade = null;
-//
-//             audio.pause();
-//             audio.currentTime = 0;
-//         }
-//     }, interval);
-// }
-//
 // ----- 3. CORE FUNCTIONS ----
 function getDestination(direction, pageId) {
     return roomLeads[pageId]?.[direction] || null;
@@ -3000,7 +2781,7 @@ async function tutorialHitboxInit() {
         currentOverlayItem = null;
     });
 
-    //fixme check the following so that the user can't soft-lock themselves
+    //fixme check the following so that the user can't soft-lock themselves; Note: it should be all good if I just move the hitbox logic to the tutorial step section
 
     //hitbox setup
     document.getElementById('apt-fd-handle-hitbox').onclick = () => {
