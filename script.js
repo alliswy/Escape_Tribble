@@ -2184,17 +2184,19 @@ const termPage = document.getElementById('terminal-login-page');
 const termInput = document.getElementById('terminal-input');
 const termFeedback = document.getElementById('terminal-feedback');
 const loginHeader = document.querySelector('#terminal-window .terminal-content div:first-child');
+const prompt = document.getElementById('pin-prompt');
 
 // Called when clicking the monitor hitbox
 async function openTerminal() {
     termPage.classList.remove('hidden');
-    document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+    //document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
 
     if (state.usedDrive) {
-        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.remove('hidden');
+        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
         termFeedback.style.display = "none";
+        if (prompt) prompt.style.display = "none";
 
         const finalError = document.getElementById('final-error-feedback');
         if (finalError) finalError.innerText = "";
@@ -2203,6 +2205,9 @@ async function openTerminal() {
         setTimeout(() => document.getElementById('final-terminal-input').focus(), 10);
         // Don't run the rest of the function
     } else if (state.loMonitorUnlocked) {
+        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
+        document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+        if (prompt) prompt.style.display = "none";
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
 
@@ -2210,17 +2215,23 @@ async function openTerminal() {
         termFeedback.style.fontSize = "1.8rem";
         termFeedback.style.color = "#00ff41";
         termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
-        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
     } else {
-        document.getElementById('lo-desk-monitor-hitbox').classList.remove('hidden');
+        document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+        //  Disable typing immediately
+        termInput.disabled = true;
+
         if (!state.notificationsSeen['lo-monitor-4dig-hint']) {
             state.notificationsSeen['lo-monitor-4dig-hint'] = true;
+
             await spawnThemedBox("I need another code, 4 digits this time...", 'notification-top');
             await delay(20);
             await spawnThemedBox("Wait--I've found 4 different shapes, and the read sign in the library has the same colors as those shapes", 'notification-top');
             await delay(20);
             await spawnThemedBox("I wonder if the shapes, the colors, and this code are related...", 'notification-top');
         }
+
+        // Re-enable typing AFTER messages finish
+        termInput.disabled = false;
         termInput.style.display = "block";
         if (loginHeader) loginHeader.style.display = "block";
         // Reset font size for typing mode
@@ -2237,7 +2248,7 @@ function closeTerminal() {
 
     // 2. Re-enable the monitor hitbox
     if (state.usedDrive) {
-        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
+        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.remove('hidden');
     } else {
         document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
         document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
@@ -2290,6 +2301,7 @@ termPage.addEventListener('click', (e) => {
 async function useDrive() {
     if (state.hasLs10drive) {
         state.usedDrive = true;
+        triggerSound('driveNotif');
         const keySlot = document.getElementById('inv-ls-drive');
         if (keySlot) {
             keySlot.classList.add('hidden');
@@ -2324,6 +2336,9 @@ async function useDrive() {
 
 const finalInput = document.getElementById('final-terminal-input');
 const finalError = document.getElementById('final-error-feedback');
+
+termInput.addEventListener('keydown', () => triggerSound('keyboard'));
+finalInput.addEventListener('keydown', () => triggerSound('keyboard'));
 
 // 1. Only allow numbers to be typed
 finalInput.addEventListener('input', (e) => {
@@ -2360,6 +2375,45 @@ finalInput.addEventListener('keyup', async (e) => {
         }
     }
 });
+
+function resetTerminalUI() {
+    // Hide everything
+    termPage.classList.add('hidden');
+
+    document.getElementById('final-auth-section').classList.add('hidden');
+    document.getElementById('final-auth-section').style.display = "none";
+
+    const monitorHitbox = document.getElementById('lo-monitor-hitbox');
+    const driveHitbox = document.getElementById('lo-monitor-drive-hitbox');
+    const driveMonitorHitbox = document.getElementById('lo-monitor-drive-monitor-hitbox');
+
+    if (monitorHitbox) monitorHitbox.classList.remove('hidden');
+    if (driveHitbox) driveHitbox.classList.add('hidden');
+    if (driveMonitorHitbox) driveMonitorHitbox.classList.add('hidden');
+
+    termInput.style.display = "block";
+    termInput.value = "";
+
+    termFeedback.style.display = "block";
+    termFeedback.innerText = "";
+    termFeedback.style.fontSize = "1.2rem";
+
+    if (loginHeader) loginHeader.style.display = "block";
+
+    const prompt = document.getElementById('pin-prompt');
+    if (prompt) prompt.style.display = "block";
+
+    const finalInput = document.getElementById('final-terminal-input');
+    if (finalInput) {
+        finalInput.value = "";
+        finalInput.disabled = false;
+    }
+
+    const finalError = document.getElementById('final-error-feedback');
+    if (finalError) finalError.innerText = "";
+}
+
+//fixme do more testing to makes sure the final puzzle term pages are working on restart and save and whatnot !
 
 
 // ---- PRINTER SYNC MINIGAME ----
@@ -3544,11 +3598,13 @@ function init() {
             await showPage('mh-bd-main-page');
             stopAllAudio();
             startGlobalAudio();
+            resetTerminalUI();
         } else {
             state.isTutorialActive = true;
             await showPage('apt-fd-page');
             stopAllAudio();
             startGlobalAudio();
+            resetTerminalUI();
 
             const handle = document.getElementById('apt-fd-handle-hitbox');
             if (handle) handle.classList.add('hidden');
