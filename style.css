@@ -2637,6 +2637,32 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#bh-sh-cr-dc-sh-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 55%;
+    width: 20%;
+    height: 89%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bh-sh-cr-do-sh-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 59%;
+    width: 20%;
+    height: 89%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 /* Position the grid over the physical buttons in the photo */
 .button-grid {
     position: absolute;
@@ -3412,10 +3438,23 @@ input[type="range"]::-webkit-slider-thumb {
 
 #mh-cw-stairs-hitbox {
     position: absolute;
+    top: 29%;
+    left: 52%;
+    width: 21%;
+    height: 52%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#stairs-aw-door-hitbox {
+    position: absolute;
     top: 5%;
-    left: 60%;
-    width: 17%;
-    height: 62%;
+    left: 30%;
+    width: 27%;
+    height: 87%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -3468,6 +3507,19 @@ input[type="range"]::-webkit-slider-thumb {
     left: 37%;
     width: 23%;
     height: 31%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-bw-door-hitbox {
+    position: absolute;
+    top: 15%;
+    left: 37%;
+    width: 22%;
+    height: 53%;
 
     background-color: transparent;
     border: 2px solid transparent;
