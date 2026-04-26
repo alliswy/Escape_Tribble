@@ -3014,21 +3014,34 @@ async function advanceTutorial() {
     fix the background clicking for itemOverlay
  */
 
-function runTutorial() {
+let tutorialListenersInitialized = false;
+
+function runTutorial(resume = false) {
     tutorialHitboxInit();
-        //give the user the key
-        const keySlot = document.getElementById('inv-apt-key');
-        state.hasAptKey = true;
-        if (keySlot) {
-            keySlot.classList.remove('hidden');
-            refreshInventorySlots();
-        }
+
     state.isTutorialActive = true;
-    state.currTutorialStep = "init"; // Ensure we start at the beginning
+
+    const keySlot = document.getElementById('inv-apt-key');
+
+    if (!resume) {
+        // Fresh tutorial start
+        state.hasAptKey = true;
+        state.currTutorialStep = "init";
+    }
+
+    // Sync key visibility with current state (important on resume)
+    if (keySlot) {
+        if (state.hasAptKey) keySlot.classList.remove('hidden');
+        else keySlot.classList.add('hidden');
+        refreshInventorySlots();
+    }
+
     advanceTutorial();
 }
 
 async function tutorialHitboxInit() {
+    if (tutorialListenersInitialized) return;
+    tutorialListenersInitialized = true;
     document.querySelector('.overlay-backdrop').addEventListener("click", () => {
         overlay.classList.add("hidden");
         currentOverlayItem = null;
@@ -3413,6 +3426,13 @@ async function returnToMainMenu() {
     runMenuTypewriter();
 }
 
+//----- SAVE THE GAME ON REFRESH----//
+window.addEventListener('pagehide', () => {
+    if (state.currentPage) {
+        saveGame(state.currentPage);
+    }
+});
+
 
 // ----- INITIALIZE EVENT LISTENERS -----
 
@@ -3420,24 +3440,34 @@ function init() {
     //Menu System
     runMenuTypewriter();
 
-    startButton.onclick = () => {
+    startButton.onclick = async () => {
+        if (hasSaveFile()) {
+            const confirmOverwrite = await showThemedConfirm(
+                "Start a new game?",
+                "This will overwrite your current save file and erase all progress."
+            );
+
+            if (!confirmOverwrite) {
+                showPage('menu-screen');
+                return;
+            }
+
+            // User explicitly accepted overwrite
+            clearSave();
+        }
+
+        // No save exists, or user accepted overwrite
         showPage('disclaimer-page');
     };
     window.addEventListener('DOMContentLoaded', () => {
 
-        startButton.onclick = () => {
-            showPage('disclaimer-page');
-        };
-
         document.getElementById('confirm-start-btn').onclick = async () => {
             await loadEverything();
-            clearSave();
             prepareGameUI();
 
             requestAnimationFrame(async () => {
                 state.isTutorialActive = true;
-
-                await showPage('apt-fd-page');
+                await showPage('apt-fd-page'); // first real savable page
 
                 stopAllAudio();
                 startGlobalAudio();
@@ -3456,7 +3486,6 @@ function init() {
         };
 
         document.getElementById('cancel-start-btn').onclick = () => {
-            clearSave();
             showPage('menu-screen');
         };
     });
@@ -3477,6 +3506,14 @@ function init() {
         // --- 2. LOAD DATA ---
         // This updates the global 'state' object immediately
         const saveData = loadGame();
+
+        const savedPageEl = saveData?.currentPage ? document.getElementById(saveData.currentPage) : null;
+        if (!savedPageEl || !savedPageEl.classList.contains('fit')) {
+            alert("Save file is invalid or from a menu screen. Please start a new game.");
+            clearSave();
+            showPage('menu-screen');
+            return;
+        }
 
         if (saveData && saveData.currentPage) {
 
@@ -5030,6 +5067,36 @@ function init() {
     };
 
 
+// ------------ SAVE GAME ON RELOAD -----------//
+    const restoreFromSaveOnReload = async () => {
+        const navEntry = performance.getEntriesByType('navigation')[0];
+        const isReload = navEntry && navEntry.type === 'reload';
+        if (!isReload || !hasSaveFile()) return;
+
+        await loadEverything();
+        const saveData = loadGame();
+        if (!saveData || !saveData.currentPage) return;
+
+        const savedPageEl = document.getElementById(saveData.currentPage);
+        if (!savedPageEl || !savedPageEl.classList.contains('fit')) return;
+
+        prepareGameUI();
+        startGlobalAudio();
+
+        await showPage(saveData.currentPage);
+
+        if (typeof updateInventoryUI === "function") updateInventoryUI();
+        updateMap(saveData.currentPage);
+        drawMap();
+
+        if (state.isTutorialActive) {
+            runTutorial(true); // resume tutorial, do not reset
+        }
+    };
+    restoreFromSaveOnReload();
+
+
+
 
 
 
@@ -5600,6 +5667,23 @@ function prepareGameUI() {
 }
 
 function saveGame(currentPageId) {
+    // Never save menu/overlay pages
+    const nonSavablePages = new Set([
+        'menu-screen',
+        'disclaimer-page',
+        'info-screen',
+        'settings-screen',
+        'thanks-page',
+        'terminal-login-page',
+        'map-screen'
+    ]);
+
+    if (!currentPageId || nonSavablePages.has(currentPageId)) return;
+
+    const pageEl = document.getElementById(currentPageId);
+    // Only save real gameplay pages
+    if (!pageEl || !pageEl.classList.contains('fit')) return;
+
     // 1. Get a list of every item currently visible in the inventory
     const visibleItems = [];
     document.querySelectorAll('.inv-item').forEach(item => {

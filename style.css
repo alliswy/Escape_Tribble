@@ -690,19 +690,21 @@ body.menu-mode .theme-burgundy-gold {
 
 .recommendations {
     max-width: 650px;
-    background: rgba(0, 0, 0, 0.4); /* Darkens the area behind text for readability */
+    background: rgba(0, 0, 0, 0.4);
     padding: 30px;
     border: 1px solid rgba(180, 140, 40, 0.3);
     border-radius: 8px;
     margin: 20px 0;
     text-align: left;
     color: #cccccc;
-    font-family: 'Special Elite', cursive; /* Keeping the typewriter vibe */
+    font-family: 'Georgia', 'Times New Roman', serif; /* easier to read */
     line-height: 1.6;
 }
 
 .recommendations p {
     margin-bottom: 15px;
+    font-size: 1.25rem;
+    line-height: 1.7;
 }
 
 .recommendations strong {
