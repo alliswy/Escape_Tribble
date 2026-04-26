@@ -659,6 +659,93 @@ body.menu-mode .theme-burgundy-gold {
     transform: scale(0.95);
 }
 
+
+/* ---- DISCLAIMER PAGE (Matching Menu Theme) ---- */
+#disclaimer-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #1a0f00; /* Same as #menu-screen */
+    background-image: radial-gradient(ellipse at center, rgba(180,120,0,0.35) 0%, transparent 70%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 200;
+}
+
+#disclaimer-page.hidden {
+    display: none;
+}
+
+#disclaimer-page h2, #disclaimer-page h3 {
+    font-family: 'Special Elite', cursive;
+    color: #c9a84c;
+    text-shadow: 0 0 15px rgba(200, 160, 0, 0.5);
+    letter-spacing: 2px;
+}
+
+.recommendations {
+    max-width: 650px;
+    background: rgba(0, 0, 0, 0.4); /* Darkens the area behind text for readability */
+    padding: 30px;
+    border: 1px solid rgba(180, 140, 40, 0.3);
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: left;
+    color: #cccccc;
+    font-family: 'Special Elite', cursive; /* Keeping the typewriter vibe */
+    line-height: 1.6;
+}
+
+.recommendations p {
+    margin-bottom: 15px;
+}
+
+.recommendations strong {
+    color: #c9a84c;
+}
+
+/* Applying your menu-btn style to the Yes/No buttons */
+.disclaimer-btn {
+    width: 200px;
+    height: 50px;
+    background: rgba(100, 20, 30, 0.85); /* Your Burgundy */
+    color: #c9a84c; /* Your Gold */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: 'Special Elite', cursive;
+    letter-spacing: 2px;
+    border: 1px solid rgba(180, 140, 40, 0.5);
+    margin: 10px;
+    transition: all 0.2s ease;
+}
+
+.disclaimer-btn:hover {
+    background: rgba(130, 30, 40, 0.95);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(201, 168, 76, 0.4);
+}
+
+/* --------- info page stuff -----*/
+#sources a {
+    color: #ffcc33;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 204, 51, 0.6);
+}
+
+#sources a:hover {
+    color: #fff2b3;
+    border-bottom: 1px solid #fff2b3;
+}
+
 /* ---- FADE SCREENS (Settings, How to Play) ---- */
 .fade-screen {
     position: absolute;

@@ -219,13 +219,13 @@ const sfx = {
     shufflePapers: { audio: new Audio('sounds/shuffle-papers.mp3'),  baseVol: 0.2 },
     unlock: { audio: new Audio('sounds/unlock.mp3'),  baseVol: 0.5 },
     openDoor: {audio: new Audio('sounds/door-open.mp3'), baseVol: 0.4},
-    cwDoor: {audio: new Audio('sounds/cw-door.mp3'), baseVol: 0.5},
+    cwDoor: {audio: new Audio('sounds/cw-door.mp3'), baseVol: 0.3},
     doorOpenClose: {audio: new Audio('sounds/door-open-close.mp3'), baseVol: 0.5},
     doorClose: {audio: new Audio('sounds/door-close.mp3'), baseVol: 0.5},
     steps: {audio: new Audio('sounds/steps.mp3'), baseVol: 0.5},
     markerWhiteboard: {audio: new Audio('sounds/marker-whiteboard.mp3'), baseVol: 0.5},
     stiffPaper: {audio: new Audio('sounds/paper-1.mp3'), baseVol: 0.5},
-    floppyPaper: {audio: new Audio('sounds/paper-2.mp3'), baseVol: 0.5},
+    floppyPaper: {audio: new Audio('sounds/paper-2.mp3'), baseVol: 0.3},
 
     scanner: {audio: new Audio('sounds/scanner.mp3'), baseVol: 0.5},
     keypadBeep: {audio: new Audio('sounds/keypad-beep.mp3'), baseVol: 0.5},
@@ -248,12 +248,13 @@ const sfx = {
     //library sounds
     bones: {audio: new Audio('sounds/bones.mp3'), baseVol: 1},
 
+    //cr sounds
+    ghostSound: {audio: new Audio('sounds/Ghost-sound.mp3'), baseVol: 0.3},
+
 }; //fixme add more sounds
 
 
-// ------  SOUNDS FUNCTIONS --------- fixme move these down later for organization
-
-
+// ------  SOUNDS FUNCTIONS ---------
 function getSFXMultiplier() {
     const slider = document.getElementById('sfx-slider');
     return slider ? parseFloat(slider.value) / 50 : 1.0;
@@ -410,7 +411,7 @@ const pageSounds = {
         isGlobal: true
     },
     tutorialAmbience: {   // NEW
-        ...createSoundClip(sfx.aptAmbience, 0.12, true, 1.5, 1),
+        ...createSoundClip(sfx.aptAmbience, 0.10, true, 1.5, 1),
         type: 'music',
         isGlobal: true
     },
@@ -436,9 +437,13 @@ const pageSounds = {
     bdBookClose: createSoundClip(sfx.bdBook, 0.5, false, 7.5, 0),
     hatchOpen: createSoundClip(sfx.hatch, 1, false, 0, 0.3),
     hatchClose: createSoundClip(sfx.hatch, 1, false, 0.3, 0),
+    grabBook: createSoundClip(sfx.grabBook, 0.5, false, 2.2, 15.4),
 
     //library sounds
     bones: createSoundClip(sfx.bones, 1, false, 1, 3),
+
+    //cw sounds
+    openBathDoor: createSoundClip(sfx.doorOpenClose, 0.5, false,0, 2,)
 };
 
 let activeGlobalLoop = null;
@@ -1119,7 +1124,7 @@ const roomLeads = {
     'apt-fd-handle-page':   {back: 'apt-fd-page'},
     //'apt-fd-open-page':     {back: 'apt-fd-page'},
     'apt-main-water-page':  {forward: 'apt-table-water-page'},
-    'apt-table-water-page': {back: 'apt-main-water-page', left: 'apt-ki-entr-page'},
+    'apt-table-water-page': {back: 'apt-main-water-page', left: 'apt-ki-entr-page', right: 'apt-bed-page'},
     'apt-table-page':       {left: 'apt-ki-entr-page', right: 'apt-bed-page'},
     'apt-ki-entr-page':     {forward: 'apt-ki-1-page', right: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
     'apt-ki-1-page':        {back: 'apt-ki-entr-page', forward: 'apt-ki-2-page'},
@@ -1127,8 +1132,8 @@ const roomLeads = {
     'apt-ki-sink-page':        {back: 'apt-ki-1-page', left: 'apt-ki-3-page'},
     'apt-sink-water-bottle-page': {back: 'apt-sink-page'},
     'apt-ki-3-page':        {forward: 'apt-ki-exit-page', right: 'apt-ki-sink-page'},
-    'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page', left: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
-    'apt-bed-page':         {back: 'apt-ki-exit-page'},
+    'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page'},
+    'apt-bed-page':         {back: 'apt-ki-exit-page', left: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
 };
 
 
@@ -1197,13 +1202,13 @@ async function triggerNotification(pageId) {
     //spawn textbox when certain page is shown !
     switch (pageId) {
         case 'camr-main-wp-page': {
-            await delay(20);
             document.getElementById('camr-main-wp-ml-hitbox').classList.add('hidden');
             document.getElementById('camr-main-wp-mr-hitbox').classList.add('hidden');
             document.getElementById('master-back-arrow').classList.add('hidden');
-
+            triggerSound('ghostSound');
             // Trigger the initial window notification once
             if (!state.notificationsSeen['wp-init']) {
+                await delay(20);
                 await spawnThemedBox("What's that in the window ??", "notification-top");
                 state.notificationsSeen['wp-init'] = true;
             }
@@ -1313,6 +1318,9 @@ async function triggerNotification(pageId) {
             }
         } break;
         case 'cw-bath-door-page': {
+            if (state.prevPage ==='bath-page') {
+                triggerSound('doorClose'); //fixme this part is weird
+            }
             if (!isPlaying('ambientNoise')) {
                 triggerSound('ambientNoise');
             }
@@ -1343,7 +1351,7 @@ async function triggerNotification(pageId) {
                 await delay(20);
                 await spawnThemedBox('At least it seems that this ghost is trying to help me', 'notification-top');
             }
-        }
+        } break;
 
     }
     //fixme when loading a save file, it re plays these notifications, no matter if thes tate of the room changed. fix this problem
@@ -1399,8 +1407,105 @@ function triggerFlicker(elementId) {
 
 // ---------- HINT SYSTEM LOGIC ------------
 const hintRules = [
+    // 1. Initial State
     {
-        condition: () => !state.bdUnlocked && !state.hasBdKey,
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'init',
+        text: "Click the inventory button to view your inventory"
+    },
+    // 2. Open Inventory
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'inv-open-key',
+        text: "You have the key to your apartment in your inventory. Click to inspect it"
+    },
+    // 3. Inspect Key Overlay
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'inv-overlay-key',
+        text: "Click the X to close the inventory inspection"
+    },
+    // 4. Close Inventory
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'inv-close-key',
+        text: "Click the inventory button again to close your inventory"
+    },
+    // 5. Hint View
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'hint-view',
+        text: "Click the hint button to view hints"
+    },
+    // 6. Hint Close
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'hint-close',
+        text: "Click the hint button again to close the hint box"
+    },
+    // 7. Menu Open
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'menu-open',
+        text: "Click the button in the top right of the screen to open the benu"
+    },
+    // 8. Menu Close
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'menu-close',
+        text: "Click again to close the menu"
+    },
+    // 9. View Handle (Shows the last notification of the two)
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'view-handle',
+        text: "Click on the door handle"
+    },
+    // 10. Use Key
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'use-key',
+        text: "Click on the keyhole to unlock the door"
+    },
+    // 11. Open Door
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'open-door',
+        text: "Now that the door is unlocked, open it by clicking on the door handle"
+    },
+    // 12. Enter Apartment
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'enter-apartment',
+        text: "Enter a new room by clicking on the doorway"
+    },
+    // 13. In Apartment
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'in-apartment',
+        text: "When available use the navigation arrows to move around"
+    },
+    // 14. Find Bottle
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'find-bottle',
+        text: "The water bottle is on the kitchen table. Click on it to collect it"
+    },
+    // 15. Open Bottle
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'open-bottle',
+        text: "Some inventory items are interactable. Inspect the bottle from your inventory and click the top to open it"
+    },
+    // 16. Opened Bottle
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'opened-bottle',
+        text: "Close the inventory overlay"
+    },
+    // 17. Find Sink (Navigation task)
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'find-sink',
+        text: "Use the navigation arrows to move around and find the sink to refill the bottle"
+    },
+    // 18. Found Sink (Triggered by entering the sink page)
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'found-sink',
+        text: "Click the sink handle to turn it on and use the bottle"
+    },
+    // 19. Filled Bottle / Go to Bed
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'filled-bottle',
+        text: "Find the bed and go to sleep"
+    },
+
+
+    {
+        condition: () => !state.isTutorialActive && !state.bdUnlocked && !state.hasBdKey,
         text: "Try inspecting the book depository"
     },
     {
@@ -2578,6 +2683,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
 
 
 async function advanceTutorial() {
+    saveGame(state.currentPage);
     if (!state.isTutorialActive) return;
 
     if (activePopup) {
@@ -2599,7 +2705,7 @@ async function advanceTutorial() {
         case 'inv-overlay-key':
             console.log('inv-overlay-key running');
             await delay(20);
-            await spawnThemedBox("Click the X or the background to close the inspection", "notification-closeOverlay");
+            await spawnThemedBox("Click the X to close the inventory inspection", "notification-closeOverlay");
             break;
         case 'inv-close-key':
             await delay(20);
@@ -2691,6 +2797,8 @@ async function advanceTutorial() {
             break;
         case 'asleep':
             state.isTutorialActive = false;
+            // This is the "Key" that unlocks the skip option for the restart button
+            localStorage.setItem('tutorialCompleted', 'true');
             stopAllAudio();
             await showPage("mh-bd-main-page", true);
             break;
@@ -3071,48 +3179,46 @@ function init() {
     //Menu System
     runMenuTypewriter();
 
-    startButton.onclick = async () => {
-        // 1. Wait for everything to load (Images + SFX)
-        await loadEverything();
-
-        // 2. Reset the save data for a fresh start
-        clearSave();
-        prepareGameUI();
-
-        // --- OPTION A: START IN TUTORIAL (ACTIVE) ---
-        requestAnimationFrame(async () => {
-            state.isTutorialActive = true;
-
-            // Go to Apartment Front Door
-            await showPage('apt-fd-page');
-
-            stopAllAudio();
-            startGlobalAudio();
-
-            // Hide the handle hitbox initially per tutorial logic
-            const handle = document.getElementById('apt-fd-handle-hitbox');
-            if (handle) handle.classList.add('hidden');
-
-            await delay(20);
-            await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
-            runTutorial();
-        });
-
-        /* // --- OPTION B:fixme START WITHOUT TUTORIAL (COMMENTED OUT) ---
-        requestAnimationFrame(async () => {
-            state.isTutorialActive = false;
-
-            // Go to Main Game Start (Main Hall / Back Door)
-            await showPage('mh-bd-main-page');
-
-            stopAllAudio();
-            startGlobalAudio();
-
-            // Add any non-tutorial intro text here if needed
-            console.log("Game started without tutorial.");
-        });
-        */
+    startButton.onclick = () => {
+        showPage('disclaimer-page');
     };
+    window.addEventListener('DOMContentLoaded', () => {
+
+        startButton.onclick = () => {
+            showPage('disclaimer-page');
+        };
+
+        document.getElementById('confirm-start-btn').onclick = async () => {
+            await loadEverything();
+            clearSave();
+            prepareGameUI();
+
+            requestAnimationFrame(async () => {
+                state.isTutorialActive = true;
+
+                await showPage('apt-fd-page');
+
+                stopAllAudio();
+                startGlobalAudio();
+
+                const handle = document.getElementById('apt-fd-handle-hitbox');
+                if (handle) handle.classList.add('hidden');
+
+                await delay(20);
+                await spawnThemedBox(
+                    "It's been a long day of class. I'm glad to be back at my apartment.",
+                    "notification-top"
+                );
+
+                runTutorial();
+            });
+        };
+
+        document.getElementById('cancel-start-btn').onclick = () => {
+            showPage('menu-screen');
+        };
+    });
+
 
     loadSaveButton.onclick = async () => {
         const raw = localStorage.getItem(SAVE_KEY);
@@ -3122,45 +3228,70 @@ function init() {
             return;
         }
 
-        // --- NEW: Wait for all assets to be ready before doing anything ---
+        // --- 1. PRE-LOAD ASSETS ---
+        // Wait for all images/sounds to be ready before showing the game
         await loadEverything();
 
-        // 1. LOAD DATA FIRST
+        // --- 2. LOAD DATA ---
         // This updates the global 'state' object immediately
         const saveData = loadGame();
 
         if (saveData && saveData.currentPage) {
-            // 2. NOW PREPARE UI
-            // Because 'state' is now updated, prepareGameUI()
-            // will see the correct tutorial flag!
+
+            // --- 3. UI RESET (The Fix) ---
+            // Force all drawers and menus shut so they don't block the screen
+
+            const menuOverlay = document.getElementById('main-menu-overlay');
+            if (menuOverlay) menuOverlay.classList.add('hidden');
+
+            const hintBox = document.getElementById('hint-box');
+            if (hintBox) hintBox.classList.remove('hint-open');
+
+            const invPanel = document.getElementById('inventory-panel');
+            if (invPanel) invPanel.classList.remove('inventory-open');
+
+            // --- 4. PREPARE UI ---
+            // Sets up inventory slots and tutorial flags based on the loaded 'state'
             prepareGameUI();
 
             requestAnimationFrame(() => {
                 // Restore global ambience now that we are in the game
-                triggerSound('globalAmbience');
+                startGlobalAudio();
 
-                // 3. Update the Page to the saved location
+                // --- 5. RENDER GAME WORLD ---
+                // Update the Page to the saved location
                 showPage(saveData.currentPage);
 
-                // 4. Force the UI to reflect the loaded inventory
+                // Force the UI to reflect the loaded inventory items
                 if (typeof updateInventoryUI === "function") {
                     updateInventoryUI();
                 }
 
-                // 5. Force the map to reflect discovered rooms
+                // Force the map to reflect discovered rooms
                 updateMap(saveData.currentPage);
                 drawMap();
 
-                console.log("Loaded room:", saveData.currentPage);
+                console.log("Load Successful. Current room:", saveData.currentPage);
             });
+
         } else {
-            // --- YOUR ORIGINAL FALLBACK ---
-            // Fallback if load fails or data is corrupted
+            // --- FALLBACK LOGIC ---
+            // If data is corrupted or missing specific room info
+            console.warn("Save data corrupted. Using fallback to Main Hall.");
+
+            // Still need to hide the menu to see the fallback room!
+            document.getElementById('main-menu-overlay')?.classList.add('hidden');
+
             prepareGameUI();
+            startGlobalAudio();
             showPage('mh-bd-main-page');
+
             if (typeof updateInventoryUI === "function") {
                 updateInventoryUI();
             }
+
+            updateMap('mh-bd-main-page');
+            drawMap();
         }
     };
     function updateInventoryUI() {
@@ -3393,55 +3524,49 @@ function init() {
     //     // showPage('mh-bd-main-page');
     // };
     document.getElementById('restart-btn').onclick = async () => {
-        // 1. Themed confirmation to restart
+        // 1. Initial confirmation
         const confirmRestart = await showThemedConfirm("Are you sure you want to restart?", "All current progress will be lost.");
         if (!confirmRestart) return;
 
-        // 2. Wait for everything to load
+        // 2. Load latest data to ensure state is accurate
         await loadEverything();
+        const saveData = loadGame();
 
-        // 3. Check for tutorial skip eligibility
-        const hasFinishedTutorial = localStorage.getItem('tutorialCompleted') === 'true';
+        // 3. Debugging (Check your console if it doesn't work!)
+        const hasFinishedBefore = localStorage.getItem('tutorialCompleted') === 'true';
+        const isCurrentlyInMainGame = state.isTutorialActive === false;
+
+        console.log("Skip Check -> Finished Before:", hasFinishedBefore, "| In Main Game:", isCurrentlyInMainGame);
+
         let wantToSkip = false;
 
-        if (hasFinishedTutorial) {
-            wantToSkip = await showThemedConfirm("Tutorial completed previously.", "Would you like to skip straight to the game?");
+        // 4. THE CHECK
+        // If they have completed it ever AND they are not currently doing the tutorial
+        if (hasFinishedBefore && isCurrentlyInMainGame) {
+            wantToSkip = await showThemedConfirm("Tutorial skip available", "Would you like to skip the tutorial?");
         }
 
-        // 4. Reset the save data
+        // 5. Reset and Execute
         clearSave();
         prepareGameUI();
 
-        // 5. Branching Start
         if (wantToSkip) {
-            requestAnimationFrame(async () => {
-                state.isTutorialActive = false;
-
-                // Go to Main Game Start (Main Hall / Back Door)
-                await showPage('mh-bd-main-page');
-
-                stopAllAudio();
-                startGlobalAudio();
-
-                console.log("Game started without tutorial.");
-            });
+            state.isTutorialActive = false;
+            await showPage('mh-bd-main-page');
+            stopAllAudio();
+            startGlobalAudio();
         } else {
-            requestAnimationFrame(async () => {
-                state.isTutorialActive = true;
+            state.isTutorialActive = true;
+            await showPage('apt-fd-page');
+            stopAllAudio();
+            startGlobalAudio();
 
-                // Go to Apartment Front Door
-                await showPage('apt-fd-page');
+            const handle = document.getElementById('apt-fd-handle-hitbox');
+            if (handle) handle.classList.add('hidden');
 
-                stopAllAudio();
-                startGlobalAudio();
-
-                const handle = document.getElementById('apt-fd-handle-hitbox');
-                if (handle) handle.classList.add('hidden');
-
-                await delay(20);
-                await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
-                runTutorial();
-            });
+            await delay(50);
+            await spawnThemedBox("It's been a long day of class. I'm glad to be back at my apartment.", "notification-top");
+            runTutorial();
         }
     };
 
@@ -3658,6 +3783,7 @@ function init() {
 
     //collect pw book
     document.getElementById('pr-pw-hole-book-hitbox').onclick = () => {
+        triggerSound('grabBook');
         state.hasPwBook = true;
         const keySlot = document.getElementById('inv-pw-book')
         if (keySlot) {
@@ -3757,6 +3883,7 @@ function init() {
     document.getElementById('bh-sh-cr-door-closed-hitbox').onclick = () => showPage('bh-sh-cr-door-handle-page');
     document.getElementById('bh-sh-cr-door-handle-handle-hitbox').onclick = async () => {
         if (state.crUnlocked) {
+            triggerSound('openDoor');
             state.crDoorOpen = true;
             showPage('sh-cr-door-open-page');
         } else {
@@ -3980,10 +4107,14 @@ function init() {
     document.getElementById('mh-cw-door-plate-hitbox').onclick = async () => {
         await spawnThemedBox("What is this plate for ?", "notification-top");
     }
-    document.getElementById('mh-cw-door-hitbox').onclick = () => showPage('cw-entrance-page');
+    document.getElementById('mh-cw-door-hitbox').onclick = () => {
+        triggerSound('cwDoor');
+        showPage('cw-entrance-page');
+    }
     document.getElementById('cw-stairs-door-hitbox').onclick = () => {showPage('mh-cend-left-endc-page')} //fixme add page to show here goign up the stairs,
     //fixme then add a page going through the door into the hallway
     document.getElementById('cw-bath-door-hitbox').onclick = async () => {
+        triggerSound('openBathDoor');
         showPage('bath-page');
     }
     document.getElementById('bath-sink-hitbox').onclick = () => showPage('bath-sink-page');
@@ -4059,6 +4190,7 @@ function init() {
         update();
     }
     document.getElementById('print-paper-hitbox').onclick = async () => {
+        triggerSound('floppyPaper');
         openOverlay("print-paper", "cw-images/cw-sideHall-images/print-paper-item.png");
         await delay(20);
         await spawnThemedBox("A... fax to the president of the US ? from 1963 ?!? what's this about ?", "notification-top");
@@ -4239,6 +4371,7 @@ function init() {
     }
     //fixme add feedback for after they took the lor book -- should be connected with finding a second book, but the book doesn't look of any interest or smthn like that
     document.getElementById('li-tolkein-hitbox').onclick = async () => {
+        triggerSound('grabBook');
         state.hasLorBook = true;
         const keySlot = document.getElementById('inv-lor-book')
         if (keySlot) {
@@ -4433,6 +4566,7 @@ function init() {
     }
     document.getElementById('li-rw-books-birb-hitbox').onclick = () => showPage('li-birb-book-page');
     document.getElementById('li-birb-book-hitbox').onclick = async () => {
+        triggerSound('grabBook');
         state.hasSherlockBook = true;
         const keySlot = document.getElementById('inv-sh-book');
         if (keySlot) {
@@ -4520,6 +4654,7 @@ function init() {
     // ---------- LIBRARY STORAGE SECTION -----------//
     document.getElementById('ls-lo-entrance-hitbox').onclick = () => showPage('lo-main-right-page');
     document.getElementById('ls-archives-sk-hitbox').onclick = () => showPage('ls-archives-sk-2-page');
+    //fixme add the note overlay, and add sound effect floppyPaper
     document.getElementById('ls-archives-note-hitbox').onclick = () => showPage('ls-archives-note-page');
     document.getElementById('ls-archives-mcduffie-hitbox').onclick = () => showPage('ls-mcduffie-1993-page');
     document.getElementById('ls-mcduffie-1993-hitbox').onclick = async () => {
@@ -4541,6 +4676,7 @@ function init() {
     document.getElementById('ls-in-10-sk-nd-sk-hitbox').onclick = () => showPage('ls-10-sk-nd-page');
     document.getElementById('ls-in-10-sk-page').onclick = () => showPage('ls-10-sk-page');
     document.getElementById('ls-10-sk-nd-note-hitbox').onclick = () => {
+        triggerSound('floppyPaper');
         state.hasLs10note = true;
         const keySlot = document.getElementById('inv-ls-note')
         if (keySlot) {
@@ -4586,7 +4722,7 @@ function init() {
         if (state.loMonitorUnlocked) {
             await spawnThemedBox("A flash drive ! I wonder if I can use this on the monitor in the office", "notification-top"); //fixme maybe change this message
         } else {
-            await spawnThemedBox("A flash drive...");
+            await spawnThemedBox("A flash drive...", 'notification-top');
         }
     }
     document.getElementById('ls-sk-note-hitbox').onclick = () => {
@@ -5177,7 +5313,7 @@ function saveGame(currentPageId) {
         state: { ...state }, // This copies all your booleans/flags
         currentPage: currentPageId,
         inventory: visibleItems
-    }; //fixme it's not saving the wordle input/password
+    }; //fixme it's not saving the wordle input/password (?)
 
     try {
         localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
@@ -5254,19 +5390,40 @@ function clearSave() {
     localStorage.removeItem(SAVE_KEY);
 
     // 2. Reset the 'state' object variables
-    // Because state is a 'const', we use Object.assign to keep the same object
-    // but update all its internal values to the initial ones.
     Object.assign(state, getInitialState());
 
-    // 3. Hide all real inventory items
+    // 3. UI RESET: Close all drawers and boxes
+
+    // --- HINT BOX ---
+    // Matches your toggle('hint-open')
+    const hintBox = document.getElementById('hint-box');
+    if (hintBox) {
+        hintBox.classList.remove('hint-open');
+    }
+
+    // --- INVENTORY PANEL ---
+    // Matches your inventoryTab.onclick targeting 'inventory-panel'
+    const invPanel = document.getElementById('inventory-panel');
+    if (invPanel) {
+        invPanel.classList.remove('inventory-open');
+    }
+
+    // --- MENU ---
+    // Make sure the main menu overlay hides so you can see the apartment
+    const menuOverlay = document.getElementById('main-menu-overlay');
+    if (menuOverlay) {
+        menuOverlay.classList.add('hidden');
+    }
+
+    // 4. Hide all real inventory items
     const items = document.querySelectorAll('.inv-item:not(.empty)');
     items.forEach(item => item.classList.add('hidden'));
 
-    // 4. Reset the empty slots to show a full 6 (or 8) boxes
+    // 5. Reset the empty slots to show a full 6 boxes
     refreshInventorySlots();
 
-    console.log("Game state and Save file have been reset.");
-} //fixme need to fix bug w inventory drawer
+    console.log("Game reset: Inventory, Hints, and Menu forced shut.");
+}//fixme need to fix bug w inventory drawer
 
 function getInitialState() {
     return {
