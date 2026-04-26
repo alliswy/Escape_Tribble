@@ -62,40 +62,40 @@
         </div>
 
         <div class="info-body">
-<!--            <div id="credits" class="info-tab-content">-->
+            <div id="credits" class="info-tab-content">
 
-<!--                <h3 style="color: #ffcc00; font-size: 2.8rem; margin-bottom: 5px;">Primary Developer</h3>-->
-<!--                <p style="color: #fff1aa; font-size: 2.2rem; margin: 0;"><strong>Alli Swyt</strong></p>-->
-<!--                <p style="color: #e6b800; font-size: 1.1rem; margin-bottom: 20px; line-height: 1.4;">-->
-<!--                    Original Concept, Research & Narrative, Lead Programming, <br>-->
-<!--                    Systems Architecture, & Full Game Implementation-->
-<!--                </p>-->
+                <h3 style="color: #ffcc00; font-size: 2.8rem; margin-bottom: 5px;">Primary Developer</h3>
+                <p style="color: #fff1aa; font-size: 2.2rem; margin: 0;"><strong>Alli Swyt</strong></p>
+                <p style="color: #e6b800; font-size: 1.1rem; margin-bottom: 20px; line-height: 1.4;">
+                    Original Concept, Research & Narrative, Lead Programming, <br>
+                    Systems Architecture, & Full Game Implementation
+                </p>
 
-<!--                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.5;">-->
+                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.5;">
 
-<!--                <h3 style="color: #ffcc00; font-size: 1.4rem; margin-top: 15px;">Secondary Collaborator</h3>-->
-<!--                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 15px;">-->
-<!--                    <strong>Stephen Neill:</strong> wire puzzle design; initial menu/button frameworks and color theme; initial map logic; save system setup.-->
-<!--                </p>-->
+                <h3 style="color: #ffcc00; font-size: 1.4rem; margin-top: 15px;">Secondary Collaborator</h3>
+                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 15px;">
+                    <strong>Stephen Neill:</strong> wire puzzle design; initial menu/button frameworks and color theme; initial map logic; save system setup.
+                </p>
 
-<!--                <h3 style="color: #ffcc00; font-size: 1.4rem;">Production & Talent</h3>-->
+                <h3 style="color: #ffcc00; font-size: 1.4rem;">Production & Talent</h3>
 
-<!--                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 8px;">-->
-<!--                    <strong>Avelina Axonov:</strong> Featured Actor (She's the "Ghost")-->
-<!--                </p>-->
+                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 8px;">
+                    <strong>Avelina Axonov:</strong> Featured Actor (She's the "Ghost")
+                </p>
 
-<!--                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 8px;">-->
-<!--                    <strong>Alicia Lemar:</strong> Production Support & Location Access-->
-<!--                </p>-->
+                <p style="color: #fff1aa; font-size: 1.1rem; margin-bottom: 8px;">
+                    <strong>Alicia Lemar:</strong> Production Support & Location Access
+                </p>
 
-<!--                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.3; width: 50%; margin: 20px 0 10px 0;">-->
+                <hr class="menu-divider" style="border-color: #ffcc00; opacity: 0.3; width: 50%; margin: 20px 0 10px 0;">
 
-<!--                <h3 style="color: #ffcc00; font-size: 1.3rem;">Special Thanks</h3>-->
-<!--                <p style="color: #e6b800; font-size: 1rem;">-->
-<!--                    To everyone who supported the research and development of this project.-->
-<!--                </p>-->
+                <h3 style="color: #ffcc00; font-size: 1.3rem;">Special Thanks</h3>
+                <p style="color: #e6b800; font-size: 1rem;">
+                    To everyone who supported the research and development of this project.
+                </p>
 
-<!--            </div>-->
+            </div>
 
             <div id="sources" class="info-tab-content hidden">
                 <h3>Research & Clippings</h3>
@@ -721,7 +721,8 @@
 
         <div id="bh-end-page" class="fit hidden">
             <img loading="lazy" id="bh-end" src="bh-images/bh-end.jpeg" alt="Game Room">
-
+            <div id="bh-bath-hitbox" class="hitbox"></div>
+            <div id="bh-exit-door-hitbox" class="hitbox"></div>
         </div>
 
         <div id="bh-sh-entrance-page" class="fit hidden">
@@ -1080,6 +1081,7 @@
 
         <div id="cw-left-eh-page" class="fit hidden">
             <img loading="lazy" id="cw-left-eh" src="cw-images/cw-left-progression/cw-left-eh.jpeg" alt="Game Room">
+            <div id="cw-aw-return-hitbox" class="hitbox"></div>
         </div>
 
         <div id="cw-left-1-page" class="fit hidden">
@@ -1745,6 +1747,17 @@
         <div id="lo-monitor-drive-page" class="fit hidden">
             <img loading="lazy" id="lo-monitor-drive" src="lo-images/lo-monitor-drive.jpeg" alt="Game Room">
             <div id="lo-monitor-drive-monitor-hitbox" class="hitbox" onclick="openTerminal()"></div>
+
+            <!-- Full monitor camera feed overlay -->
+            <div id="monitor-hatch-feed" class="hidden">
+                <img loading="lazy" id="monitor-hatch-feed-image" src="tu-images/tu-stairs-ho.jpeg" alt="Hatch camera feed">
+
+                <!-- Clickable area on the feed -->
+                <div id="monitor-hatch-feed-hitbox" class="hitbox"></div>
+
+                <!-- X to close feed -->
+                <button id="monitor-hatch-feed-close" type="button" aria-label="Close hatch feed">X</button>
+            </div>
         </div>
 
 
@@ -2165,7 +2178,7 @@
 
     <!-- PRINTER CALIBRATION GAME ----->
     <div id="printer-sync-minigame" class="hidden">
-        <div class="ui-text">SYSTEM SYNC: LEVEL <span id="level-num">1</span>/6</div>
+        <div class="ui-text">SYSTEM SYNC: LEVEL <span id="level-num">1</span>/5</div>
 
         <div id="printer-monitor-area" onclick="checkSync()">
             <div id="static-target"></div>
@@ -2259,6 +2272,88 @@
         </div>
     </div>
 
+    <div id="end-progression-page" class="hidden" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+            <video id="end-video" style="width: 100%; height: 100%; object-fit: cover;" autoplay>
+                <source src="tu-images/end-progression.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+
+
+    <div id="thanks-page" class="hidden fade-screen">
+
+        <!-- HEADER -->
+        <div class="info-header-bar">
+            <h2 class="info-title">THANKS FOR PLAYING</h2>
+        </div>
+
+        <!-- BODY -->
+        <div class="info-body">
+
+            <div class="thanks-content">
+
+                <p>I hope you enjoyed this fun way of remembering Tribble Hall!</p>
+
+                <hr>
+
+                <h2>CREDITS</h2>
+
+                <h3>Primary Developer</h3>
+                <p><strong>Alli Swyt</strong></p>
+                <p>
+                    Original Concept, Research, Narrative, Programming,
+                    Systems Architecture, Full Game Implementation
+                </p>
+
+                <hr>
+
+                <h3>Secondary Collaborator</h3>
+                <p>
+                    <strong>Stephen Neill</strong> — wire puzzle design,
+                    UI frameworks, save system setup
+                </p>
+
+                <h3>Production & Talent</h3>
+
+                <p>
+                    <strong>Avelina Axonov</strong> — Featured Actor (The Ghost)
+                </p>
+
+                <p>
+                    <strong>Alicia Lemar</strong> — Production Support &
+                    Location Access
+                </p>
+
+                <hr>
+
+                <h3>Special Thanks</h3>
+                <p>
+                    To everyone who supported the research and development
+                    of this project.
+                </p>
+
+                <!-- BUTTON -->
+                <button class="menu-btn" onclick="returnToMainMenu()">
+                    RETURN TO MAIN MENU
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 </body>

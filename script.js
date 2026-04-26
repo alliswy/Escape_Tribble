@@ -149,6 +149,8 @@ const state = {
     currentPage: "",
     prevPage: "",
     filledBottle: false,
+
+    gameCompleted: false,
 }
 
 // ----- 2. SELECTORS -----
@@ -258,6 +260,7 @@ const sfx = {
 
     //etc sounds
     driveNotif: {audio: new Audio('sounds/drive-notif.mp3'), baseVol: 0.5},
+    paperTowel: {audio: new Audio('sounds/paper-towel.mp3'), baseVol: 0.5},
 }; //fixme add more sounds
 
 
@@ -450,7 +453,8 @@ const pageSounds = {
     bones: createSoundClip(sfx.bones, 1, false, 1, 3),
 
     //cw sounds
-    openBathDoor: createSoundClip(sfx.doorOpenClose, 0.5, false,0, 2,)
+    openBathDoor: createSoundClip(sfx.doorOpenClose, 0.5, false,0, 2,),
+    paperTowel: createSoundClip(sfx.paperTowel, 0.5, false, 0,13.6)
 };
 
 let activeGlobalLoop = null;
@@ -931,7 +935,7 @@ const roomLeads = {
     'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
     'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
     'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: 'cw-right-snh-page'},
-    'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page', left: 'cw-stairs-entrance-page'},
+    'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page', right: 'cw-eh-entrance-page'},
     'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page', left: 'cw-oh2-exit-page'},
     'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', left: 'cw-oh1-entrance-page'},
 
@@ -1128,7 +1132,7 @@ const roomLeads = {
 
 
     //tutorial pages
-    'apt-fd-handle-page':   {back: 'apt-fd-page'},
+    // 'apt-fd-handle-page':   {back: 'apt-fd-page'},
     //'apt-fd-open-page':     {back: 'apt-fd-page'},
     'apt-main-water-page':  {forward: 'apt-table-water-page'},
     'apt-table-water-page': {back: 'apt-main-water-page', left: 'apt-ki-entr-page', right: 'apt-bed-page'},
@@ -1355,8 +1359,15 @@ async function triggerNotification(pageId) {
             if (!state.notificationsSeen['ls-archives-sk-2-init']) {
                 await delay(20);
                 await spawnThemedBox("The fact that this skeleton keeps moving around is freaking me out", 'notification-top');
-                await delay(20);
                 await spawnThemedBox('At least it seems that this ghost is trying to help me', 'notification-top');
+                state.notificationsSeen['ls-archives-sk-2-init']=true;
+            }
+        } break;
+        case 'print-paper-page': {
+            if (!state.notificationsSeen['fax-init']) {
+                await delay(20);
+                await spawnThemedBox("what's this?", "notification-top"); //fixme test this
+                state.notificationsSeen['fax-init']=true;
             }
         } break;
 
@@ -1410,6 +1421,50 @@ function triggerFlicker(elementId) {
     setTimeout(() => {
         el.classList.remove('flicker-dark');
     }, 600);
+}
+
+let isMonitorFeedLocked = false;
+
+function lockMonitorFeedUI(lock) {
+    isMonitorFeedLocked = lock;
+
+    const driveMonitorHitbox = document.getElementById('lo-monitor-drive-monitor-hitbox');
+
+    if (lock) {
+        // While feed is open, no nav + no terminal re-open hitbox
+        arrows.back?.classList.add('hidden');
+        arrows.forward?.classList.add('hidden');
+        arrows.left?.classList.add('hidden');
+        arrows.right?.classList.add('hidden');
+        driveMonitorHitbox?.classList.add('hidden');
+        return;
+    }
+
+    // On unlock, restore arrows based on current page routes
+    const currentPaths = roomLeads[state.currentPage] || {};
+
+    arrows.back?.classList.toggle('hidden', !currentPaths.back);
+    arrows.forward?.classList.toggle('hidden', !currentPaths.forward);
+    arrows.left?.classList.toggle('hidden', !currentPaths.left);
+    arrows.right?.classList.toggle('hidden', !currentPaths.right);
+
+    // Re-enable the monitor hitbox after closing feed
+    driveMonitorHitbox?.classList.remove('hidden');
+}
+
+function closeMonitorHatchFeed() {
+    const feed = document.getElementById('monitor-hatch-feed');
+    if (feed) feed.classList.add('hidden');
+    lockMonitorFeedUI(false);
+}
+
+function showMonitorHatchFeedPersistent() {
+    const feed = document.getElementById('monitor-hatch-feed');
+    if (!feed) return;
+
+    lockMonitorFeedUI(true);
+    feed.classList.remove('hidden');
+    triggerFlicker('monitor-hatch-feed'); // flicker in once, then stays
 }
 
 // ---------- HINT SYSTEM LOGIC ------------
@@ -2204,9 +2259,15 @@ const prompt = document.getElementById('pin-prompt');
 // Called when clicking the monitor hitbox
 async function openTerminal() {
     termPage.classList.remove('hidden');
-    //document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
 
     if (state.usedDrive) {
+        // If hatch event already happened, reopen the hatch camera feed instead of auth UI
+        if (state.hatchOpen) {
+            termPage.classList.add('hidden');
+            showMonitorHatchFeedPersistent();
+            return;
+        }
+
         document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
@@ -2218,7 +2279,6 @@ async function openTerminal() {
 
         document.getElementById('final-auth-section').classList.remove('hidden');
         setTimeout(() => document.getElementById('final-terminal-input').focus(), 10);
-        // Don't run the rest of the function
     } else if (state.loMonitorUnlocked) {
         document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
         document.getElementById('lo-monitor-hitbox').classList.add('hidden');
@@ -2235,15 +2295,13 @@ async function openTerminal() {
         //  Disable typing immediately
         termInput.disabled = true;
 
-        if (!state.notificationsSeen['lo-monitor-4dig-hint']) {
-            state.notificationsSeen['lo-monitor-4dig-hint'] = true;
-
-            await spawnThemedBox("I need another code, 4 digits this time...", 'notification-top');
-            await delay(20);
-            await spawnThemedBox("Wait--I've found 4 different shapes, and the read sign in the library has the same colors as those shapes", 'notification-top');
-            await delay(20);
-            await spawnThemedBox("I wonder if the shapes, the colors, and this code are related...", 'notification-top');
-        }
+        // if (!state.notificationsSeen['lo-monitor-4dig-hint']) {
+        //     state.notificationsSeen['lo-monitor-4dig-hint'] = true;
+        //
+        //     await spawnThemedBox("I need another code, 4 digits this time...", 'notification-top');
+        //     await spawnThemedBox("Wait--I've found 4 different shapes, and the read sign in the library has the same colors as those shapes", 'notification-top');
+        //     await spawnThemedBox("I wonder if the shapes, the colors, and this code are related...", 'notification-top');
+        // } fixme maybe include a hint here but the current hint is too much and annoying
 
         // Re-enable typing AFTER messages finish
         termInput.disabled = false;
@@ -2372,23 +2430,27 @@ finalInput.addEventListener('input', (e) => {
 finalInput.addEventListener('keyup', async (e) => {
     if (e.key === 'Enter') {
         if (finalInput.value === "97939394") {
-            console.log("PIN Correct! Starting flicker..."); // Debugging check
+            console.log("PIN Correct! Starting flicker...");
             finalInput.disabled = true;
             finalError.style.color = "#00ff41";
             finalError.innerText = "ACCESS GRANTED. DECRYPTING...";
 
             await delay(500);
             playHatchSequence();
+            state.hatchOpen = true;
+
             setTimeout(() => {
                 triggerSound('lightFlicker');
-                // Flickering the page container
                 triggerFlicker('lo-monitor-drive-page');
-
-                // ALSO flicker the terminal-login-page so the UI glitches too
                 triggerFlicker('terminal-login-page');
+
+                // Close terminal so player sees monitor screen
+                termPage.classList.add('hidden');
+
+                // Show feed and lock nav until user closes it
+                showMonitorHatchFeedPersistent();
             }, 700);
 
-            state.hatchOpen = true;
             await delay(4000);
             await spawnThemedBox("What the heck was that ???", "notification-top");
         } else {
@@ -2399,6 +2461,7 @@ finalInput.addEventListener('keyup', async (e) => {
 });
 
 function resetTerminalUI() {
+    closeMonitorHatchFeed();
     // Hide everything
     termPage.classList.add('hidden');
 
@@ -2441,7 +2504,7 @@ function resetTerminalUI() {
 // ---- PRINTER SYNC MINIGAME ----
 // --- Settings ---
 const CONSTANT_SPEED = 3.0;
-const totalLevels = 6; // UPDATED TO 6
+const totalLevels = 5; // UPDATED TO 6
 
 // --- State ---
 let currentLevel = 1;
@@ -2456,7 +2519,10 @@ const monitor = document.getElementById('printer-monitor-area');
 const bar = document.getElementById('scanner-bar');
 
 //fixme change so that it's only 5 levels and maybe fix syncing issue (?)
+//fixme bug if you click back on the screen again after completing it it restarts
 function generateRandomTarget() {
+    document.getElementById('msg').innerText = "CALIBRATING OPTICS...";
+    document.getElementById('msg2').innerText = "Click when the white is within the green zone to calibrate";
     // Scaling for 6 levels:
     // Level 1: 22% | Level 6: 7%
     const newWidth = 25 - (currentLevel * 3);
@@ -2510,6 +2576,7 @@ function checkSync() {
     const targetEnd = currentTarget.pos + currentTarget.width;
 
     if (barMidPercent >= targetStart && barMidPercent <= targetEnd) {
+        triggerSound('accessBeep')
         currentLevel++;
 
         if (currentLevel > totalLevels) {
@@ -2519,9 +2586,10 @@ function checkSync() {
             flash("white");
         }
     } else {
+        triggerSound('errorBeep');
         reset();
     }
-}
+} //fixme test the sounds here
 
 function reset() {
     currentLevel = 1;
@@ -3112,35 +3180,25 @@ function fadeTransition(callback) {
 
     return new Promise(resolve => {
 
-        const fadeTime = 1200; // 👈 slower fade (was ~600)
+        const fadeTime = 1200;
         const holdTime = 300;
 
-        // STEP 1: fade to black
         fade.style.pointerEvents = "all";
         fade.style.transition = `opacity ${fadeTime}ms ease`;
         fade.style.opacity = "1";
 
         setTimeout(async () => {
 
-            // STEP 2: swap content while fully black
             await callback();
 
-            // small buffer so DOM paints cleanly
             setTimeout(() => {
-
-                // STEP 3: fade back in
-                setTimeout(() => { fade.style.opacity = "0"; }, holdTime + 100);
-
-                setTimeout(() => {
-                    fade.style.opacity = "0";
-                }, holdTime + 100);
-
-                setTimeout(() => {
-                    fade.style.pointerEvents = "none";
-                    resolve();
-                }, fadeTime);
-
+                fade.style.opacity = "0";
             }, holdTime);
+
+            setTimeout(() => {
+                fade.style.pointerEvents = "none";
+                resolve();
+            }, fadeTime + holdTime);
 
         }, fadeTime);
     });
@@ -3301,6 +3359,61 @@ async function showThemedConfirm(message, subMessage = "") {
 
 
 
+//-------- final exit video --------//
+function showEndVideo() {
+    const page = document.getElementById('end-progression-page');
+    const video = document.getElementById('end-video');
+
+    page.classList.remove('hidden');
+    video.currentTime = 0;
+    video.play();
+
+    document.body.style.pointerEvents = "none";
+
+    video.onended = async () => {
+        await fadeTransition(async () => {
+            page.classList.add('hidden');
+            document.getElementById('thanks-page').classList.remove('hidden');
+            state.gameCompleted = true;
+
+            // RESET INTERACTION HERE
+            document.body.style.pointerEvents = "auto";
+        });
+
+        // Also keep it here as a safety fallback
+        document.body.style.pointerEvents = "auto";
+    };
+}
+
+async function returnToMainMenu() {
+
+    if (typeof saveGame === "function") {
+        saveGame(state.currentPage);
+        console.log("Game saved manually before quitting.");
+    }
+
+    stopAllAudio();
+    clearSave();
+
+    document.body.classList.add('menu-mode');
+
+    play.classList.add('hidden');
+
+    document.getElementById('thanks-page')?.classList.add('hidden');
+    document.getElementById('end-progression-page')?.classList.add('hidden');
+    document.getElementById('end-video-page')?.classList.add('hidden');
+
+    // Hide the persistent HUD elements
+    document.getElementById('inventory-drawer').classList.add('hidden');
+    document.getElementById('hamburger-menu').classList.add('hidden');
+    document.getElementById('hint-btn').classList.add('hidden');
+    document.getElementById('hint-box').classList.add('hidden');
+
+    menu.classList.remove('hidden');
+    runMenuTypewriter();
+}
+
+
 // ----- INITIALIZE EVENT LISTENERS -----
 
 function init() {
@@ -3343,17 +3456,18 @@ function init() {
         };
 
         document.getElementById('cancel-start-btn').onclick = () => {
+            clearSave();
             showPage('menu-screen');
         };
     });
 
 
     loadSaveButton.onclick = async () => {
+        // MOVE THIS TO THE TOP
         const raw = localStorage.getItem(SAVE_KEY);
-
         if (!raw) {
             alert("No save file found!");
-            return;
+            return; // Exit immediately so no UI or assets are touched
         }
 
         // --- 1. PRE-LOAD ASSETS ---
@@ -3634,7 +3748,6 @@ function init() {
         if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
             closeSecurityTerminal();
         }
-        resetWirePuzzle()
         // 1. Initial confirmation
         const confirmRestart = await showThemedConfirm("Are you sure you want to restart?", "All current progress will be lost.");
         if (!confirmRestart) return;
@@ -3661,19 +3774,18 @@ function init() {
         clearSave();
         prepareGameUI();
 
+
         if (wantToSkip) {
             state.isTutorialActive = false;
             await showPage('mh-bd-main-page');
             stopAllAudio();
             startGlobalAudio();
-            resetTerminalUI();
         } else {
             state.isTutorialActive = true;
             await showPage('apt-fd-page');
             stopAllAudio();
             startGlobalAudio();
-            resetTerminalUI();
-            resetLeftMonitorUI();
+
 
             const handle = document.getElementById('apt-fd-handle-hitbox');
             if (handle) handle.classList.add('hidden');
@@ -3979,6 +4091,7 @@ function init() {
     document.getElementById('ki-main-pt-noCode-hitbox').onclick = () => showPage('ki-pt-noCode-page');
     document.getElementById('ki-pt-noCode-hitbox').onclick = () => {
         state.foundPtCode = true;
+        triggerSound('paperTowel');
         showPage('ki-pt-code-page');
     }
     document.getElementById('ki-pt-code-hitbox').onclick= async () => {
@@ -3989,6 +4102,13 @@ function init() {
 
 
     // ----- CREEPY ROOM SECTION -----
+    document.getElementById('bh-bath-hitbox').onclick = async () => {
+        await spawnThemedBox("There's a bad smell coming from this bathroom. I don't want to go in there.", 'notification-top');
+    }
+    document.getElementById('bh-exit-door-hitbox').onclick = async () => {
+        await spawnThemedBox("Oh wow. It looks like this hallway has been buried underground", 'notification-top');
+    }
+
     document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('bh-sh-cr-door-closed-page');
     document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
 
@@ -4205,6 +4325,7 @@ function init() {
 
 
     // ------- C-WING SECTION -----
+    document.getElementById('cw-aw-return-hitbox').onclick = () => showPage('cw-stairs-entrance-page');
     document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('stairs-rubble-page'); //fixme add door sound effect
     document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async () => {
         await spawnThemedBox("What happened here ? It looks like the upper floors have been demolished.", "notification-top");
@@ -4216,7 +4337,10 @@ function init() {
         triggerSound('steps'); //fixme only on way down rn, and weird if you click quickly
         showPage('mh-cw-door-page');
     }
-    document.getElementById('mh-cw-door-plate-hitbox').onclick = async () => {
+    document.getElementById('mh-cw-door-plate-hitbox').onclick = () => {
+        showPage('mh-cw-door-plate-page');
+    }
+    document.getElementById('mh-cw-plate-hitbox').onclick = async () => {
         await spawnThemedBox("What is this plate for ?", "notification-top");
     }
     document.getElementById('mh-cw-door-hitbox').onclick = () => {
@@ -4288,8 +4412,6 @@ function init() {
     document.getElementById('printer-hitbox').onclick = () => showPage('print-page');
     document.getElementById('printer-paper-hitbox').onclick = async () => {
         showPage('print-paper-page');
-        await delay(20);
-        await spawnThemedBox("what's this?", "notification-top");
     }
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
@@ -4766,8 +4888,23 @@ function init() {
     document.getElementById('lo-monitor-drive-hitbox').onclick = async () => {
         useDrive();
     }
+    const monitorHatchFeedHitbox = document.getElementById('monitor-hatch-feed-hitbox');
+    if (monitorHatchFeedHitbox) {
+        monitorHatchFeedHitbox.onclick = async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            await spawnThemedBox("Where is this? Maybe I can escape through that hatch.", "notification-top");
+        };
+    }
 
-
+    const monitorHatchFeedClose = document.getElementById('monitor-hatch-feed-close');
+    if (monitorHatchFeedClose) {
+        monitorHatchFeedClose.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMonitorHatchFeed();
+        };
+    }
 
 
     // ---------- LIBRARY STORAGE SECTION -----------//
@@ -4881,6 +5018,16 @@ function init() {
         await spawnThemedBox("I wonder if I can unlock this hatch somehow", "notification-top");
     }
     document.getElementById('mh-li-right-endc-sd-hitbox').onclick = () => showPage('mh-tu-stairs-door-page');
+    document.getElementById('tu-ho-hitbox').onclick = async () => {
+        const confirmExit = await showThemedConfirm(
+            "These tunnels don't look easy to traverse.",
+            "You cannot turn back from here. Are you sure you're done exploring?"
+        );
+
+        if (!confirmExit) return;
+
+        showEndVideo();
+    };
 
 
 
@@ -5517,6 +5664,9 @@ function clearSave() {
     // 1. Remove from localStorage
     localStorage.removeItem(SAVE_KEY);
 
+    resetTerminalUI();
+    resetLeftMonitorUI();
+    resetWirePuzzle()
     // 2. Reset the 'state' object variables
     Object.assign(state, getInitialState());
 
@@ -5549,27 +5699,10 @@ function clearSave() {
 
     // 5. Reset the empty slots to show a full 6 boxes
     refreshInventorySlots();
+    localStorage.removeItem(SAVE_KEY);
 
     console.log("Game reset: Inventory, Hints, and Menu forced shut.");
 }//fixme need to fix bug w inventory drawer
-
-function hardResetAllSystems() {
-
-    // --- STATE RESET ---
-    Object.assign(state, getInitialState());
-
-    // --- OVERLAYS ---
-    document.getElementById('wordle-minigame')?.classList.add('hidden');
-    document.getElementById('security-login-minigame')?.classList.add('hidden');
-    document.getElementById('terminal-login-page')?.classList.add('hidden');
-    document.getElementById('final-auth-section')?.classList.add('hidden');
-
-    // --- SAFETY: kill lingering UI states ---
-    document.getElementById('wordle-minigame').innerHTML = "";
-
-    // --- AUDIO SAFETY (important in your game) ---
-    stopAllAudio?.();
-}
 
 function getInitialState() {
     return {
@@ -5684,6 +5817,8 @@ function getInitialState() {
         currentPage: "",
         prevPage: "",
         filledBottle: false,
+
+        gameCompleted: false,
     };
 }
 
