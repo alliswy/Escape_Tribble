@@ -129,6 +129,7 @@ const state = {
     savedKey: "", //this variable is the password for the left monitor in the camera room
     enteredCode: "",
     correctCode: "3672",
+    cameraAccessed: false,
 
     //library/misc
     movedAnimals: false,
@@ -2161,21 +2162,35 @@ function showSuccessUI() {
 }
 
 function closeWordle() {
-    // 1. Hide the Wordle overlay
-    document.getElementById('wordle-minigame').classList.add('hidden');
+    resetWordle();
 
-    // 2. Bring back the Back Arrow
     const backArrow = document.getElementById('master-back-arrow');
     if (backArrow) {
         backArrow.style.visibility = 'visible';
         backArrow.style.pointerEvents = 'auto';
     }
 
-    // 3. Bring back the Monitor Hitbox
     const hitbox = document.getElementById('camr-mr-off-hitbox');
     if (hitbox) {
         hitbox.style.display = 'block';
     }
+}
+
+function resetWordle() {
+    const container = document.getElementById('wordle-minigame');
+
+    // Hide UI
+    container.classList.add('hidden');
+
+    // Reset state
+    targetWord = "";
+    currentGuessCount = 0;
+    isGameOver = false;
+
+    // Clear DOM completely (IMPORTANT)
+    container.innerHTML = "";
+
+    // Remove any leftover input listeners safely (handled by DOM wipe)
 }
 
 // ------ FINAL PUZZLE INITIAL LOGIN PIN SECTION ----
@@ -2254,6 +2269,13 @@ function closeTerminal() {
         document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
     }
 }
+
+// function fullyCloseTerminal() {
+//     termPage.classList.add('hidden');
+//     document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
+//     document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+//     document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
+// }
 
 termInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
@@ -2632,6 +2654,26 @@ function closeSecurityTerminal() {
     }
 }
 
+//fixme bug -- this UI is not properly being reset. need to fix this later
+function resetLeftMonitorUI() {
+    const container = document.getElementById('security-login-minigame');
+
+    container.innerHTML = `
+        <div id="security-ui-wrapper">
+            <div id="auth-header">SECURITY TERMINAL</div>
+
+            <input id="security-pass-input" type="text" maxlength="4" />
+
+            <div id="security-feedback"></div>
+            <div id="status-text">ENTER PASSWORD</div>
+        </div>
+    `;
+
+    // IMPORTANT: rebind input listener every time
+    const input = document.getElementById('security-pass-input');
+    input.addEventListener('input', () => triggerSound('keyboard'));
+}
+
 // ------ INVENTORY INSPECTION -----
 
 const overlay = document.getElementById("item-overlay");
@@ -2669,6 +2711,13 @@ function openOverlay(itemName, imgSrc) {
     overlay.classList.remove("hidden");
 
     setupOverlayHitboxes(itemName, imgSrc);
+
+    if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
+        closeWordle();
+    }
+    if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
+        closeSecurityTerminal();
+    }
 }
 
 function setupOverlayHitboxes(itemName, imgSrc) {
@@ -3503,6 +3552,12 @@ function init() {
     // View Map button
     document.getElementById('map-btn').onclick = () => {
         hamburgerDropdown.classList.remove('dropdown-open');
+        if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
+            closeWordle();
+        }
+        if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
+            closeSecurityTerminal();
+        }
         document.getElementById('map-screen').classList.remove('hidden');
         drawMap();
     };
@@ -3515,6 +3570,12 @@ function init() {
     // In-game settings button
     document.getElementById('ingame-settings-btn').onclick = () => {
         hamburgerDropdown.classList.remove('dropdown-open');
+        if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
+            closeWordle();
+        }
+        if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
+            closeSecurityTerminal();
+        }
         document.getElementById('ingame-settings').classList.remove('hidden');
 
         // Sync fullscreen checkbox state
@@ -3567,6 +3628,12 @@ function init() {
     });
 
     document.getElementById('restart-btn').onclick = async () => {
+        if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
+            closeWordle();
+        }
+        if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
+            closeSecurityTerminal();
+        }
         // 1. Initial confirmation
         const confirmRestart = await showThemedConfirm("Are you sure you want to restart?", "All current progress will be lost.");
         if (!confirmRestart) return;
@@ -3605,6 +3672,7 @@ function init() {
             stopAllAudio();
             startGlobalAudio();
             resetTerminalUI();
+            resetLeftMonitorUI();
 
             const handle = document.getElementById('apt-fd-handle-hitbox');
             if (handle) handle.classList.add('hidden');
@@ -3617,6 +3685,12 @@ function init() {
 
  //fixme test for bugs
     document.getElementById('quit-btn').onclick = () => {
+        if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
+            closeWordle();
+        }
+        if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
+            closeSecurityTerminal();
+        }
         // 1. SAVE THE STATE BEFORE WIPING THE UI
         if (typeof saveGame === "function") {
             saveGame(state.currentPage);
@@ -3639,14 +3713,6 @@ function init() {
         menu.classList.remove('hidden');
         runMenuTypewriter();
     };
-
-    function enterGameMode() {
-        // Reveal all hidden notifications instantly
-        document.body.classList.remove('menu-mode');
-
-        // Ensure the game container is visible
-        play.classList.remove('hidden');
-    }
 
 
     // ---- HINT BUTTON ----
@@ -5477,6 +5543,24 @@ function clearSave() {
     console.log("Game reset: Inventory, Hints, and Menu forced shut.");
 }//fixme need to fix bug w inventory drawer
 
+function hardResetAllSystems() {
+
+    // --- STATE RESET ---
+    Object.assign(state, getInitialState());
+
+    // --- OVERLAYS ---
+    document.getElementById('wordle-minigame')?.classList.add('hidden');
+    document.getElementById('security-login-minigame')?.classList.add('hidden');
+    document.getElementById('terminal-login-page')?.classList.add('hidden');
+    document.getElementById('final-auth-section')?.classList.add('hidden');
+
+    // --- SAFETY: kill lingering UI states ---
+    document.getElementById('wordle-minigame').innerHTML = "";
+
+    // --- AUDIO SAFETY (important in your game) ---
+    stopAllAudio?.();
+}
+
 function getInitialState() {
     return {
         // Keys & Items
@@ -5569,6 +5653,7 @@ function getInitialState() {
         savedKey: "", // password for left monitor
         enteredCode: "",
         correctCode: "3672",
+        cameraAccessed: false,
 
         // Library / Misc
         movedAnimals: false,
