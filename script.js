@@ -250,7 +250,13 @@ const sfx = {
 
     //cr sounds
     ghostSound: {audio: new Audio('sounds/Ghost-sound.mp3'), baseVol: 0.3},
+    keyboard: {audio: new Audio('sounds/keyboard-click.mp3'), baseVol: 0.75},
 
+    //cw sound
+    printPage: {audio: new Audio('sounds/printPage.m4a'), baseVol: 0.1},
+
+    //etc sounds
+    driveNotif: {audio: new Audio('sounds/drive-notif.mp3'), baseVol: 0.5},
 }; //fixme add more sounds
 
 
@@ -1975,15 +1981,22 @@ function startWordle(onWinCallback) {
     container.classList.remove('hidden');
 
     container.innerHTML = `
-        <div id="wordle-ui-wrapper" style="text-align:center;">
-            <h2 style="color:#4a9eff; font-family:monospace;">SYSTEM OVERRIDE</h2>
-            <div class="wordle-grid" id="wordle-grid" style="display:grid; grid-template-columns:repeat(5, 50px); gap:8px; justify-content:center; margin-bottom:15px;"></div>
-            <input type="text" maxlength="5" id="wordle-input" placeholder="KEYWORD..." autocomplete="off" style="width:250px; padding:10px; background:#1a1a1a; border:1px solid #4a9eff; color:white; text-align:center; font-size:1.2rem;">
-            <div style="margin-top:15px;">
-                <button onclick="closeWordle()" style="background:#333; color:#aaa; border:none; padding:5px 15px; cursor:pointer; font-size:0.8rem;">ABORT</button>
-            </div>
+    <div id="wordle-ui-wrapper" style="text-align:center;">
+        <h2 style="color:#26e600; font-family:monospace; margin: 0;">SYSTEM OVERRIDE</h2>
+        
+        <p style="color:#26e600; font-family:monospace; font-size:0.7rem; margin: 2px 0 8px 0; opacity:0.8;">
+            FIND THE 5-LETTER KEY. [ <span style="color:#538d4e">■</span>:Good <span style="color:#c9b458">■</span>:MOVE <span style="color:#3a3a3c">■</span>:Null ]
+        </p>
+
+        <div class="wordle-grid" id="wordle-grid"></div>
+        
+        <input type="text" maxlength="5" id="wordle-input" placeholder="KEYWORD..." autocomplete="off">
+        
+        <div style="margin-top:10px;">
+            <button onclick="closeWordle()">ABORT</button>
         </div>
-    `;
+    </div>
+`;
 
     const grid = document.getElementById('wordle-grid');
     for(let i = 0; i < 30; i++) {
@@ -1999,8 +2012,14 @@ function startWordle(onWinCallback) {
         grid.appendChild(tile);
     }
 
+    // ... inside startWordle ...
     const input = document.getElementById('wordle-input');
     input.focus();
+
+// Sound triggers here so it catches every single key press from the start
+    input.addEventListener('input', () => {
+        triggerSound('keyboard');
+    });
 
     input.addEventListener('keydown', (e) => {
         if (isGameOver) return;
@@ -2172,7 +2191,7 @@ async function openTerminal() {
     document.getElementById('lo-monitor-hitbox').classList.add('hidden');
 
     if (state.usedDrive) {
-        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
+        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.remove('hidden');
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
         termFeedback.style.display = "none";
@@ -2182,7 +2201,7 @@ async function openTerminal() {
 
         document.getElementById('final-auth-section').classList.remove('hidden');
         setTimeout(() => document.getElementById('final-terminal-input').focus(), 10);
-         // Don't run the rest of the function
+        // Don't run the rest of the function
     } else if (state.loMonitorUnlocked) {
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
@@ -2193,14 +2212,15 @@ async function openTerminal() {
         termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
         document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
     } else {
+        document.getElementById('lo-desk-monitor-hitbox').classList.remove('hidden');
         if (!state.notificationsSeen['lo-monitor-4dig-hint']) {
+            state.notificationsSeen['lo-monitor-4dig-hint'] = true;
             await spawnThemedBox("I need another code, 4 digits this time...", 'notification-top');
             await delay(20);
             await spawnThemedBox("Wait--I've found 4 different shapes, and the read sign in the library has the same colors as those shapes", 'notification-top');
             await delay(20);
             await spawnThemedBox("I wonder if the shapes, the colors, and this code are related...", 'notification-top');
-            state.notificationsSeen['li-monitor-4dig-hint'] = true;
-        } //fixme test this
+        }
         termInput.style.display = "block";
         if (loginHeader) loginHeader.style.display = "block";
         // Reset font size for typing mode
@@ -2276,7 +2296,6 @@ async function useDrive() {
             refreshInventorySlots();
         }
         showPage('lo-monitor-drive-page');
-        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
 
         // 1. Hide EVERYTHING from the previous stage
         termFeedback.style.display = "none";
@@ -2439,6 +2458,7 @@ function win() {
     document.getElementById('msg').innerText = "CALIBRATION SUCCESSFUL";
     document.getElementById('msg2').innerText = "PRINTING...";
     state.isPrinterCalibrated = true;
+    triggerSound('printPage');
 }
 
 function flash(type) {
@@ -2497,6 +2517,11 @@ function checkSecurityPass() {
     const input = document.getElementById('security-pass-input');
     const feedback = document.getElementById('security-feedback');
     const status = document.getElementById('status-text');
+    const securityInput = document.getElementById('security-pass-input');
+
+    securityInput.addEventListener('input', () => {
+        triggerSound('keyboard');
+    });
 
     const userAttempt = input.value.trim().toUpperCase();
     const correctKey = state.savedKey ? state.savedKey.toUpperCase() : "";
@@ -3487,42 +3512,6 @@ function init() {
         document.getElementById('fullscreen-toggle').checked = isFullscreen;
     });
 
-    //Restart button
-    // document.getElementById('restart-btn').onclick = async () => {
-    //     // stopAllAudio();
-    //     // hamburgerDropdown.classList.remove('dropdown-open');
-    //     //
-    //     // // Reset all state flags
-    //     // Object.keys(state).forEach(key => {
-    //     //     state[key] = false;
-    //     // });
-    //     //
-    //     // // Hide all inventory items
-    //     // document.querySelectorAll('.inv-item').forEach(item => {
-    //     //     if (!item.classList.contains('empty')) {
-    //     //         item.classList.add('hidden');
-    //     //     }
-    //     // });
-    //     //
-    //     // // Close hint box if open
-    //     // document.getElementById('hint-box').classList.remove('hint-open');
-    //     //
-    //     // // Reset wire puzzle
-    //     // wirePuzzleInitialized = false;
-    //     // document.getElementById('wire-solved-popup').classList.add('hidden');
-    //     //
-    //     // // Clear save so a fresh game starts next time
-    //     // clearSave();
-    //     //
-    //     // // Return to start of game
-    //     // startGlobalAudio();
-    //     // const currentMusicVol = document.getElementById('music-slider').value;
-    //     // const currentSFXVol = document.getElementById('sfx-slider').value;
-    //     // syncMusicSystems(currentMusicVol);
-    //     // syncSFXSystems(currentSFXVol);
-    //     //
-    //     // showPage('mh-bd-main-page');
-    // };
     document.getElementById('restart-btn').onclick = async () => {
         // 1. Initial confirmation
         const confirmRestart = await showThemedConfirm("Are you sure you want to restart?", "All current progress will be lost.");
@@ -4643,7 +4632,14 @@ function init() {
     document.getElementById('lo-storage-entrance-hitbox').onclick = () => showPage('ls-in-1-page');
     document.getElementById('lo-main-right-desk-hitbox').onclick = () => showPage('lo-desk-page');
     document.getElementById('lo-desk-hitbox').onclick = () => showPage('lo-desk-2-page');
-    document.getElementById('lo-desk-monitor-hitbox').onclick = () => {showPage('lo-monitor-page'); state.foundLoMonitor = true;}
+    document.getElementById('lo-desk-monitor-hitbox').onclick = () => {
+        if (state.usedDrive) {
+            showPage('lo-monitor-drive-page');
+        } else {
+            showPage('lo-monitor-page');
+            state.foundLoMonitor = true;
+        }
+    }
     document.getElementById('lo-monitor-drive-hitbox').onclick = async () => {
         useDrive();
     }

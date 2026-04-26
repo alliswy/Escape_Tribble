@@ -1748,6 +1748,42 @@
         </div>
 
 
+        <div id="terminal-login-page" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); display: flex; justify-content: center; align-items: center; z-index: 100; box-shadow: none !important; border: none !important; outline: none !important;">
+
+            <div id="terminal-window" style="position: relative; width: 450px; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: none !important; box-shadow: none !important; outline: none !important; background: transparent !important;">
+
+                <div id="terminal-close-btn" onclick="closeTerminal()"
+                     style="position: absolute; top: 10px; right: 10px; color: #00ff41; font-family: 'Courier New', monospace; font-size: 20px; cursor: pointer; z-index: 1001; padding: 5px; opacity: 0.6; text-shadow: none !important; box-shadow: none !important;">
+                    [X]
+                </div>
+
+                <div class="terminal-content" style="color: #00ff41; font-family: 'Courier New', monospace; text-align: center; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; box-shadow: none !important; outline: none !important;">
+                    <div id="auth-header" style="margin-bottom: 20px; font-size: 1.5rem; letter-spacing: 3px; font-weight: bold; text-shadow: none !important;">AUTHENTICATION REQUIRED</div>
+
+                    <div id="pin-prompt" style="margin-bottom: 15px; font-size: 1.2rem; opacity: 0.7; text-shadow: none !important;">PLEASE INPUT 4-DIGIT PIN</div>
+
+                    <input type="text" id="terminal-input" maxlength="4" autocomplete="off"
+                           style="background: transparent !important; border: none !important; border-bottom: 3px solid #00ff41 !important; color: #00ff41 !important; font-size: 3.5rem; text-align: center; outline: none !important; width: 220px; letter-spacing: 10px; font-family: inherit; box-shadow: none !important; text-shadow: none !important;">
+
+                    <div id="terminal-feedback" style="margin-top: 25px; height: auto; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; text-shadow: none !important; line-height: 1.6; box-shadow: none !important;"></div>
+
+
+                    <div id="final-auth-section" class="hidden" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                        <div id="final-prompt-text" style="color: #00ff41; font-size: 1.2rem; margin-bottom: 5px; opacity: 0.9;">
+                            EXTERNAL DRIVE DETECTED. <br> ENTER 8-DIGIT AUTHORIZATION KEY:
+                        </div>
+
+                        <div id="final-error-feedback" style="color: #ff4444; font-size: 1rem; height: 20px; margin-bottom: 10px; font-family: inherit; font-weight: bold;"></div>
+
+                        <input type="text" id="final-terminal-input" maxlength="8" autocomplete="off" inputmode="numeric"
+                               style="background: transparent !important; border: none !important; border-bottom: 3px solid #00ff41 !important; color: #00ff41 !important; font-size: 2.5rem; text-align: center; outline: none !important; width: 350px; letter-spacing: 5px; font-family: inherit;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
 
         <!-- LIBRARY STORAGE PAGES; ls = library storage -->
         <div id="ls-in-1-page" class="fit hidden">
@@ -2126,40 +2162,6 @@
         </div>
     </div>
 
-    <div id="terminal-login-page" class="hidden" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0); display: flex; justify-content: center; align-items: center; z-index: 100; box-shadow: none !important; border: none !important; outline: none !important;">
-
-        <div id="terminal-window" style="position: relative; width: 450px; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border: none !important; box-shadow: none !important; outline: none !important; background: transparent !important;">
-
-            <div id="terminal-close-btn" onclick="closeTerminal()"
-                 style="position: absolute; top: 10px; right: 10px; color: #00ff41; font-family: 'Courier New', monospace; font-size: 20px; cursor: pointer; z-index: 1001; padding: 5px; opacity: 0.6; text-shadow: none !important; box-shadow: none !important;">
-                [X]
-            </div>
-
-            <div class="terminal-content" style="color: #00ff41; font-family: 'Courier New', monospace; text-align: center; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; box-shadow: none !important; outline: none !important;">
-                <div id="auth-header" style="margin-bottom: 20px; font-size: 1.5rem; letter-spacing: 3px; font-weight: bold; text-shadow: none !important;">AUTHENTICATION REQUIRED</div>
-
-                <div id="pin-prompt" style="margin-bottom: 15px; font-size: 1.2rem; opacity: 0.7; text-shadow: none !important;">PLEASE INPUT 4-DIGIT PIN</div>
-
-                <input type="text" id="terminal-input" maxlength="4" autocomplete="off"
-                       style="background: transparent !important; border: none !important; border-bottom: 3px solid #00ff41 !important; color: #00ff41 !important; font-size: 3.5rem; text-align: center; outline: none !important; width: 220px; letter-spacing: 10px; font-family: inherit; box-shadow: none !important; text-shadow: none !important;">
-
-                <div id="terminal-feedback" style="margin-top: 25px; height: auto; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; text-shadow: none !important; line-height: 1.6; box-shadow: none !important;"></div>
-
-
-                <div id="final-auth-section" class="hidden" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-                    <div id="final-prompt-text" style="color: #00ff41; font-size: 1.2rem; margin-bottom: 5px; opacity: 0.9;">
-                        EXTERNAL DRIVE DETECTED. <br> ENTER 8-DIGIT AUTHORIZATION KEY:
-                    </div>
-
-                    <div id="final-error-feedback" style="color: #ff4444; font-size: 1rem; height: 20px; margin-bottom: 10px; font-family: inherit; font-weight: bold;"></div>
-
-                    <input type="text" id="final-terminal-input" maxlength="8" autocomplete="off" inputmode="numeric"
-                           style="background: transparent !important; border: none !important; border-bottom: 3px solid #00ff41 !important; color: #00ff41 !important; font-size: 2.5rem; text-align: center; outline: none !important; width: 350px; letter-spacing: 5px; font-family: inherit;">
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- PRINTER CALIBRATION GAME ----->
     <div id="printer-sync-minigame" class="hidden">
@@ -2242,10 +2244,11 @@
         <div class="menu-content">
             <h2>Before You Begin...</h2>
             <div class="recommendations">
+                <p>• <strong>Hardware:</strong> This game is NOT designed for mobile. Please use a computer for the best experience.</p>
                 <p>• This game is best experienced in a <strong>single sitting</strong>. It should take around 1-2 hours to complete.</p>
                 <p>• <strong>Take your time</strong>. It's meant to be played at leisure. Take the time to inspect every corner.</p>
+                <p>• <strong>Turn your sound on</strong>! Some interactions will be confusing without audio.</p>
                 <p>• <strong>WFU Students:</strong> For maximum immersion, find a corner and sit in the <strong>Tribble Hall basement</strong> late in the evening while playing.</p>
-                <p>• <strong>Hardware:</strong> This game is NOT designed for mobile. Please use a computer for the best experience.</p>
             </div>
 
             <h3>Are you ready to play?</h3>
