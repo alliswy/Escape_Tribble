@@ -3281,7 +3281,7 @@ async function loadEverything() {
             };
 
             // fallback timeout (optional but safer)
-            const timeout = setTimeout(() => finish('timeout'), 5000);
+            const timeout = setTimeout(() => finish('timeout'), 15000);
 
             setupFn({
                 success: () => {
