@@ -3634,13 +3634,14 @@ function init() {
         if (!document.getElementById('security-login-minigame').classList.contains('hidden')) {
             closeSecurityTerminal();
         }
+        resetWirePuzzle()
         // 1. Initial confirmation
         const confirmRestart = await showThemedConfirm("Are you sure you want to restart?", "All current progress will be lost.");
         if (!confirmRestart) return;
 
         // 2. Load latest data to ensure state is accurate
         await loadEverything();
-        const saveData = loadGame();
+        //const saveData = loadGame();
 
         // 3. Debugging (Check your console if it doesn't work!)
         const hasFinishedBefore = localStorage.getItem('tutorialCompleted') === 'true';
@@ -5402,6 +5403,15 @@ function setupWireCanvasEvents() {
             drawWireCanvas();
         }
     };
+}
+
+function resetWirePuzzle() {
+    wirePuzzleInitialized = false;
+    wireConnections = {};
+    wireDragging = false;
+    wireDragStart = null;
+    wireDragCurrent = null;
+    wireErrorFlash = false;
 }
 
 // ---- SAVE SYSTEM ----
