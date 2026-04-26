@@ -5056,7 +5056,19 @@ const mapRooms = {
     cr:   { x: 19, y: 35, w: 8, h: 8,  label: 'Creepy Room',   key: 'cr'   },
     camr: { x: 28, y: 40, w: 4,  h: 4,  label: 'Camera Room',   key: 'camr' },
     // C-Wing
-    cw:   { x: 16, y: 11, w: 4,  h: 30, label: 'C-Wing',        key: 'cw'   }, // y moved 5->11
+    cw: {
+        x: 16, y: 11, w: 4, h: 30, label: 'C-Wing', key: 'cw',
+        segments: [
+            // Main vertical hall
+            { x: 16, y: 11, w: 4, h: 30 },
+
+            // Left offshoot: below bathroom, a bit bigger than bathroom
+            { x: 11, y: 23, w: 5, h: 4 },
+
+            // Right offshoot: below snack hall, slightly lower than left offshoot
+            { x: 20, y: 25, w: 5, h: 4 }
+        ]
+    },
     wr:   { x: 13, y: 0,  w: 10, h: 10, label: 'Classroom',     key: 'wr'   }, // resized to 10x10
     bath: { x: 11, y: 19, w: 4,  h: 3,  label: 'Bathroom',      key: 'bath' }, // y moved 13->19
     snh:  { x: 21, y: 15, w: 10, h: 4,  label: 'Office Hall',   key: 'snh'  }, // y moved 9->15
@@ -5213,8 +5225,11 @@ function drawMap() {
     // Calculate canvas size from room extents
     let maxX = 0, maxY = 0;
     Object.values(rooms).forEach(r => {
-        maxX = Math.max(maxX, r.x + r.w);
-        maxY = Math.max(maxY, r.y + r.h);
+        const parts = r.segments || [r];
+        parts.forEach(part => {
+            maxX = Math.max(maxX, part.x + part.w);
+            maxY = Math.max(maxY, part.y + part.h);
+        });
     });
 
     // Set dynamic canvas size with padding
@@ -5279,16 +5294,26 @@ function drawMap() {
         if (!roomDiscovery[room.key]?.()) return;
 
         const isCurrent = room.key === currentMapRoom;
+        const parts = room.segments || [room];
+
+        ctx.fillStyle = isCurrent ? 'rgba(180,120,0,0.8)' : 'rgba(100,20,30,0.85)';
+        ctx.strokeStyle = isCurrent ? '#c9a84c' : 'rgba(180,140,40,0.6)';
+        ctx.lineWidth = isCurrent ? 2 : 1;
+
+        parts.forEach(part => {
+            const px = part.x * CELL;
+            const py = part.y * CELL;
+            const pw = part.w * CELL;
+            const ph = part.h * CELL;
+            ctx.fillRect(px, py, pw, ph);
+            ctx.strokeRect(px, py, pw, ph);
+        });
+
+        // Keep label/dot centered on the main rect (room.x/y/w/h)
         const rx = room.x * CELL;
         const ry = room.y * CELL;
         const rw = room.w * CELL;
         const rh = room.h * CELL;
-
-        ctx.fillStyle = isCurrent ? 'rgba(180,120,0,0.8)' : 'rgba(100,20,30,0.85)';
-        ctx.fillRect(rx, ry, rw, rh);
-        ctx.strokeStyle = isCurrent ? '#c9a84c' : 'rgba(180,140,40,0.6)';
-        ctx.lineWidth = isCurrent ? 2 : 1;
-        ctx.strokeRect(rx, ry, rw, rh);
 
         // Text Wrapping Logic
         const padding = 4;
