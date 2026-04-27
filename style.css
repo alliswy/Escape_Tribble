@@ -1224,9 +1224,13 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* ---- PRINTER SYNC MINIGAME -----*/
 #printer-monitor-area {
-    position: relative; width: 600px; height: 150px;
+    position: relative;
+    width: 92%;
+    height: 34%;
     background: #000; border: 4px solid #00ff00;
-    margin: 50px auto; overflow: hidden; cursor: pointer;
+    margin: 10px auto;
+    overflow: hidden;
+    cursor: pointer;
 }
 #scanner-bar {
     position: absolute; top: 0; left: 0;
@@ -1240,39 +1244,41 @@ input[type="range"]::-webkit-slider-thumb {
 }
 /* Update these specific lines */
 #printer-sync-minigame {
-    /* Standard .fit properties */
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-
-    /* Centering Logic */
+    top: 31%;
+    left: 24%;
+    width: 60%;
+    height: 38%;
     display: flex;
-    flex-direction: column;   /* Stack text, then box, then more text */
-    justify-content: center; /* Center vertically */
-    align-items: center;     /* Center horizontally */
-
-    background: #111;        /* Dark background to make text pop */
-    z-index: 2000;           /* Ensure it's above your room images */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(8, 12, 8, 0.9);
+    border: 2px solid rgba(0, 255, 0, 0.45);
+    box-shadow: inset 0 0 12px rgba(0, 255, 0, 0.25);
+    z-index: 1200;
+    pointer-events: auto;
 }
 
 #printer-sync-minigame .ui-text {
-    margin: 15px 0;          /* Add space between text and the monitor box */
+    margin: 6px 0;
     color: #00ff00;
     font-family: 'Courier New', monospace;
-    font-size: 1.5rem;
+    font-size: 0.9rem;
     text-align: center;
-    width: 100%;             /* Ensure the text has room to center */
+    width: 100%;
 }
-.ui-text { margin-top: 20px; font-size: 1.2rem; }
+.ui-text { margin-top: 6px; font-size: 0.9rem; }
 
 #printer-back-btn {
-    margin-top: 30px;
+    margin-top: 8px;
     background: transparent;
     border: 1px solid #00ff00;
     color: #00ff00;
     font-family: 'Courier New', monospace;
-    padding: 10px 20px;
+    padding: 6px 10px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.75rem;
     transition: all 0.2s ease;
     text-transform: uppercase;
 }

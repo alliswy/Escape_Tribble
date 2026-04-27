@@ -574,6 +574,8 @@ function stopGlobalAudio() {
 function getDesiredGlobalAudioId(pageId = state.currentPage) {
     if (!pageId || SILENT_AUDIO_PAGES.has(pageId)) return null;
 
+    if (pageId === 'printer-sync-minigame') return 'globalAmbience';
+
     if (SPOOKY_AUDIO_PAGES.has(pageId)) return 'spookyMusic';
 
     if (state.isTutorialActive) return 'tutorialAmbience';
@@ -984,7 +986,7 @@ const roomLeads = {
     'mh-tu-stairs-door-page':    {left: 'mh-li-right-endc-page', right: 'mh-li-left-endc-page'},
 
     // Main Hall (Left Side)
-    'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page', back: 'stairs-aw-door-page' },
+    'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page', back: 'stairs-aw-door-page', audio: {back: 'cwDoor'} },
     'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'mh-li-door-closed-page', left: 'mh-tu-stairs-door-page' },
     'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'mh-bd-main-page' },
     'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page', right: 'mh-bh-exit-page'},
@@ -1082,7 +1084,7 @@ const roomLeads = {
     //cw stairs pages
     'stairs-up-page': {back: 'cw-stairs-door-page', forward: 'stairs-aw-door-page', audio: {back: 'cwDoor'}},
     'stairs-aw-door-page': {back: 'stairs-up-page', left: 'stairs-rubble-page', audio: {back: 'steps'}},
-    'stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page',right: 'stairs-aw-door-page'},
+    'stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page', right: 'stairs-aw-door-page', audio: {back: 'cwDoor'}},
     'stairs-page':        {back: 'stairs-rubble-page', forward: 'mh-cw-door-page'},
 
 
@@ -1244,7 +1246,7 @@ const roomLeads = {
 
     //library office pages
     'li-office-door-closed-page':   {back: 'li-2dc-page'}, 
-    'li-office-door-open-page':     {back: 'li-office-door-closed-page'}, 
+    'li-office-door-open-page':     {back: 'li-office-door-closed-page', audio: {back: 'doorClose'}},
     'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
     'lo-main-left-page':            {right: 'lo-main-page'},
     'lo-storage-entrance-page':     {back: 'lo-main-left-page', forward: 'ls-in-1-page' },
@@ -1367,6 +1369,12 @@ async function showPage(pageId, useFade = false) {
         normalizeFitPageScale(target);
         lastPage = target;
 
+        const printerMinigame = document.getElementById('printer-sync-minigame');
+        if (pageId !== 'print-screen-page' && printerMinigame && !printerMinigame.classList.contains('hidden')) {
+            printerMinigame.classList.add('hidden');
+            isRunning = false;
+        }
+
         const currentPaths = roomLeads[pageId] || {};
 
         arrows.back.classList.toggle(
@@ -1484,7 +1492,7 @@ async function triggerNotification(pageId) {
                 state.notificationsSeen['li-lt-sk-paper-init'] = true;
             }
         }break;
-        case 'clr-main-page': {
+        case 'clr-main-id-page': {
             if (!state.notificationsSeen['clr-main-init']) {
                 await delay(20);
                 await spawnThemedBox("That person from the camera feed, they're not here", "notification-top");
@@ -2722,7 +2730,7 @@ function resetTerminalUI() {
 // ---- PRINTER SYNC MINIGAME ----
 // --- Settings ---
 const CONSTANT_SPEED = 3.0;
-const totalLevels = 5; // UPDATED TO 6
+const totalLevels = 5;
 
 // --- State ---
 let currentLevel = 1;
@@ -2837,17 +2845,11 @@ function exitPrinterGame() {
     // 1. Kill the animation loop
     isRunning = false;
 
-    // 2. FORCE hide the minigame specifically
+    // 2. Hide the overlay
     const minigame = document.getElementById('printer-sync-minigame');
     if (minigame) {
         minigame.classList.add('hidden');
     }
-
-    // 3. Now show the room page
-    // Note: Use 'print-screen-page' or 'print-page'—whichever matches your HTML
-    showPage('print-screen-page');
-
-    console.log("Minigame manually hidden and returning to room.");
 }
 
 
@@ -4484,6 +4486,7 @@ function init() {
         }
     }
     document.getElementById('cr-doors-1dc-cam-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
+    document.getElementById('cr-doors-1dc-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
     document.getElementById('cr-1dc-ld-door-closed-hitbox').onclick = async () => {
         if (state.hasClrKey) {
             triggerSound('unlock');
@@ -4495,11 +4498,12 @@ function init() {
                 refreshInventorySlots();
             }
             showPage('clr-main-id-page');
-            await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-top');
+            //await spawnThemedBox('What is that ?? And ID card ? Why is it so large ??', 'notification-top');
         } else {
             await spawnThemedBox('I need to find a key for this door', "notification-top");
         }
     }
+    document.getElementById('cr-doors-ld-hitbox').onclick = () => {state.hasWrId ? showPage('clr-main-page'): showPage('clr-main-id-page') };
     document.getElementById('clr-main-cloth-hitbox').onclick = async () => {
         showPage('clr-cloth-page');
     }
@@ -4521,6 +4525,9 @@ function init() {
 
     //----- CAMERA ROOM SECTION -----
     document.getElementById('cr-doors-1dc-rd-hitbox').onclick = () => {
+        state.isLeftMonitorOn ? showPage('camr-main-ml-on-page') : showPage('camr-main-page');
+    }
+    document.getElementById('cr-doors-rd-hitbox').onclick = () => {
         state.isLeftMonitorOn ? showPage('camr-main-ml-on-page') : showPage('camr-main-page');
     }
     document.getElementById('camr-main-window-hitbox').onclick = () => {
@@ -4613,7 +4620,10 @@ function init() {
 
     // ------- C-WING SECTION -----
     document.getElementById('cw-aw-return-hitbox').onclick = () => showPage('cw-stairs-entrance-page');
-    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => showPage('stairs-rubble-page'); //fixme add door sound effect
+    document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => {
+        triggerSound('cwDoor');
+        showPage('stairs-rubble-page');
+    }
     document.getElementById('mh-cw-stairs-rubble-hitbox').onclick = async () => {
         await spawnThemedBox("What happened here ? It looks like the upper floors have been demolished.", "notification-top");
     }
@@ -4621,7 +4631,7 @@ function init() {
         showPage('stairs-page');
     }
     document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => {
-        triggerSound('steps'); //fixme only on way down rn, and weird if you click quickly
+        triggerSound('steps');
         showPage('mh-cw-door-page');
     }
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => {
@@ -4639,7 +4649,10 @@ function init() {
         showPage('stairs-up-page');
     } //fixme add page to show here goign up the stairs,
     //fixme then add a page going through the door into the hallway
-    document.getElementById('stairs-aw-door-hitbox').onclick = () => showPage('mh-cend-left-endc-page');
+    document.getElementById('stairs-aw-door-hitbox').onclick = () => {
+        triggerSound('cwDoor');
+        showPage('mh-cend-left-endc-page');
+    };
     document.getElementById('cw-bath-door-hitbox').onclick = async () => {
         triggerSound('openBathDoor');
         showPage('bath-page');
@@ -4706,7 +4719,9 @@ function init() {
     }
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
     document.getElementById('print-screen-2-hitbox').onclick = () => {
-        showPage('printer-sync-minigame');
+        const minigame = document.getElementById('printer-sync-minigame');
+        if (minigame) minigame.classList.remove('hidden');
+
         // 3. Reset the state
         currentLevel = 1;
         isRunning = true;
@@ -4717,8 +4732,10 @@ function init() {
     document.getElementById('print-paper-hitbox').onclick = async () => {
         triggerSound('floppyPaper');
         openOverlay("print-paper", "cw-images/cw-sideHall-images/print-paper-item.png");
-        await delay(20);
-        await spawnThemedBox("A... fax to the president of the US ? from 1963 ?!? what's this about ?", "notification-top");
+        if (!state.notificationsSeen['fax-inspect-init']) {
+            state.notificationsSeen['fax-inspect-init'] = true;
+            await spawnThemedBox("A... fax to the president of the US ? from 1963 ?!? what's this about ?", "notification-top");
+        }
     };
     document.getElementById('cw-right-print-room-hitbox').onclick = () => {state.isPrinterCalibrated ? showPage('print-main-paper-page') : showPage('print-main-page')};
 
@@ -5190,7 +5207,7 @@ function init() {
                 keySlot.classList.add('hidden');
                 refreshInventorySlots();
             }
-            triggerSound('openDoor');
+            triggerSound('doorOpen');
             showPage('li-office-door-open-page');
         } else {
             await spawnThemedBox("I need one more key...", "notification-top");
