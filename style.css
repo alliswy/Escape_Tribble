@@ -5,10 +5,10 @@ html, body{
     background-color: black; /* makes background black instead of white */
 }
 
-body.debug-hitboxes .hitbox {
-    background: rgba(0, 255, 0, 0.25);
-    outline: 2px solid lime;
-}
+/*body.debug-hitboxes .hitbox {*/
+/*    background: rgba(0, 255, 0, 0.25);*/
+/*    outline: 2px solid lime;*/
+/*}*/
 
 body:not(.debug-hitboxes) .hitbox {
     background: transparent;

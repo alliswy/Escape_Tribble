@@ -2074,7 +2074,7 @@ function spawnThemedBox(message, positionClass) {
             window.addEventListener('click', handleTutorialClick, true);
         }, 50);
 
-        typeWriter(textTarget, message, 20, () => {
+        typeWriter(textTarget, message, 30, () => {
             box.isDone = true;
             box.style.pointerEvents = "auto";
         });
@@ -3708,7 +3708,7 @@ function init() {
         // MOVE THIS TO THE TOP
         const raw = localStorage.getItem(SAVE_KEY);
         if (!raw) {
-            alert("No save file found!");
+            alert("No save file found!"); //fixme change this so it's not an alert
             return; // Exit immediately so no UI or assets are touched
         }
 
@@ -3746,10 +3746,10 @@ function init() {
             // Sets up inventory slots and tutorial flags based on the loaded 'state'
             prepareGameUI();
 
-            requestAnimationFrame(() => {
+            requestAnimationFrame(async () => {
                 // --- 5. RENDER GAME WORLD ---
                 // Update the Page to the saved location
-                showPage(saveData.currentPage);
+                await showPage(saveData.currentPage);
 
                 // Force the UI to reflect the loaded inventory items
                 if (typeof updateInventoryUI === "function") {
@@ -3759,6 +3759,12 @@ function init() {
                 // Force the map to reflect discovered rooms
                 updateMap(saveData.currentPage);
                 drawMap();
+
+                // Resume tutorial logic/listeners when loading from apartment pages.
+                // Without this, tutorial notifications and step progression can soft-lock.
+                if (state.isTutorialActive) {
+                    runTutorial(true);
+                }
 
                 console.log("Load Successful. Current room:", saveData.currentPage);
             });
