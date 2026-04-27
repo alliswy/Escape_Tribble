@@ -242,6 +242,7 @@ const sfx = {
     fillBottle: {audio: new Audio('sounds/fill-bottle.mp3'), baseVol: 0.5},
     ambientNoise: {audio: new Audio('sounds/ambient-noise.m4a'), baseVol: 0.8},
     aptAmbience: {audio: new Audio('sounds/apt-ambience.mp3'), baseVol: 0.5},
+    spookyMusic: {audio: new Audio('sounds/spooky-music.mp3'), baseVol: 0.03},
 
     //book drop and pr sounds
     hatch: {audio: new Audio('sounds/hatch.mp3'), baseVol: 1},
@@ -356,8 +357,8 @@ function syncSFXSystems(val) {
 
     // 2. Update all active sounds in the library
     for (let key in sfx) {
-        // Tell the SFX slider to keep its hands off the music file!
-        if (key === 'ambientNoise') continue;
+        // Keep music tracks fully controlled by the music slider.
+        if (key === 'ambientNoise' || key === 'aptAmbience' || key === 'spookyMusic') continue;
 
         const entry = sfx[key];
         if (entry && entry.audio) {
@@ -382,11 +383,13 @@ function syncMusicSystems(val) {
     document.getElementById('music-value').textContent = val;
     document.getElementById('music-slider').value = val;
 
-    // 1. Update the raw audio file in the sfx warehouse
-    if (sfx.ambientNoise) {
-        const finalVol = sfx.ambientNoise.baseVol * multiplier;
-        sfx.ambientNoise.audio.volume = Math.min(Math.max(finalVol, 0), 1);
-    }
+    // 1. Update all raw music files in the sfx warehouse
+    ['ambientNoise', 'aptAmbience', 'spookyMusic'].forEach((id) => {
+        const entry = sfx[id];
+        if (!entry?.audio) return;
+        const finalVol = entry.baseVol * multiplier;
+        entry.audio.volume = Math.min(Math.max(finalVol, 0), 1);
+    });
 
     // 2. Update any clips tagged as music
     for (let page in pageSounds) {
@@ -422,6 +425,11 @@ const pageSounds = {
     },
     tutorialAmbience: {   // NEW
         ...createSoundClip(sfx.aptAmbience, 0.10, true, 1.5, 1),
+        type: 'music',
+        isGlobal: true
+    },
+    spookyMusic: {   // NEW
+        ...createSoundClip(sfx.spookyMusic, 0.02, true, 0.01, 0.02),
         type: 'music',
         isGlobal: true
     },
@@ -463,13 +471,141 @@ let activeRoomLoop = null;
 
 let currentGlobalId = null;
 let currentRoomId = null;
+let userHasInteractedWithPage = false;
 
-function startGlobalAudio() {
-    if (state.isTutorialActive) {
-        triggerSound('tutorialAmbience', { fadeIn: 2000 });
-    } else {
-        triggerSound('globalAmbience', { fadeIn: 2000 });
+function resumeBlockedAudioIfNeeded() {
+    if (currentGlobalId) {
+        const globalSound = pageSounds[currentGlobalId];
+        if (globalSound?.clip?.paused) {
+            safePlay(globalSound.clip, { suppressAutoplayWarning: false });
+        }
     }
+
+    if (currentRoomId) {
+        const roomSound = pageSounds[currentRoomId];
+        if (roomSound?.clip?.paused) {
+            safePlay(roomSound.clip, { suppressAutoplayWarning: false });
+        }
+    }
+}
+
+function markUserInteraction() {
+    userHasInteractedWithPage = true;
+    resumeBlockedAudioIfNeeded();
+}
+
+window.addEventListener('pointerdown', markUserInteraction, { once: true });
+window.addEventListener('keydown', markUserInteraction, { once: true });
+
+function safePlay(audio, { suppressAutoplayWarning = true } = {}) {
+    if (!audio) return false;
+
+    const playPromise = audio.play();
+    if (!playPromise || typeof playPromise.catch !== 'function') {
+        audio.blockedByAutoplay = false;
+        return true;
+    }
+
+    playPromise
+        .then(() => {
+            audio.blockedByAutoplay = false;
+        })
+        .catch(err => {
+            const isAutoplayBlock = err?.name === 'NotAllowedError';
+            if (isAutoplayBlock) {
+                audio.blockedByAutoplay = true;
+                if (!suppressAutoplayWarning) {
+                    console.warn('Audio autoplay blocked until user interaction.');
+                }
+                return;
+            }
+
+            console.error('Audio play failed:', err);
+        });
+
+    return true;
+}
+
+const SILENT_AUDIO_PAGES = new Set([
+    'disclaimer-page'
+]);
+const SPOOKY_AUDIO_PAGES = new Set([
+    'menu-screen',
+    'info-screen',
+    'settings-screen',
+    'end-progression-page',
+    'end-video-page',
+    'thanks-page'
+]);
+
+function stopGlobalAudio() {
+    if (activeGlobalLoop) {
+        cancelAnimationFrame(activeGlobalLoop);
+        activeGlobalLoop = null;
+    }
+
+    currentGlobalId = null;
+
+    ['globalAmbience', 'tutorialAmbience', 'spookyMusic'].forEach(id => {
+        const sound = pageSounds[id];
+        if (!sound?.clip) return;
+
+        const audio = sound.clip;
+
+        if (audio.activeFade) {
+            clearInterval(audio.activeFade);
+            audio.activeFade = null;
+        }
+
+        if (audio.actionTimer) {
+            clearTimeout(audio.actionTimer);
+            audio.actionTimer = null;
+        }
+
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 0;
+    });
+}
+
+function getDesiredGlobalAudioId(pageId = state.currentPage) {
+    if (!pageId || SILENT_AUDIO_PAGES.has(pageId)) return null;
+
+    if (SPOOKY_AUDIO_PAGES.has(pageId)) return 'spookyMusic';
+
+    if (state.isTutorialActive) return 'tutorialAmbience';
+
+    const pageEl = document.getElementById(pageId);
+    const isGameplayPage = !!pageEl?.classList.contains('fit');
+    if (isGameplayPage) return 'globalAmbience';
+
+    if (entryPages.includes(pageId)) return 'globalAmbience';
+
+    return 'spookyMusic';
+}
+
+function startGlobalAudio(pageId = state.currentPage, options = {}) {
+    const { forceRestart = false } = options;
+    const desiredGlobalId = getDesiredGlobalAudioId(pageId);
+
+    if (!desiredGlobalId) {
+        stopGlobalAudio();
+        return;
+    }
+
+    if (
+        !forceRestart &&
+        currentGlobalId === desiredGlobalId &&
+        isPlaying(desiredGlobalId)
+    ) {
+        return;
+    }
+
+    if (currentGlobalId && currentGlobalId !== desiredGlobalId) {
+        stopGlobalAudio();
+    }
+
+    triggerSound(desiredGlobalId, { fadeIn: 2000 });
 }
 
 function setVolume(id, newVolume) {
@@ -551,7 +687,7 @@ function triggerSound(id, options = {}) {
         const startPlayback = () => {
             clip.pause();
             clip.currentTime = startCrop;
-            clip.play();
+            safePlay(clip);
         };
 
         const applyFadeIn = () => {
@@ -614,11 +750,29 @@ function triggerSound(id, options = {}) {
                     if (currentRoomId !== id) return;
                 }
 
+                // Safety net: if the browser hits the natural end before
+                // our crop check, force playback back into a loop.
+                if (clip.paused || clip.ended) {
+                    if (clip.blockedByAutoplay && !userHasInteractedWithPage) {
+                        if (isGlobal) {
+                            activeGlobalLoop =
+                                requestAnimationFrame(monitorLoop);
+                        } else {
+                            activeRoomLoop =
+                                requestAnimationFrame(monitorLoop);
+                        }
+                        return;
+                    }
+                    clip.currentTime = startCrop;
+                    safePlay(clip);
+                }
+
                 if (
                     clip.duration &&
                     clip.currentTime >= clip.duration - endCrop
                 ) {
                     clip.currentTime = startCrop;
+                    if (clip.paused) safePlay(clip);
                 }
 
                 if (isGlobal) {
@@ -671,7 +825,7 @@ function triggerSound(id, options = {}) {
 
         audio.pause();
         audio.currentTime = 0;
-        audio.play();
+        safePlay(audio);
         audio.volume = targetVolume;
     }
 }
@@ -961,9 +1115,9 @@ const roomLeads = {
     'print-main-paper-page':    {back: 'cw-right-print-page'},
     'print-paper-page':         {back: 'print-main-paper-page'},
     'print-screen-page':        {back: () => state.isPrinterCalibrated ? 'print-paper-page' : 'print-page'}, //fixme add more for this page
-    'cw-eh-entrance-page':      {forward: 'eh-door-page', right: 'cw-right-eh-page', left: 'cw-left-eh-page'},
-    'eh-door-page':             {back: 'cw-eh-entrance-page'},
-    'eh-door-plate-page':       {back: 'eh-door-page'},
+    'cw-eh-entrance-page':      {forward: 'cw-eh-door-page', right: 'cw-right-eh-page', left: 'cw-left-eh-page'},
+    'cw-eh-door-page':             {back: 'cw-eh-entrance-page'},
+    'cw-eh-door-plate-page':       {back: 'cw-eh-door-page'},
     'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', right: 'cw-left-2-page'},
     'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page', forward: 'oh1-left-3-page'},
     'oh1-left-1-page':          {left: 'oh1-exit-1-page', forward: 'oh1-left-2-page'}, //fixme add left (?)
@@ -1056,10 +1210,11 @@ const roomLeads = {
     'li-lt-page':           {back: 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
     'li-laptop-star-page':  {back: 'li-lt-star-page'},
-    'li-lt-star-page':      {back: () => state.scannedBook ? !state.hasSkPaper ? 'li-lt-sk-paper-page': 'li-lt-...-page' : 'li-left-lt-page'}, //fixme add another check/page
+    'li-lt-star-page':      {back: () => state.scannedBook ? !state.hasSkPaper ? 'li-lt-sk-paper-page': 'li-left-lt-star-page' : 'li-left-lt-page'}, //fixme add another check/page
     'li-lt-sk-paper-page':  {}, //they're forced to take the paper
     'li-lt-sk-page':        {back: 'li-main-lw-sk-page'},
     'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add check for doors open
+    'li-left-lt-star-page': {back: 'li-main-lw-page'},
 
     //mw books pages
     'li-mw-books-page':     {back: 'li-main-lw-page' }, 
@@ -1205,6 +1360,7 @@ async function showPage(pageId, useFade = false) {
 
         updateMap(pageId);
         triggerNotification(pageId);
+        startGlobalAudio(pageId);
 
         // IMPORTANT: play audio immediately
         setRoomAudio(pageId);
@@ -3392,6 +3548,9 @@ function showEndVideo() {
     const page = document.getElementById('end-progression-page');
     const video = document.getElementById('end-video');
 
+    stopAllAudio();
+    startGlobalAudio('end-progression-page', { forceRestart: true });
+
     page.classList.remove('hidden');
     video.currentTime = 0;
     video.play();
@@ -3439,6 +3598,7 @@ async function returnToMainMenu() {
 
     menu.classList.remove('hidden');
     runMenuTypewriter();
+    startGlobalAudio('menu-screen');
 }
 
 //----- SAVE THE GAME ON REFRESH----//
@@ -3483,9 +3643,6 @@ function init() {
             requestAnimationFrame(async () => {
                 state.isTutorialActive = true;
                 await showPage('apt-fd-page'); // first real savable page
-
-                stopAllAudio();
-                startGlobalAudio();
 
                 const handle = document.getElementById('apt-fd-handle-hitbox');
                 if (handle) handle.classList.add('hidden');
@@ -3549,9 +3706,6 @@ function init() {
             prepareGameUI();
 
             requestAnimationFrame(() => {
-                // Restore global ambience now that we are in the game
-                startGlobalAudio();
-
                 // --- 5. RENDER GAME WORLD ---
                 // Update the Page to the saved location
                 showPage(saveData.currentPage);
@@ -3577,7 +3731,6 @@ function init() {
             document.getElementById('main-menu-overlay')?.classList.add('hidden');
 
             prepareGameUI();
-            startGlobalAudio();
             showPage('mh-bd-main-page');
 
             if (typeof updateInventoryUI === "function") {
@@ -3637,11 +3790,13 @@ function init() {
 // 2. Logic for the Main Menu (Back) Button
     document.getElementById('info-back-button').onclick = () => {
         document.getElementById('info-screen').classList.add('hidden');
+        startGlobalAudio('menu-screen');
     };
 
 // 3. Opening the Info Screen (Triggered from your Main Menu)
     infoButton.onclick = () => {
         document.getElementById('info-screen').classList.remove('hidden');
+        startGlobalAudio('info-screen');
 
         // Always start on the Credits tab for a clean look
         const defaultTab = document.querySelector('.tab-btn[data-target="credits"]');
@@ -3652,12 +3807,14 @@ function init() {
     document.getElementById('settings-button').onclick = () => {
         menu.classList.add('hidden');
         document.getElementById('settings-screen').classList.remove('hidden');
+        startGlobalAudio('settings-screen');
     };
 
     //Back button from Settings
     document.getElementById('settings-back-button').onclick = () => {
         document.getElementById('settings-screen').classList.add('hidden');
         menu.classList.remove('hidden');
+        startGlobalAudio('menu-screen');
     };
 
     //Music volume slider
@@ -3679,6 +3836,8 @@ function init() {
         }
     };
 
+    startGlobalAudio('menu-screen');
+
 
     //Exit button fixme temporarily removed exit button. All it does is close the window, and no websites have this bc its unnecessary
     /* document.getElementById('exit-button').onclick = () => {
@@ -3687,7 +3846,22 @@ function init() {
 
     //audio behavior when webpage is not currently being viewed
     document.addEventListener('visibilitychange', () => {
-        if (document.hidden) return;
+        if (document.hidden) {
+            if (currentGlobalId) {
+                const globalSound = pageSounds[currentGlobalId];
+                if (globalSound?.clip && !globalSound.clip.paused) {
+                    globalSound.clip.pause();
+                }
+            }
+
+            if (currentRoomId) {
+                const roomSound = pageSounds[currentRoomId];
+                if (roomSound?.clip && !roomSound.clip.paused) {
+                    roomSound.clip.pause();
+                }
+            }
+            return;
+        }
 
         if (currentGlobalId) {
             const sound = pageSounds[currentGlobalId];
@@ -3830,13 +4004,9 @@ function init() {
         if (wantToSkip) {
             state.isTutorialActive = false;
             await showPage('mh-bd-main-page');
-            stopAllAudio();
-            startGlobalAudio();
         } else {
             state.isTutorialActive = true;
             await showPage('apt-fd-page');
-            stopAllAudio();
-            startGlobalAudio();
 
 
             const handle = document.getElementById('apt-fd-handle-hitbox');
@@ -3877,6 +4047,7 @@ function init() {
 
         menu.classList.remove('hidden');
         runMenuTypewriter();
+        startGlobalAudio('menu-screen');
     };
 
 
@@ -4495,6 +4666,14 @@ function init() {
     };
     document.getElementById('cw-right-print-room-hitbox').onclick = () => {state.isPrinterCalibrated ? showPage('print-main-paper-page') : showPage('print-main-page')};
 
+    document.getElementById('eh-door-stuff-hitbox').onclick = () => showPage("cw-eh-door-plate-page");
+    document.getElementById('eh-door-plate-hitbox').onclick = async () => {
+        await spawnThemedBox("Another one of those plates...", "notification-top");
+    }
+    document.getElementById('eh-door-sign-hitbox').onclick = async () => {
+        await spawnThemedBox("A nuclear fallout warning sign ? What is this from the 1960s?", "notification-top");
+    }
+
 
 
     //------ WRITING ROOM SECTION -----
@@ -4601,6 +4780,7 @@ function init() {
         } //fixme later add check for if they did what was needed for this page
     }
     document.getElementById('li-left-lt-hitbox').onclick = () => showPage('li-lt-page');
+    document.getElementById('li-left-star-lt-hitbox').onclick = () => showPage('li-lt-star-page');
     document.getElementById('li-lt-laptop-hitbox').onclick = () => showPage('li-laptop-page');
     document.getElementById('li-lt-scanner-hitbox').onclick = async() => {
         if (state.hasLorBook) {
@@ -4659,13 +4839,25 @@ function init() {
     document.getElementById('li-mw-nb-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
     document.getElementById('li-mw-nb-russo-hitbox').onclick   = () => showPage('li-russo-page');
     document.getElementById('li-esme-hitbox').onclick = async () => {
-        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        if (state.hasSkPaper) {
+            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
+        } else {
+            await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        }
     }
     document.getElementById('li-ruta-hitbox').onclick = async () => {
-        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        if (state.hasSkPaper) {
+            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
+        } else {
+            await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        }
     }
     document.getElementById('li-russo-hitbox').onclick = async () => {
-        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        if (state.hasSkPaper) {
+            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
+        } else {
+            await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        }
     }
     //fixme add feedback for after they took the lor book -- should be connected with finding a second book, but the book doesn't look of any interest or smthn like that
     document.getElementById('li-tolkein-hitbox').onclick = async () => {
@@ -4854,13 +5046,25 @@ function init() {
     document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
     document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');
     document.getElementById('li-alston-hitbox').onclick = async () => {
-        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        if (state.hasSkPaper) {
+            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
+        } else {
+            await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        }
     }
     document.getElementById('li-barnes-hitbox').onclick = async () => {
-        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        if (state.hasSkPaper) {
+            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
+        } else {
+            await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        }
     }
     document.getElementById('li-boulley-hitbox').onclick = async () => {
-        await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        if (state.hasSkPaper) {
+            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
+        } else {
+            await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        }
     }
     document.getElementById('li-rw-books-birb-hitbox').onclick = () => showPage('li-birb-book-page');
     document.getElementById('li-birb-book-hitbox').onclick = async () => {
@@ -5046,7 +5250,8 @@ function init() {
         }
     }
     document.getElementById('ls-sk-note-hitbox').onclick = () => {
-        openOverlay(''); //fixme take and add image of this page
+        triggerSound('floppyPaper');
+        openOverlay('archives-note', 'ls-images/archives-images/archives-paper.png');
     }
 
     document.getElementById("item-close-btn").addEventListener("click", (e) => {
@@ -5757,8 +5962,33 @@ function loadGame() {
         state.isTutorialActive = saveData.currentPage && saveData.currentPage.startsWith('apt-');
 
         // 3. Restore Inventory Data
-        if (saveData.inventory) {
-            state.inventory = [...saveData.inventory];
+        state.inventory = Array.isArray(saveData.inventory)
+            ? [...saveData.inventory]
+            : [];
+
+        // Tutorial key reconciliation:
+        // Only restore the apartment key in the EARLY tutorial,
+        // before the player reaches the "use-key" phase.
+        const tutorialStepsBeforeKeyUse = new Set([
+            'init',
+            'inv-open-key',
+            'inv-overlay-key',
+            'inv-close-key',
+            'hint-view',
+            'hint-close',
+            'menu-open',
+            'menu-close',
+            'view-handle'
+        ]);
+
+        if (
+            state.isTutorialActive &&
+            state.hasAptKey &&
+            !state.aptUnlocked &&
+            tutorialStepsBeforeKeyUse.has(state.currTutorialStep) &&
+            !state.inventory.includes('inv-apt-key')
+        ) {
+            state.inventory.push('inv-apt-key');
         }
 
         // 4. UI Sync: Update the visual inventory tray

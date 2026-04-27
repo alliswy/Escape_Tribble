@@ -3685,10 +3685,36 @@ input[type="range"]::-webkit-slider-thumb {
 
 #eh-door-plate-hitbox {
     position: absolute;
-    top: 27%;
+    top: 21%;
+    left: 16%;
+    width: 21%;
+    height: 27%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#eh-door-sign-hitbox {
+    position: absolute;
+    top: 20%;
     left: 44%;
-    width: 8%;
-    height: 11%;
+    width: 40%;
+    height: 69%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#eh-door-stuff-hitbox {
+    position: absolute;
+    top: 27%;
+    left: 41%;
+    width: 27%;
+    height: 25%;
 
     background-color: transparent;
     border: 2px solid transparent;
@@ -4375,6 +4401,19 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #li-left-lt-hitbox {
+    position: absolute;
+    top: 41%;
+    left: 42%;
+    width: 20%;
+    height: 25%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#li-left-star-lt-hitbox {
     position: absolute;
     top: 41%;
     left: 42%;
