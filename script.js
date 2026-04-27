@@ -179,33 +179,6 @@ const loadSaveButton = document.getElementById('load-save-button');
 const play = document.getElementById('play');
 const allPages = document.querySelectorAll('.fit');
 const inventoryTab = document.getElementById('inventory-tab');
-const entryPages = [
-    'mh-bd-main-page',    // Starting area
-    'bd-door-open-page',  //entrance to bd
-    'pr-steps-page',      //entrance to pr
-    'ki-door-open-page',  // Kitchen
-    'cr-main-2dc-page',   //cr entrance
-    'camr-main-page',     //camr
-    'clr-main-id-page',   //clr
-    'bh-entrance-page',   //back hall
-    'sh-cr-door-open-page',    //side hall
-    'li-door-open-page',   // Library
-    'cw-entrance-page',   // C-Wing
-    'bath-page',
-    'stairs-rubble-page',
-    'wr-main-page',
-    'ls-in-1-page',       //library storage
-    'lo-main-page',       //library office
-    'tu-stairs-page',
-    'tu-stairs-ho-page',
-    'eh-door-page',
-    'oh2-entrance-page',
-    'oh3-page',
-    'print-main-page',
-    'snh-entrance-page',
-    'oh1-left-1-page',
-    //fixme add one more for oh1 for the other entrance when that photo is added
-]; //fixme, double check these are starting pages, and add inv images
 
 // ------------ audio -------------
 // --- Audio Assets & Base Volumes ---
@@ -484,6 +457,7 @@ let userHasInteractedWithPage =
     localStorage.getItem(AUDIO_UNLOCK_KEY) === 'true';
 let autoplayRecoveryInterval = null;
 let autoplayRecoveryAttempts = 0;
+let hasShownAutoplayBlockedWarning = false;
 
 function hasBlockedTrackedAudio() {
     const globalClip = currentGlobalId ? pageSounds[currentGlobalId]?.clip : null;
@@ -552,6 +526,7 @@ function safePlay(audio, { suppressAutoplayWarning = true } = {}) {
     playPromise
         .then(() => {
             audio.blockedByAutoplay = false;
+            hasShownAutoplayBlockedWarning = false;
         })
         .catch(err => {
             const isAutoplayBlock = err?.name === 'NotAllowedError';
@@ -583,8 +558,9 @@ function safePlay(audio, { suppressAutoplayWarning = true } = {}) {
                 }
 
                 scheduleAutoplayRecovery();
-                if (!suppressAutoplayWarning) {
+                if (!suppressAutoplayWarning && !hasShownAutoplayBlockedWarning) {
                     console.warn('Audio autoplay blocked until user interaction.');
+                    hasShownAutoplayBlockedWarning = true;
                 }
                 return;
             }
@@ -649,8 +625,6 @@ function getDesiredGlobalAudioId(pageId = state.currentPage) {
     const pageEl = document.getElementById(pageId);
     const isGameplayPage = !!pageEl?.classList.contains('fit');
     if (isGameplayPage) return 'globalAmbience';
-
-    if (entryPages.includes(pageId)) return 'globalAmbience';
 
     return 'spookyMusic';
 }
@@ -4456,7 +4430,6 @@ function init() {
             keySlot.classList.remove('hidden');
             refreshInventorySlots();
         }
-        // fixme
         showPage('pr-pw-hole-noBook-page');
         openOverlay('pw-book', 'inv-images/pw-book.png');
     }
@@ -4613,7 +4586,6 @@ function init() {
     }
 
     document.getElementById('cr-main-2dc-doors-hitbox').onclick = () => showPage('cr-doors-2dc-page');
-    //fixme add image: document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('');
     document.getElementById('cr-main-doors-hitbox').onclick = () => {
         state.isLeftMonitorOn ? showPage('cr-doors-cam-page') : showPage('cr-doors-page');
     }
@@ -4806,8 +4778,7 @@ function init() {
     document.getElementById('cw-stairs-door-hitbox').onclick = () => {
         triggerSound('cwDoor');
         showPage('stairs-up-page');
-    } //fixme add page to show here goign up the stairs,
-    //fixme then add a page going through the door into the hallway
+    }
     document.getElementById('stairs-aw-door-hitbox').onclick = () => {
         triggerSound('cwDoor');
         showPage('mh-cend-left-endc-page');
@@ -5006,7 +4977,7 @@ function init() {
     }
     document.getElementById('li-main-lw-lt-hitbox').onclick = () => {
         if (state.hasSkPaper) {
-            showPage('li-left-lt-star-page'); //fixme add this image
+            showPage('li-left-lt-star-page');
         } else {
            showPage('li-left-lt-page');
         } //fixme later add check for if they did what was needed for this page
@@ -5091,7 +5062,6 @@ function init() {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
         }
     }
-    //fixme add feedback for after they took the lor book -- should be connected with finding a second book, but the book doesn't look of any interest or smthn like that
     document.getElementById('li-tolkein-hitbox').onclick = async () => {
         triggerSound('grabBook');
         state.hasLorBook = true;
@@ -5410,7 +5380,6 @@ function init() {
     // ---------- LIBRARY STORAGE SECTION -----------//
     document.getElementById('ls-lo-entrance-hitbox').onclick = () => showPage('lo-main-right-page');
     document.getElementById('ls-archives-sk-hitbox').onclick = () => showPage('ls-archives-sk-2-page');
-    //fixme add the note overlay, and add sound effect floppyPaper
     document.getElementById('ls-archives-note-hitbox').onclick = () => showPage('ls-archives-note-page');
     document.getElementById('ls-archives-mcduffie-hitbox').onclick = () => showPage('ls-mcduffie-1993-page');
     document.getElementById('ls-mcduffie-1993-hitbox').onclick = async () => {
@@ -5463,7 +5432,7 @@ function init() {
         showPage('ls-10-sk-note-page');
         openOverlay('ls-10-drive', 'inv-images/ls-10-drive.png'); //I want it to overlay immediately and the character to comment on it
         //fixme maybe change feedback
-        await spawnThemedBox("Who is leaving these notes ?", "notification-top")
+        await spawnThemedBox("What is this ghost trying to tell me ?", "notification-top")
     }
     document.getElementById('ls-10-sk-drive-hitbox').onclick = async () => {
         state.hasLs10drive = true;
@@ -5476,7 +5445,7 @@ function init() {
         openOverlay('ls-10-drive', 'inv-images/ls-10-drive.png');
 
         if (state.loMonitorUnlocked) {
-            await spawnThemedBox("A flash drive ! I wonder if I can use this on the monitor in the office", "notification-top"); //fixme maybe change this message
+            await spawnThemedBox("A flash drive ! I wonder if I can use this on the monitor in the office", "notification-top");
         } else {
             await spawnThemedBox("A flash drive...", 'notification-top');
         }
@@ -5533,6 +5502,10 @@ function init() {
 
 // ------------ SAVE GAME ON RELOAD -----------//
     const restoreFromSaveOnReload = async () => {
+        // Refresh should always land on main menu.
+        // Save data is still preserved and can be loaded manually.
+        return;
+
         const navEntry = performance.getEntriesByType('navigation')[0];
         const isReload = navEntry && navEntry.type === 'reload';
         if (!isReload || !hasSaveFile()) return;
@@ -5557,7 +5530,8 @@ function init() {
             runTutorial(true); // resume tutorial, do not reset
         }
     };
-    restoreFromSaveOnReload();
+    // Intentionally disabled: do not auto-enter gameplay on refresh.
+    // restoreFromSaveOnReload();
 
 
 
@@ -6161,7 +6135,7 @@ function saveGame(currentPageId) {
         state: { ...state }, // This copies all your booleans/flags
         currentPage: currentPageId,
         inventory: visibleItems
-    }; //fixme it's not saving the wordle input/password (?)
+    };
 
     try {
         localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
@@ -6307,7 +6281,7 @@ function clearSave() {
     localStorage.removeItem(SAVE_KEY);
 
     console.log("Game reset: Inventory, Hints, and Menu forced shut.");
-}//fixme need to fix bug w inventory drawer
+}
 
 function getInitialState() {
     return {
