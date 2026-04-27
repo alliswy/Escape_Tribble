@@ -1955,6 +1955,34 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#pr-pw-po-he-diamond-hitbox {
+    position: absolute;
+    top: 31%;
+    left: 81%;
+    width: 8%;
+    height: 18%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+
+#pr-pw-po-hb-diamond-hitbox {
+    position: absolute;
+    top: 27%;
+    left: 79%;
+    width: 8%;
+    height: 15%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+
 #pr-po-wr-hitbox {
     position: absolute;
     top: 12%;
@@ -3834,10 +3862,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #wr-desk-hitbox {
     position: absolute;
-    top: 7%;
+    top: 10%;
     left: 5%;
     width: 83%;
-    height: 88%;
+    height: 55%;
 
     background-color: transparent;
     border: 2px solid transparent;

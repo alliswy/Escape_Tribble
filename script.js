@@ -267,7 +267,7 @@ const sfx = {
 }; //fixme add more sounds
 
 // Slightly slow down menu/end spooky track for mood.
-const SPOOKY_PLAYBACK_RATE = 0.8;
+const SPOOKY_PLAYBACK_RATE = 0.9;
 sfx.spookyMusic.audio.defaultPlaybackRate = SPOOKY_PLAYBACK_RATE;
 sfx.spookyMusic.audio.playbackRate = SPOOKY_PLAYBACK_RATE;
 
@@ -476,10 +476,41 @@ const pageSounds = {
 
 let activeGlobalLoop = null;
 let activeRoomLoop = null;
+const AUDIO_UNLOCK_KEY = 'audioUnlockedByInteraction';
 
 let currentGlobalId = null;
 let currentRoomId = null;
-let userHasInteractedWithPage = false;
+let userHasInteractedWithPage =
+    localStorage.getItem(AUDIO_UNLOCK_KEY) === 'true';
+let autoplayRecoveryInterval = null;
+let autoplayRecoveryAttempts = 0;
+
+function hasBlockedTrackedAudio() {
+    const globalClip = currentGlobalId ? pageSounds[currentGlobalId]?.clip : null;
+    const roomClip = currentRoomId ? pageSounds[currentRoomId]?.clip : null;
+
+    return Boolean(
+        (globalClip?.paused && globalClip?.blockedByAutoplay) ||
+        (roomClip?.paused && roomClip?.blockedByAutoplay)
+    );
+}
+
+function scheduleAutoplayRecovery() {
+    if (autoplayRecoveryInterval) return;
+
+    autoplayRecoveryAttempts = 0;
+    autoplayRecoveryInterval = setInterval(() => {
+        autoplayRecoveryAttempts++;
+        resumeBlockedAudioIfNeeded();
+
+        // Keep retrying briefly for flaky browser/device readiness after reload.
+        if (!hasBlockedTrackedAudio() || autoplayRecoveryAttempts >= 20) {
+            clearInterval(autoplayRecoveryInterval);
+            autoplayRecoveryInterval = null;
+            autoplayRecoveryAttempts = 0;
+        }
+    }, 250);
+}
 
 function resumeBlockedAudioIfNeeded() {
     if (currentGlobalId) {
@@ -499,11 +530,15 @@ function resumeBlockedAudioIfNeeded() {
 
 function markUserInteraction() {
     userHasInteractedWithPage = true;
+    localStorage.setItem(AUDIO_UNLOCK_KEY, 'true');
     resumeBlockedAudioIfNeeded();
 }
 
-window.addEventListener('pointerdown', markUserInteraction, { once: true });
-window.addEventListener('keydown', markUserInteraction, { once: true });
+window.addEventListener('pointerdown', markUserInteraction);
+window.addEventListener('keydown', markUserInteraction);
+window.addEventListener('touchstart', markUserInteraction, { passive: true });
+window.addEventListener('focus', resumeBlockedAudioIfNeeded);
+window.addEventListener('pageshow', resumeBlockedAudioIfNeeded);
 
 function safePlay(audio, { suppressAutoplayWarning = true } = {}) {
     if (!audio) return false;
@@ -522,6 +557,32 @@ function safePlay(audio, { suppressAutoplayWarning = true } = {}) {
             const isAutoplayBlock = err?.name === 'NotAllowedError';
             if (isAutoplayBlock) {
                 audio.blockedByAutoplay = true;
+
+                // Best-effort recovery: many browsers allow muted autoplay
+                // after refresh if the user has previously interacted with the site.
+                if (userHasInteractedWithPage) {
+                    const wasMuted = audio.muted;
+                    audio.muted = true;
+                    const mutedRetry = audio.play();
+
+                    if (mutedRetry && typeof mutedRetry.then === 'function') {
+                        mutedRetry
+                            .then(() => {
+                                audio.blockedByAutoplay = false;
+                                // Let playback stabilize, then restore mute state.
+                                setTimeout(() => {
+                                    audio.muted = wasMuted;
+                                }, 120);
+                            })
+                            .catch(() => {
+                                audio.muted = wasMuted;
+                            });
+                    } else {
+                        audio.muted = wasMuted;
+                    }
+                }
+
+                scheduleAutoplayRecovery();
                 if (!suppressAutoplayWarning) {
                     console.warn('Audio autoplay blocked until user interaction.');
                 }
@@ -3361,6 +3422,10 @@ async function tutorialHitboxInit() {
         } else if (state.currTutorialStep==='use-key' && clickedId==='apt-fd-handle-keyhole-hitbox') {
             if (state.hasAptKey) {
                 state.aptUnlocked = true;
+                state.hasAptKey = false;
+                state.inventory = Array.isArray(state.inventory)
+                    ? state.inventory.filter(id => id !== 'inv-apt-key')
+                    : [];
                 const keySlot = document.getElementById('inv-apt-key');
                 if (keySlot) {
                     keySlot.classList.add('hidden');
@@ -3911,20 +3976,95 @@ function init() {
         window.close();
     };*/
 
+    function fadeClipOutForBackground(clip, durationMs = 280) {
+        if (!clip || clip.paused) return;
+
+        if (clip.visibilityFadeTimer) {
+            clearInterval(clip.visibilityFadeTimer);
+            clip.visibilityFadeTimer = null;
+        }
+
+        const startVolume = clip.volume;
+        clip.visibilityTargetVolume = startVolume;
+
+        if (startVolume <= 0.001) {
+            clip.pause();
+            return;
+        }
+
+        const steps = 12;
+        const interval = Math.max(12, Math.floor(durationMs / steps));
+        let step = 0;
+
+        clip.visibilityFadeTimer = setInterval(() => {
+            step++;
+            const progress = step / steps;
+            clip.volume = Math.max(0, startVolume * (1 - progress));
+
+            if (step >= steps) {
+                clearInterval(clip.visibilityFadeTimer);
+                clip.visibilityFadeTimer = null;
+                clip.pause();
+                clip.volume = Math.max(0, startVolume);
+            }
+        }, interval);
+    }
+
+    function fadeClipBackInOnFocus(clip, durationMs = 220) {
+        if (!clip) return;
+
+        if (clip.visibilityFadeTimer) {
+            clearInterval(clip.visibilityFadeTimer);
+            clip.visibilityFadeTimer = null;
+        }
+
+        const targetVolume = Math.max(
+            0,
+            typeof clip.visibilityTargetVolume === 'number'
+                ? clip.visibilityTargetVolume
+                : clip.volume
+        );
+
+        if (clip.paused) {
+            clip.volume = 0;
+            safePlay(clip, { suppressAutoplayWarning: false });
+        }
+
+        if (targetVolume <= 0.001) {
+            clip.volume = 0;
+            return;
+        }
+
+        const steps = 12;
+        const interval = Math.max(12, Math.floor(durationMs / steps));
+        let step = 0;
+
+        clip.visibilityFadeTimer = setInterval(() => {
+            step++;
+            clip.volume = Math.min(targetVolume, targetVolume * (step / steps));
+
+            if (step >= steps) {
+                clearInterval(clip.visibilityFadeTimer);
+                clip.visibilityFadeTimer = null;
+                clip.volume = targetVolume;
+            }
+        }, interval);
+    }
+
     //audio behavior when webpage is not currently being viewed
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
             if (currentGlobalId) {
                 const globalSound = pageSounds[currentGlobalId];
                 if (globalSound?.clip && !globalSound.clip.paused) {
-                    globalSound.clip.pause();
+                    fadeClipOutForBackground(globalSound.clip);
                 }
             }
 
             if (currentRoomId) {
                 const roomSound = pageSounds[currentRoomId];
                 if (roomSound?.clip && !roomSound.clip.paused) {
-                    roomSound.clip.pause();
+                    fadeClipOutForBackground(roomSound.clip);
                 }
             }
             return;
@@ -3933,16 +4073,16 @@ function init() {
         if (currentGlobalId) {
             const sound = pageSounds[currentGlobalId];
 
-            if (sound?.clip?.paused) {
-                sound.clip.play();
+            if (sound?.clip) {
+                fadeClipBackInOnFocus(sound.clip);
             }
         }
 
         if (currentRoomId) {
             const sound = pageSounds[currentRoomId];
 
-            if (sound?.clip?.paused) {
-                sound.clip.play();
+            if (sound?.clip) {
+                fadeClipBackInOnFocus(sound.clip);
             }
         }
     });
@@ -4300,6 +4440,12 @@ function init() {
     document.getElementById('pr-pw-po-hb-hitbox').onclick = () => showPage('pr-pw-hole-book-page');
     document.getElementById('pr-pw-hb-hitbox').onclick = () => showPage('pr-pw-hole-book-page');
     document.getElementById('pr-pw-he-hitbox').onclick = () => showPage('pr-pw-hole-noBook-page');
+    document.getElementById('pr-pw-po-he-diamond-hitbox').onclick = async() => {
+        await spawnThemedBox("A green diamond ?","notification-top");
+    }
+    document.getElementById('pr-pw-po-hb-diamond-hitbox').onclick = async() => {
+        await spawnThemedBox("A green diamond ?", "notification-top");
+    }
 
     //collect pw book
     document.getElementById('pr-pw-hole-book-hitbox').onclick = () => {
@@ -4313,6 +4459,9 @@ function init() {
         // fixme
         showPage('pr-pw-hole-noBook-page');
         openOverlay('pw-book', 'inv-images/pw-book.png');
+    }
+    document.getElementById('pr-pw-hole-noBook-hitbox').onclick = async () => {
+        await spawnThemedBox('Who put all these books in this hole ?', "notification-top");
     }
 
     //Wire Room Section
@@ -6050,9 +6199,9 @@ function loadGame() {
             : [];
 
         // Tutorial key reconciliation:
-        // Only restore the apartment key in the EARLY tutorial,
-        // before the player reaches the "use-key" phase.
-        const tutorialStepsBeforeKeyUse = new Set([
+        // Only force-restore the apartment key while the tutorial is still
+        // in a pre-unlock phase. This avoids re-adding it after unlock.
+        const preApartmentUnlockTutorialSteps = new Set([
             'init',
             'inv-open-key',
             'inv-overlay-key',
@@ -6061,17 +6210,24 @@ function loadGame() {
             'hint-close',
             'menu-open',
             'menu-close',
-            'view-handle'
+            'view-handle',
+            'use-key'
         ]);
 
         if (
             state.isTutorialActive &&
-            state.hasAptKey &&
             !state.aptUnlocked &&
-            tutorialStepsBeforeKeyUse.has(state.currTutorialStep) &&
-            !state.inventory.includes('inv-apt-key')
+            preApartmentUnlockTutorialSteps.has(state.currTutorialStep)
         ) {
-            state.inventory.push('inv-apt-key');
+            state.hasAptKey = true;
+            if (!state.inventory.includes('inv-apt-key')) {
+                state.inventory.push('inv-apt-key');
+            }
+        } else if (state.isTutorialActive) {
+            // Past pre-unlock tutorial phases: ensure the apartment key
+            // does not come back after reload.
+            state.hasAptKey = false;
+            state.inventory = state.inventory.filter(id => id !== 'inv-apt-key');
         }
 
         // 4. UI Sync: Update the visual inventory tray

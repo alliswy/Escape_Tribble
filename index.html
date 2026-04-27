@@ -365,13 +365,13 @@
                 <div id="inv-br" class="inv-item hidden" title="Black Remote"
                      data-item="br"
                      data-img="inv-images/br.png">
-                    <span class="emoji-icon">temp br</span>
+                    <span class="emoji-icon">📺</span>
                 </div>
 
                 <div id="inv-wr" class="inv-item hidden" title="White Remote"
                      data-item="wr"
                      data-img="inv-images/wr.png">
-                    <span class="emoji-icon">temp wr</span>
+                    <span class="emoji-icon">📟</span>
                 </div>
 
                 <div id="inv-ls-drive" class="inv-item hidden" title="Flash drive from skeleton"
@@ -404,7 +404,6 @@
                     <span class="emoji-icon">📔</span>
                 </div>
 
-                <!-- fixme add remote emojis -->
 
                 <div class="inv-item empty"></div>
                 <div class="inv-item empty"></div>
@@ -514,7 +513,6 @@
             <img loading="lazy" id="pr-pw-main-book" src="pr-images/pr-pw-main-book.jpeg" alt="Game Room">
             <div id="pr-pw-hb-hitbox" class="hitbox"></div>
             <div id="pr-pw-hb-projector-hitbox" class="hitbox"></div>
-            <!-- fixme - add hitbox for other stuff -->
         </div>
 
         <!-- pw = projector wall; he = hole empty-->
@@ -522,11 +520,10 @@
             <img loading="lazy" id="pr-pw-main-noBook" src="pr-images/pr-pw-main-noBook.jpeg" alt="Game Room">
             <div id="pr-pw-he-hitbox" class="hitbox"></div>
             <div id="pr-pw-he-projector-hitbox" class="hitbox"></div>
-            <!-- fixme - add hitbox for other stuff -->
         </div>
 
         <div id="pr-pw-book-projector-on-page" class="fit hidden">
-            <img loading="lazy" id="pr-pw-book-projector-on" src="pr-images/pr-pw-noBook-projector-on.jpeg" alt="Game Room">
+            <img loading="lazy" id="pr-pw-book-projector-on" src="pr-images/pr-pw-book-projector-on.jpeg" alt="Game Room">
             <div id="pr-pw-book-po-hitbox" class="hitbox"></div>
         </div>
 
@@ -547,19 +544,20 @@
 
         <div id="pr-pw-main-book-po-page" class="fit hidden">
             <img loading="lazy" id="pr-pw-main-book-po" src="pr-images/pr-pw-main-book-po.jpeg" alt="Game Room">
+            <div id="pr-pw-po-hb-diamond-hitbox" class="hitbox"></div>
             <div id="pr-pw-po-hb-hitbox" class="hitbox"></div>
             <div id="pr-pw-main-book-po-hitbox" class="hitbox"></div>
         </div>
 
         <div id="pr-pw-main-noBook-po-page" class="fit hidden">
             <img loading="lazy" id="pr-pw-main-noBook-po" src="pr-images/pr-pw-main-noBook-po.jpeg" alt="Game Room">
+            <div id="pr-pw-po-he-diamond-hitbox" class="hitbox"></div>
             <div id="pr-pw-po-he-hitbox" class="hitbox"></div>
             <div id="pr-pw-main-noBook-po-hitbox" class="hitbox"></div>
         </div>
 
         <div id="pr-main-po-page" class="fit hidden">
             <img loading="lazy" id="pr-main-po" src="pr-images/pr-main-po.jpeg" alt="Game Room">
-            <!-- fixme add hitbox for wire room -->
             <div id="pr-po-wr-hitbox" class="hitbox"></div>
             <div id="pr-po-pw-hitbox" class="hitbox"></div>
         </div>
@@ -738,14 +736,14 @@
             <div id="bh-exit-door-hitbox" class="hitbox"></div>
         </div>
 
-        <div id="bh-sh-entrance-page" class="fit hidden">
-            <img loading="lazy" id="bh-sh-entrance" src="bh-images/bh-sh-entrance.jpeg" alt="Game Room">
+        <div id="sh-entrance-page" class="fit hidden">
+            <img loading="lazy" id="sh-entrance" src="bh-images/sh-entrance.jpeg" alt="Game Room">
 
         </div>
 
         <!-- sh = side hall; cr = creepy room; do = door open; dc = door closed -->
-        <div id="bh-sh-cr-dc-page" class="fit hidden">
-            <img loading="lazy" id="bh-sh-cr-dc" src="bh-images/bh-sh-cr-dc.jpeg" alt="Game Room">
+        <div id="sh-cr-dc-page" class="fit hidden">
+            <img loading="lazy" id="sh-cr-dc" src="bh-images/sh-cr-dc.jpeg" alt="Game Room">
             <div id="bh-sh-cr-dc-hitbox" class="hitbox"></div>
             <div id="bh-sh-cr-dc-sh-hitbox" class="hitbox"></div>
         </div>
@@ -754,8 +752,8 @@
             <img loading="lazy" id=sh-main" src="bh-images/sh-main.jpeg" alt="Game Room">
         </div>
 
-        <div id="bh-sh-cr-door-keypad-page" class="fit hidden">
-            <img loading="lazy" id="bh-sh-cr-door-keypad" src="bh-images/bh-sh-cr-door-keypad.jpeg" alt="Keypad">
+        <div id="sh-cr-door-keypad-page" class="fit hidden">
+            <img loading="lazy" id="sh-cr-door-keypad" src="bh-images/sh-cr-door-keypad.jpeg" alt="Keypad">
 
             <div class="button-grid">
                 <button class="hitbox" onclick="inputKey('1')"></button>
@@ -773,14 +771,14 @@
             </div>
         </div>
 
-        <div id="bh-sh-cr-door-handle-page" class="fit hidden">
-            <img loading="lazy" id="bh-sh-cr-door-handle" src="bh-images/bh-sh-cr-door-handle.jpeg" alt="Game Room">
+        <div id="sh-cr-door-handle-page" class="fit hidden">
+            <img loading="lazy" id="sh-cr-door-handle" src="bh-images/sh-cr-door-handle.jpeg" alt="Game Room">
             <div id="bh-sh-cr-door-handle-keypad-hitbox" class="hitbox"></div>
             <div id="bh-sh-cr-door-handle-handle-hitbox" class="hitbox"></div>
         </div>
 
-        <div id="bh-sh-cr-do-page" class="fit hidden">
-            <img loading="lazy" id="bh-sh-cr-do" src="bh-images/bh-sh-cr-do.jpeg" alt="Game Room">
+        <div id="sh-cr-do-page" class="fit hidden">
+            <img loading="lazy" id="sh-cr-do" src="bh-images/sh-cr-do.jpeg" alt="Game Room">
             <div id="bh-sh-cr-do-hitbox" class="hitbox"></div>
             <div id="bh-sh-cr-do-sh-hitbox" class="hitbox"></div>
         </div>
@@ -792,7 +790,6 @@
             <div id="ki-door-handle-hitbox" class="hitbox"></div>
         </div>
 
-        <!-- FIXME this is currently a placeholder image, take a new one ! -->
         <div id="mh-ki-door-handle-page" class="fit hidden">
             <img loading="lazy" id="mh-ki-door-handle" src="mh-images/mh-ki-door-handle.jpeg" alt="Game Room">
             <div id="ki-door-handle-keyhole-hitbox" class="hitbox"></div>
@@ -844,7 +841,7 @@
         </div>
 
         <div id="bh-sh-cr-door-closed-page" class="fit hidden">
-            <img loading="lazy" id="bh-sh-cr-door-closed" src="bh-images/bh-sh-cr-door-closed.jpeg" alt="Game Room">
+            <img loading="lazy" id="bh-sh-cr-door-closed" src="bh-images/sh-cr-door-closed.jpeg" alt="Game Room">
             <div id="bh-sh-cr-door-closed-hitbox" class="hitbox"></div>
 
         </div>
@@ -940,7 +937,6 @@
 
         </div>
 
-        <!------ fixme add hitboxes ---->
         <div id="camr-main-page" class="fit hidden">
             <img loading="lazy" id="camr-main" src="cr-images/camr-images/camr-main.jpeg" alt="Game Room">
             <div id="camr-main-ml-hitbox" class="hitbox"></div>
@@ -1051,13 +1047,13 @@
 
         <!-- C WING PAGES -->
         <div id="stairs-rubble-page" class="fit hidden">
-            <img loading="lazy" id="stairs-rubble" src="mh-images/mh-stairs-images/stairs-rubble.jpeg" alt="Game Room">
+            <img loading="lazy" id="stairs-rubble" src="cwStairs-images/stairs-rubble.jpeg" alt="Game Room">
             <div id="mh-cw-stairs-rubble-hitbox" class="hitbox"></div>
             <div id="mh-cw-stairs-hitbox" class="hitbox"></div>
         </div>
 
         <div id="stairs-page" class="fit hidden">
-            <img loading="lazy" id="stairs" src="mh-images/mh-stairs-images/stairs.jpeg" alt="Game Room">
+            <img loading="lazy" id="stairs" src="cwStairs-images/stairs.jpeg" alt="Game Room">
             <div id="mh-cw-stairs-door-hitbox" class="hitbox"></div>
         </div>
 
@@ -1070,21 +1066,19 @@
             <div id="stairs-aw-door-hitbox" class="hitbox"></div>
         </div>
 
-<!--        fixme make these pages in the stairs part of the map-->
-        <div id="mh-cw-door-page" class="fit hidden">
-            <img loading="lazy" id="mh-cw-door" src="mh-images/mh-cw-door.jpeg" alt="Game Room">
+        <div id="stairs-cw-door-page" class="fit hidden">
+            <img loading="lazy" id="stairs-cw-door" src="cwStairs-images/stairs-cw-door.jpeg" alt="Game Room">
             <div id="mh-cw-door-hitbox" class="hitbox"></div>
             <div id="mh-cw-door-plate-hitbox" class="hitbox"></div>
         </div>
 
-        <div id="mh-cw-door-plate-page" class="fit hidden">
-            <img loading="lazy" id="mh-cw-door-plate" src="mh-images/mh-cw-door-plate.jpeg" alt="Game Room">
+        <div id="stairs-cw-door-plate-page" class="fit hidden">
+            <img loading="lazy" id="stairs-cw-door-plate" src="cwStairs-images/stairs-cw-door-plate.jpeg" alt="Game Room">
             <div id="mh-cw-plate-hitbox" class="hitbox"></div>
         </div>
 
         <div id="cw-entrance-page" class="fit hidden">
             <img loading="lazy" id="cw-entrance" src="cw-images/cw-entrance.jpeg" alt="Game Room">
-
         </div>
 
         <div id="cw-entrance-2-page" class="fit hidden">
@@ -1306,8 +1300,6 @@
         </div>
 
         <!-- C-WING RIGHT PROGRESSION and right halls); cw = c-wing; snh = snack hall; aw = a-wing; eh = exit hall -->
-        <!-- FIXME optionally photoshop out exit sign -->
-
         <div id="cw-right-snh-page" class="fit hidden">
             <img loading="lazy" id="cw-right-snh" src="cw-images/cw-right-progression/cw-right-snh.jpeg" alt="Game Room">
         </div>
@@ -1335,7 +1327,7 @@
 
 
 
-        <!-- WRITING ROOM PAGES (wr = writing room) fixme add hitbox functionality -->
+        <!-- WRITING ROOM PAGES (wr = writing room) -->
         <div id="wr-left-page" class="fit hidden">
             <img loading="lazy" id="wr-left" src="wr-images/wr-left.jpeg" alt="Game Room">
         </div>
@@ -1508,14 +1500,8 @@
             <div id="li-smith-hitbox" class="hitbox"></div>
         </div>
 
-<!--        <div id="li-lw-books-page" class="fit hidden">-->
-<!--            <img loading="lazy" id="li-lw-books" src="li-images/li-lw-books.jpeg" alt="Game Room">-->
 
-<!--        </div> &lt;!&ndash; fixme add functionality here &ndash;&gt;-->
-
-        <!-- lw books -->
-
-
+        <!-- rw books -->
         <div id="li-rw-books-page" class="fit hidden">
             <img loading="lazy" id="li-rw-books" src="li-images/li-rw-books.jpeg" alt="Game Room">
             <div id="li-rw-alston-hitbox" class="hitbox"></div>
@@ -1745,7 +1731,6 @@
         <div id="li-office-door-closed-page" class="fit hidden">
             <img loading="lazy" id="li-office-door-closed" src="li-images/li-office-door-closed.jpeg" alt="Game Room">
             <div id="li-office-door-closed-hitbox" class="hitbox"></div>
-            <!-- fixme add zoom in on door handle pages-->
         </div>
 
         <div id="li-office-door-open-page" class="fit hidden">
@@ -2029,7 +2014,7 @@
 
 
 
-        <!-- TUTORIAL PAGES  FIXME some of these are temp images, and should add more images as well, add apt main page (no water)-->
+        <!-- TUTORIAL PAGES -->
         <div id="apt-fd-page" class="fit hidden">
             <img id="apt-fd" src="tutorial/apt-fd.jpeg" alt="Game Room">
             <div id="apt-fd-handle-hitbox" class="hitbox"></div>
@@ -2308,9 +2293,9 @@
             <div class="recommendations">
                 <p>• <strong>Hardware:</strong> This game is NOT designed for mobile. Please use a computer for the best experience.</p>
                 <p>• This game is best experienced in a <strong>single sitting</strong>. It should take around 1-2 hours to complete.</p>
-                <p>• <strong>Take your time</strong>. It's meant to be played at leisure. Take the time to inspect every corner.</p>
-                <p>• <strong>Turn your sound on</strong>! Some interactions will be confusing without audio.</p>
-                <p>• <strong>WFU Students:</strong> For maximum immersion, find a corner and sit in the <strong>Tribble Hall basement</strong> late in the evening while playing.</p>
+                <p>• <strong>Take your time.</strong> It's meant to be played at leisure. Take the time to inspect every corner.</p>
+                <p>• <strong>Turn your sound up !</strong> Some interactions will be confusing without audio.</p>
+                <p>• <strong>WFU Students:</strong> For maximum immersion, play this game in the <strong>Tribble Hall basement</strong> late in the evening.</p>
             </div>
 
             <h3>Are you ready to play?</h3>
