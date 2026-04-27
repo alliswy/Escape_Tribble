@@ -266,6 +266,11 @@ const sfx = {
 
 }; //fixme add more sounds
 
+// Slightly slow down menu/end spooky track for mood.
+const SPOOKY_PLAYBACK_RATE = 0.8;
+sfx.spookyMusic.audio.defaultPlaybackRate = SPOOKY_PLAYBACK_RATE;
+sfx.spookyMusic.audio.playbackRate = SPOOKY_PLAYBACK_RATE;
+
 
 // ------  SOUNDS FUNCTIONS ---------
 function getSFXMultiplier() {
@@ -690,6 +695,10 @@ function triggerSound(id, options = {}) {
         }
 
         const startPlayback = () => {
+            if (id === 'spookyMusic') {
+                clip.defaultPlaybackRate = SPOOKY_PLAYBACK_RATE;
+                clip.playbackRate = SPOOKY_PLAYBACK_RATE;
+            }
             clip.pause();
             clip.currentTime = startCrop;
             safePlay(clip);
@@ -4486,7 +4495,7 @@ function init() {
         }
     }
     document.getElementById('cr-doors-1dc-cam-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
-    document.getElementById('cr-doors-1dc-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
+    //document.getElementById('cr-doors-1dc-ld-hitbox').onclick = () => showPage('cr-doors-1dc-ld-page');
     document.getElementById('cr-1dc-ld-door-closed-hitbox').onclick = async () => {
         if (state.hasClrKey) {
             triggerSound('unlock');
@@ -4503,7 +4512,8 @@ function init() {
             await spawnThemedBox('I need to find a key for this door', "notification-top");
         }
     }
-    document.getElementById('cr-doors-ld-hitbox').onclick = () => {state.hasWrId ? showPage('clr-main-page'): showPage('clr-main-id-page') };
+    document.getElementById('cr-doors-cam-ld-hitbox').onclick = () => {state.hasWrId ? showPage('clr-main-page'): showPage('clr-main-id-page') };
+    //document.getElementById('cr-doors-ld-hitbox').onclick = () => {state.hasWrId ? showPage('clr-main-page'): showPage('clr-main-id-page') };
     document.getElementById('clr-main-cloth-hitbox').onclick = async () => {
         showPage('clr-cloth-page');
     }
