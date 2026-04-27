@@ -248,6 +248,7 @@ const sfx = {
     hatch: {audio: new Audio('sounds/hatch.mp3'), baseVol: 1},
     grabBook: {audio: new Audio('sounds/grab-book.mp3'), baseVol: 0.5},
     bdBook: {audio: new Audio('sounds/bd-book.mp3'), baseVol: 0.5},
+    pwBook: {audio: new Audio('sounds/open-book.mp3'), baseVol: 0.5},
 
     //library sounds
     bones: {audio: new Audio('sounds/bones.mp3'), baseVol: 1},
@@ -262,6 +263,7 @@ const sfx = {
     //etc sounds
     driveNotif: {audio: new Audio('sounds/drive-notif.mp3'), baseVol: 0.5},
     paperTowel: {audio: new Audio('sounds/paper-towel.mp3'), baseVol: 0.5},
+
 }; //fixme add more sounds
 
 
@@ -456,13 +458,14 @@ const pageSounds = {
     hatchOpen: createSoundClip(sfx.hatch, 1, false, 0, 0.3),
     hatchClose: createSoundClip(sfx.hatch, 1, false, 0.3, 0),
     grabBook: createSoundClip(sfx.grabBook, 0.5, false, 2.2, 15.4),
+    pwBook: createSoundClip(sfx.pwBook, 0.5, false, 0, 8),
 
     //library sounds
     bones: createSoundClip(sfx.bones, 1, false, 1, 3),
 
     //cw sounds
     openBathDoor: createSoundClip(sfx.doorOpenClose, 0.5, false,0, 2,),
-    paperTowel: createSoundClip(sfx.paperTowel, 0.5, false, 0,13.6),
+    paperTowel: createSoundClip(sfx.paperTowel, 0.2, false, 0,13.9),
     cwDoor: createSoundClip(sfx.cwDoor, 0.2, false, 2.5, 0),
 };
 
@@ -1319,6 +1322,33 @@ function getDestination(direction, pageId) {
 }
 
 let lastPage = null; //tracks prev page
+
+function normalizeFitPageScale(target) {
+    if (!target || !target.classList.contains('fit')) return;
+
+    const img = target.querySelector('img');
+    if (!img) return;
+
+    const applyScale = () => {
+        const imgW = img.clientWidth;
+        const imgH = img.clientHeight;
+        if (!imgW || !imgH) return;
+
+        // Scale the whole page (image + hitboxes) so relative hitbox placement is preserved.
+        const maxScale = Math.min(window.innerWidth / imgW, window.innerHeight / imgH, 1.35);
+        const scale = maxScale > 1.02 ? maxScale : 1;
+
+        target.style.transformOrigin = "center center";
+        target.style.transform = `scale(${scale})`;
+    };
+
+    if (img.complete) {
+        requestAnimationFrame(applyScale);
+    } else {
+        img.addEventListener('load', () => requestAnimationFrame(applyScale), { once: true });
+    }
+}
+
 async function showPage(pageId, useFade = false) {
     const run = async () => {
         const target = document.getElementById(pageId);
@@ -1334,6 +1364,7 @@ async function showPage(pageId, useFade = false) {
         }
 
         target.classList.remove('hidden');
+        normalizeFitPageScale(target);
         lastPage = target;
 
         const currentPaths = roomLeads[pageId] || {};
@@ -1374,6 +1405,12 @@ async function showPage(pageId, useFade = false) {
         await run();
     }
 }
+
+window.addEventListener('resize', () => {
+    if (lastPage) {
+        normalizeFitPageScale(lastPage);
+    }
+});
 
 async function triggerNotification(pageId) {
     //spawn textbox when certain page is shown !
@@ -2493,6 +2530,10 @@ function closeTerminal() {
     // 2. Re-enable the monitor hitbox
     if (state.usedDrive) {
         document.getElementById('lo-monitor-drive-monitor-hitbox').classList.remove('hidden');
+    } else if (state.loMonitorUnlocked) {
+        // Keep the drive slot clickable after the 4-digit lock is solved.
+        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
+        document.getElementById('lo-monitor-hitbox').classList.add('hidden');
     } else {
         document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
         document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
@@ -2538,8 +2579,14 @@ termInput.addEventListener('keyup', (e) => {
 });
 
 // Ensure typing is always active while the overlay is up
-termPage.addEventListener('click', (e) => {
+termPage.addEventListener('click', async (e) => {
     if (e.target.id !== 'terminal-close-btn') {
+        // If monitor is unlocked, allow drive interaction without closing terminal first.
+        if (!state.usedDrive && state.loMonitorUnlocked) {
+            await useDrive();
+            return;
+        }
+
         // If the drive is used, focus the 8-digit box. Otherwise, the 4-digit box.
         if (state.usedDrive) {
             document.getElementById('final-terminal-input').focus();
@@ -2896,21 +2943,22 @@ function closeSecurityTerminal() {
 //fixme bug -- this UI is not properly being reset. need to fix this later
 function resetLeftMonitorUI() {
     const container = document.getElementById('security-login-minigame');
-
-    container.innerHTML = `
-        <div id="security-ui-wrapper">
-            <div id="auth-header">SECURITY TERMINAL</div>
-
-            <input id="security-pass-input" type="text" maxlength="4" />
-
-            <div id="security-feedback"></div>
-            <div id="status-text">ENTER PASSWORD</div>
-        </div>
-    `;
-
-    // IMPORTANT: rebind input listener every time
     const input = document.getElementById('security-pass-input');
-    input.addEventListener('input', () => triggerSound('keyboard'));
+    const feedback = document.getElementById('security-feedback');
+    const status = document.getElementById('status-text');
+
+    // Keep the original terminal markup from index.html.
+    // Only reset visibility/text/input state so styles/layout stay intact.
+    if (container) container.classList.add('hidden');
+    if (input) {
+        input.value = "";
+        input.disabled = false;
+    }
+    if (feedback) {
+        feedback.innerText = "READY FOR INPUT...";
+        feedback.style.color = "#26e600";
+    }
+    if (status) status.innerText = "LOCKED";
 }
 
 // ------ INVENTORY INSPECTION -----
@@ -2973,8 +3021,10 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                 document.getElementById('pw-book-hitbox').classList.remove('hidden');
                 document.getElementById("pw-book-hitbox").onclick = () => {
                     if (state.hasKiKey) {
+                        triggerSound('pwBook');
                         openOverlay("pw-book", "inv-images/pw-book-open.png");
                     } else {
+                        triggerSound('pwBook');
                         openOverlay("pw-book", "inv-images/pw-book-open-key.png");
                     }
                 };
@@ -2996,6 +3046,10 @@ function setupOverlayHitboxes(itemName, imgSrc) {
             } break;
             case 'inv-images/pw-book-open.png': {
                 document.getElementById('pw-book-open-hitbox').classList.remove('hidden');
+                document.getElementById('pw-book-open-hitbox').onclick = () => {
+                    triggerSound('pwBook');
+                    openOverlay('pw-book', 'inv-images/pw-book.png');
+                }
             } break;
         }
     } else if (itemName === "sherlock-book") {
@@ -3003,6 +3057,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
             case 'inv-images/sherlock-book.png': {
                 document.getElementById('sherlock-book-hitbox').classList.remove('hidden');
                 document.getElementById("sherlock-book-hitbox").onclick = () => {
+                    triggerSound('bdBookOpen');
                     openOverlay("sherlock-book", "inv-images/sherlock-book-open.png")
                 };
             } break;
@@ -3010,6 +3065,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                 document.getElementById('sherlock-book-open-hitbox').classList.remove('hidden');
                 document.getElementById("sherlock-book-open-hitbox").onclick = () => {
                     if (state.hasSkPaper) {
+                        triggerSound('pwBook');
                         openOverlay("sherlock-book", "inv-images/sherlock-book-paper.png");
                     } else {
                         console.log('Error with progression has occurred'); //fixme check that they have to get the paper before being able to access the book
@@ -4335,7 +4391,7 @@ function init() {
         await spawnThemedBox("There's a bad smell coming from this bathroom. I don't want to go in there.", 'notification-top');
     }
     document.getElementById('bh-exit-door-hitbox').onclick = async () => {
-        await spawnThemedBox("Oh wow. It looks like this hallway has been buried underground", 'notification-top');
+        await spawnThemedBox("Oh wow. It looks like this place has been buried underground", 'notification-top');
     }
 
     document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('bh-sh-cr-door-closed-page');
