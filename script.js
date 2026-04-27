@@ -1163,20 +1163,20 @@ const roomLeads = {
     'print-page':               {back: 'print-main-page'},
     'print-main-paper-page':    {back: 'cw-right-print-page'},
     'print-paper-page':         {back: 'print-main-paper-page'},
-    'print-screen-page':        {back: () => state.isPrinterCalibrated ? 'print-paper-page' : 'print-page'}, //fixme add more for this page
+    'print-screen-page':        {back: () => state.isPrinterCalibrated ? 'print-paper-page' : 'print-page'},
     'cw-eh-entrance-page':      {forward: 'cw-eh-door-page', right: 'cw-right-eh-page', left: 'cw-left-eh-page'},
     'cw-eh-door-page':             {back: 'cw-eh-entrance-page'},
     'cw-eh-door-plate-page':       {back: 'cw-eh-door-page'},
     'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', right: 'cw-left-2-page'},
     'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page', forward: 'oh1-left-3-page'},
-    'oh1-left-1-page':          {left: 'oh1-exit-1-page', forward: 'oh1-left-2-page'}, //fixme add left (?)
+    'oh1-left-1-page':          {left: 'oh1-exit-1-page', forward: 'oh1-left-2-page'},
     'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
     'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-left-4-page':          {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-left-4-key-page':      {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page', right: 'oh1-exit-2-page'},
-    'oh1-right-3-page':         {back: 'oh1-right-2-page', right: 'oh1-exit-1-page'}, //fixme add right: oh1-exit-1-page
+    'oh1-right-3-page':         {back: 'oh1-right-2-page', right: 'oh1-exit-1-page'},
     'oh1-exit-1-page':          {forward: 'cw-oh1-exit-1-page', right: 'oh1-left-1-page'},
     'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page', forward: 'cw-oh2-entrance-page'},
     'oh1-books-page':           {back: 'oh1-left-4-page'},
@@ -1215,17 +1215,17 @@ const roomLeads = {
     'mh-li-door-closed-page':    { left: 'mh-li-left-endc-page', right: 'mh-li-right-endc-page' },
     'mh-li-door-handle-page':    { back: 'mh-li-door-closed-page' },
     'li-door-open-page':         {back: 'mh-li-door-closed-page', forward: () => state.isLiTvOn ? 'li-entrance-tvo-page' :'li-entrance-page', audio: {back: 'doorClose'}},
-    'li-entrance-page':          {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
-    'li-entrance-nb-page':       {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
-    'li-entrance-tvo-page':      {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
-    'li-entrance-tvo-nb-page':   {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'}, //fixme add check for if one door is open
+    'li-entrance-page':          {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'},
+    'li-entrance-nb-page':       {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'},
+    'li-entrance-tvo-page':      {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'},
+    'li-entrance-tvo-nb-page':   {back: 'li-door-open-page', right: () => state.isLiReadOn ? state.isLiTvOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-ro-page' : state.isLiTvOn ? 'li-main-2dc-tvo-page' :'li-main-2dc-page'},
     'li-2dc-page':               {back: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page': 'li-main-2dc-page'},
     'li-main-2dc-page':          {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-page':       {back: 'li-entrance-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-tvo-page':      {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-2dc-ro-tvo-page':   {back: 'li-entrance-tvo-page', right: 'li-main-rw-page', left: 'li-main-lw-page'},
     'li-main-rw-page':           {left:  () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'},
-    'li-main-lw-page':           {back: () => state.hasLorBook ? state.isLiTvOn ? 'li-entrance-tvo-nb-page' : 'li-entrance-nb-page' : state.isLiTvOn ? 'li-entrance-tvo-page' : 'li-entrance-page', right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add do check
+    'li-main-lw-page':           {back: () => state.hasLorBook ? state.isLiTvOn ? 'li-entrance-tvo-nb-page' : 'li-entrance-nb-page' : state.isLiTvOn ? 'li-entrance-tvo-page' : 'li-entrance-page', right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'},
 
     //library mid-wall pages
     'li-mid-wall-page':     {back: 'li-main-2dc-page'}, 
@@ -1262,7 +1262,7 @@ const roomLeads = {
     'li-lt-star-page':      {back: () => state.scannedBook ? !state.hasSkPaper ? 'li-lt-sk-paper-page': 'li-left-lt-star-page' : 'li-left-lt-page'}, //fixme add another check/page
     'li-lt-sk-paper-page':  {}, //they're forced to take the paper
     'li-lt-sk-page':        {back: 'li-main-lw-sk-page'},
-    'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'}, //fixme add check for doors open
+    'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'},
     'li-left-lt-star-page': {back: 'li-main-lw-page'},
 
     //mw books pages
@@ -1276,15 +1276,15 @@ const roomLeads = {
 
     //lw books page
     'li-rw-books-page':     {back: 'li-main-rw-page'},
-    'li-lw-books-page':      {back: 'li-main-lw-page'}, //fixme
+    'li-lw-books-page':      {back: 'li-main-lw-page'},
     'li-onoseta-page':      {back: 'li-rw-books-page'},
     'li-barnes-page':         {back: 'li-rw-books-page'},
     'li-boulley-page':        {back: 'li-rw-books-page'},
     'li-alston-page':        {back: 'li-rw-books-page'},
     'li-smith-page':        {back: 'li-rw-books-page'},
 
-    'li-rw-books-birb-page':   {back: 'li-main-rw-page'}, //fixme fix back
-    'li-rw-books-birb-nb-page': {back: 'li-main-rw-page'}, //fixme is that the page I want back ?
+    'li-rw-books-birb-page':   {back: 'li-main-rw-page'},
+    'li-rw-books-birb-nb-page': {back: 'li-main-rw-page'},
     'li-birb-book-page':        {back: 'li-rw-books-birb-page'},
     'li-birb-page':             {back: 'li-rw-books-birb-nb-page'},
 
@@ -1510,18 +1510,11 @@ async function triggerNotification(pageId) {
         case 'mh-bd-main-page': {
             if (!state.notificationsSeen['mh-bd-main-init']) {
                 startGlobalAudio();
-                await delay(1400); //fixme adjust this and fade-in time to be slightly longer (?)
+                await delay(1400);
                 await spawnThemedBox("Wait, what? Where am I ?", "notification-top");
                 state.notificationsSeen['mh-bd-main-init'] = true;
             }
         } break;
-        // case 'bd-door-open-page': {
-        //     await delay(20);
-        //     if (!state.notificationsSeen['bd-door-open-init']) {
-        //         await spawnThemedBox('Another room.... I wonder what\'s behind that back door', "notification-top");
-        //         state.notificationsSeen['bd-door-open-init'] = true;
-        //     }
-        // } break; fixme may remove this
         case 'pr-wr-box-page': {
             await delay(20);
             if (!state.notificationsSeen['pr-wr-box-init']) {
@@ -1585,7 +1578,7 @@ async function triggerNotification(pageId) {
         } break;
         case 'cw-bath-door-page': {
             if (state.prevPage ==='bath-page') {
-                triggerSound('doorClose'); //fixme this part is weird
+                triggerSound('doorClose'); //fixme test this area
             }
             if (!isPlaying('ambientNoise')) {
                 triggerSound('ambientNoise');
@@ -1632,7 +1625,6 @@ async function triggerNotification(pageId) {
         } break;
 
     }
-    //fixme when loading a save file, it re plays these notifications, no matter if thes tate of the room changed. fix this problem
 }
 
 function goBack()    { move('back'); }
@@ -1884,7 +1876,7 @@ const hintRules = [
     },
     {
         condition: () => !state.wonWordle && !state.isLeftMonitorOn && state.foundWordle,
-        text: "You'll need to solve the wordle to continue." //fixme add an option to skip the wordle
+        text: "You'll need to solve the wordle to continue."
     },
     {
         condition: () => state.wonWordle && !state.isLeftMonitorOn && !state.foundMl,
@@ -2014,7 +2006,6 @@ const hintRules = [
         condition: () => state.hatchOpen,
         text: "Look around for the exit hatch to escape through the tunnels!"
     },
-    //fixme bug check for if progression is completed out of order
 
 
 
@@ -2036,25 +2027,6 @@ function getCurrentHint() {
 
 // ----- TEXTBOX NOTIFICATIONS ----
 let activePopup = null;
-
-// ---- THE POPUP AT MOUSE ---- //fixme currently non-used, remove if unwanted
-function spawnPopupAtMouse(event, message, speed = 40) {
-    if (activePopup) activePopup.remove();
-
-    const popup = document.createElement('div');
-    popup.className = 'click-popup theme-burgundy-gold';
-    popup.style.left = event.pageX + 'px';
-    popup.style.top = (event.pageY - 70) + 'px';
-
-    popup.isDone = false;
-    popup.birthTime = Date.now(); // RECORD BIRTH
-
-    document.body.appendChild(popup);
-    activePopup = popup;
-
-    typeWriter(popup, message, speed);
-    stopEventPropagation(event);
-}
 
 function spawnThemedBox(message, positionClass) {
     return new Promise((resolve) => {
@@ -2768,8 +2740,6 @@ function resetTerminalUI() {
     if (finalError) finalError.innerText = "";
 }
 
-//fixme do more testing to makes sure the final puzzle term pages are working on restart and save and whatnot !
-
 
 // ---- PRINTER SYNC MINIGAME ----
 // --- Settings ---
@@ -2788,7 +2758,6 @@ let currentTarget = { pos: 0, width: 22 };
 const monitor = document.getElementById('printer-monitor-area');
 const bar = document.getElementById('scanner-bar');
 
-//fixme change so that it's only 5 levels and maybe fix syncing issue (?)
 //fixme bug if you click back on the screen again after completing it it restarts
 function generateRandomTarget() {
     document.getElementById('msg').innerText = "CALIBRATING OPTICS...";
@@ -2913,7 +2882,7 @@ async function inputKey(num) {
             await spawnThemedBox('It worked ! I should be able to open the door now', 'notification-top');
             // Go to the next room
         } else {
-            await spawnThemedBox('It didn\'t work', 'notification-top'); //fixme feedback
+            await spawnThemedBox('It didn\'t work', 'notification-top');
             enteredCode = ""; // Reset to try again
         }
     }
@@ -2986,7 +2955,7 @@ function closeSecurityTerminal() {
     }
 }
 
-//fixme bug -- this UI is not properly being reset. need to fix this later
+//fixme check that the ui is being properly reset
 function resetLeftMonitorUI() {
     const container = document.getElementById('security-login-minigame');
     const input = document.getElementById('security-pass-input');
@@ -3085,7 +3054,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                         refreshInventorySlots();
                     }
                     document.getElementById("item-overlay").classList.add("hidden");
-                    openOverlay("pw-book", "inv-images/pw-book-open.png"); //fixme will the repeated item name cause issues?
+                    openOverlay("pw-book", "inv-images/pw-book-open.png");
                     await delay(20);
                     await spawnThemedBox("Another key.... Which door is this one for ?", "notification-top");
                 }
@@ -3147,7 +3116,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
         } else {
             document.getElementById('wb-hitbox').classList.add('hidden');
         }
-    } //fixme make it so next time they click on wb it opens overlay for the open bottle
+    } //fixme make it so next time they click on wb it opens overlay for the open bottle (?)
 }
 
 
@@ -3271,21 +3240,9 @@ async function advanceTutorial() {
             stopAllAudio();
             await showPage("mh-bd-main-page", true);
             break;
-        // case 'menu-map':
-        //     await delay(20);
-        //     await spawnThemedBox('Click to open the map and view where you are', "notification-map");
-        //     break; //fixme
     }
 }
 
-
-/*fixme bugs:
-    still bugs with bottle interaction
-    make bottle so when you click to open, and then close inspection and re-open it, then the bottle is open
-    issues with being able to click too early and messing up the progression of the spawnThemedBoxes
-    fix the hint
-    fix the background clicking for itemOverlay
- */
 
 let tutorialListenersInitialized = false;
 
@@ -3319,28 +3276,6 @@ async function tutorialHitboxInit() {
         overlay.classList.add("hidden");
         currentOverlayItem = null;
     });
-
-    //fixme check the following so that the user can't soft-lock themselves; Note: it should be all good if I just move the hitbox logic to the tutorial step section
-
-    //fixme remove the following, changed it for avoiding soft-locking
-    // document.getElementById('apt-fd-handle-handle-hitbox').onclick = () => {
-    //     if (!state.aptUnlocked) {
-    //         //fixme add feedback
-    //     }
-    // }
-    // document.getElementById('apt-fd-handle-keyhole-hitbox').onclick = () => {
-    //     if (!state.hasAptKey) {
-    //         //fixme add feedback
-    //     }
-    // }
-    // document.getElementById('apt-ki-sink-hitbox').onclick = async () => {
-    //     if (!(state.hasWb && state.isWbOpen && !state.filledBottle)) {
-    //         //fixme add feedback
-    //     }
-    // }
-    // document.getElementById('apt-bed-hitbox').onclick = () => {
-    //     //fixme add fade to black then wake up in tribble
-    // }
 
     window.addEventListener('click', async (event) => {
         if (!state.isTutorialActive) return;
@@ -4199,7 +4134,6 @@ function init() {
         }
     };
 
- //fixme test for bugs
     document.getElementById('quit-btn').onclick = () => {
         if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
             closeWordle();
