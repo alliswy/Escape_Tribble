@@ -1045,21 +1045,21 @@ const roomLeads = {
     'bh-entrance-page':       { forward: 'bh-2-page', left: 'mh-bh-right-endc-page', right: 'mh-bh-left-endc-page' },
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page', forward: 'bh-4-page' },
-    'bh-4-page':            { back: 'bh-3-page', forward: 'bh-end-page', left: 'bh-sh-entrance-page'},
-    'bh-sh-entrance-page':   {back: 'bh-4-page', forward: () => state.crDoorOpen ? 'bh-sh-cr-do-page':'bh-sh-cr-dc-page', left: 'bh-rev-1-page'},
-    'bh-rev-1-page':            {forward: 'bh-rev-2-page', right: 'bh-sh-entrance-page'},
+    'bh-4-page':            { back: 'bh-3-page', forward: 'bh-end-page', left: 'sh-entrance-page'},
+    'sh-entrance-page':   {back: 'bh-4-page', forward: () => state.crDoorOpen ? 'sh-cr-do-page':'sh-cr-dc-page', left: 'bh-rev-1-page'},
+    'bh-rev-1-page':            {forward: 'bh-rev-2-page', right: 'sh-entrance-page'},
     'bh-rev-2-page':            {back: 'bh-rev-1-page', forward: 'bh-rev-3-page'},
     'bh-rev-3-page':            {back: 'bh-rev-2-page', forward: 'bh-rev-4-page'},
     'bh-rev-4-page':            {back: 'bh-rev-3-page', forward: 'mh-bh-exit-page'},
     'mh-bh-exit-page':          {back: 'bh-rev-4-page', right: 'mh-bh-right-endc-page', left: 'mh-bh-left-endc-page'},
-    'bh-sh-cr-dc-page':      {back: 'bh-sh-entrance-page'},
+    'sh-cr-dc-page':      {back: 'sh-entrance-page'},
     'bh-end-page':          {back: 'bh-4-page'},
-    'bh-sh-cr-do-page':      {back: 'bh-sh-entrance-page'},
-    'sh-cr-door-open-page':    {back: 'bh-sh-cr-do-page', right: 'sh-main-page'},
-    'bh-sh-cr-door-closed-page':   {back: 'bh-sh-cr-dc-page', right: 'sh-main-page'},
-    'bh-sh-cr-door-handle-page':    {back: 'bh-sh-cr-door-closed-page'},
-    'bh-sh-cr-door-keypad-page':    {back: 'bh-sh-cr-door-handle-page'},
-    'sh-main-page':        {back: () => state.crDoorOpen ? 'bh-sh-cr-do-page':'bh-sh-cr-dc-page'},
+    'sh-cr-do-page':      {back: 'sh-entrance-page'},
+    'sh-cr-door-open-page':    {back: 'sh-cr-do-page', right: 'sh-main-page'},
+    'sh-cr-door-closed-page':   {back: 'sh-cr-dc-page', right: 'sh-main-page'},
+    'sh-cr-door-handle-page':    {back: 'sh-cr-door-closed-page'},
+    'sh-cr-door-keypad-page':    {back: 'sh-cr-door-handle-page'},
+    'sh-main-page':        {back: () => state.crDoorOpen ? 'sh-cr-do-page':'sh-cr-dc-page'},
 
     //creepy room
     'cr-main-2dc-page':     {back: 'sh-cr-door-open-page'},
@@ -1129,15 +1129,15 @@ const roomLeads = {
     'stairs-up-page': {back: 'cw-stairs-door-page', forward: 'stairs-aw-door-page', audio: {back: 'cwDoor'}},
     'stairs-aw-door-page': {back: 'stairs-up-page', left: 'stairs-rubble-page', audio: {back: 'steps'}},
     'stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page', right: 'stairs-aw-door-page', audio: {back: 'cwDoor'}},
-    'stairs-page':        {back: 'stairs-rubble-page', forward: 'mh-cw-door-page'},
+    'stairs-page':        {back: 'stairs-rubble-page', forward: 'stairs-cw-door-page'},
 
 
     //c-wing left-progression/entrance/snack hall
-    'mh-cw-door-page':          {back: 'stairs-page', audio: {back: 'steps'}},
-    'mh-cw-door-plate-page':    {back: 'mh-cw-door-page'},
+    'stairs-cw-door-page':          {back: 'stairs-page', audio: {back: 'steps'}},
+    'stairs-cw-door-plate-page':    {back: 'stairs-cw-door-page'},
     'cw-stairs-door-page':       {back: 'cw-stairs-entrance-page'},
     'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: 'cw-left-bath-page', left: 'cw-right-aw-page'},
-    'cw-entrance-page':         {back: 'mh-cw-door-page', audio: {back: 'cwDoor'}, forward: 'cw-entrance-2-page'},
+    'cw-entrance-page':         {back: 'stairs-cw-door-page', audio: {back: 'cwDoor'}, forward: 'cw-entrance-2-page'},
     'cw-entrance-2-page':       {back: 'cw-entrance-page', forward: 'cw-entrance-3-page'},
     'cw-entrance-3-page':       {back: 'cw-entrance-2-page', left: 'cw-left-bath-page', right: 'cw-right-eh-page'},
     'cw-left-bath-page':    {back: 'cw-left-eh-page', left: 'cw-bath-door-page', forward: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page'},
@@ -4467,10 +4467,10 @@ function init() {
         await spawnThemedBox("Oh wow. It looks like this place has been buried underground", 'notification-top');
     }
 
-    document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('bh-sh-cr-door-closed-page');
+    document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('sh-cr-door-closed-page');
     document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
 
-    document.getElementById('bh-sh-cr-door-closed-hitbox').onclick = () => showPage('bh-sh-cr-door-handle-page');
+    document.getElementById('bh-sh-cr-door-closed-hitbox').onclick = () => showPage('sh-cr-door-handle-page');
     document.getElementById('bh-sh-cr-door-handle-handle-hitbox').onclick = async () => {
         if (state.crUnlocked) {
             triggerSound('openDoor');
@@ -4481,7 +4481,7 @@ function init() {
         }
     }
     document.getElementById('bh-sh-cr-door-handle-keypad-hitbox').onclick = () => {
-        showPage('bh-sh-cr-door-keypad-page');
+        showPage('sh-cr-door-keypad-page');
         enteredCode = ""; //resets entered code
     }
 
@@ -4703,10 +4703,10 @@ function init() {
     }
     document.getElementById('mh-cw-stairs-door-hitbox').onclick = () => {
         triggerSound('steps');
-        showPage('mh-cw-door-page');
+        showPage('stairs-cw-door-page');
     }
     document.getElementById('mh-cw-door-plate-hitbox').onclick = () => {
-        showPage('mh-cw-door-plate-page');
+        showPage('stairs-cw-door-plate-page');
     }
     document.getElementById('mh-cw-plate-hitbox').onclick = async () => {
         await spawnThemedBox("What is this plate for ?", "notification-top");
