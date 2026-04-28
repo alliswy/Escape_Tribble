@@ -5218,7 +5218,7 @@ function init() {
             await delay(20);
             await spawnThemedBox("Nice, it's on now. Why is each letter a different color?", "notification-top");
         } else {
-            await spawnThemedBox("This sign looks like it can be turned on.", "notification-top");
+            await spawnThemedBox("This LED sign looks like it can be turned on.", "notification-top");
         }
     }
     document.getElementById('li-read-on-hitbox').onclick = async () => {
@@ -5229,7 +5229,7 @@ function init() {
     document.getElementById('li-tv-br-hitbox').onclick = () => showPage('li-br-page');
     document.getElementById('li-tv-wr-hitbox').onclick = () => showPage('li-wr-page');
     document.getElementById('li-tv-tvo-wr-hitbox').onclick = () => showPage('li-wr-tvo-page');
-    document.getElementById('li-2r-wr-hitbox').onclick = () => {
+    document.getElementById('li-2r-wr-hitbox').onclick = async () => {
         state.hasWr = true;
         const keySlot = document.getElementById('inv-wr');
         if (keySlot) {
@@ -5238,6 +5238,8 @@ function init() {
         }
         showPage('li-br-page');
         openOverlay("li-wr", "inv-images/wr.png");
+        await (10);
+        await spawnThemedBox("This remote looks like it could turn on some LED lights");
     }
     document.getElementById('li-2r-br-hitbox').onclick = () => {
         state.hasBr = true;
