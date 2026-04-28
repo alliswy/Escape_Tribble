@@ -5,10 +5,10 @@ html, body{
     background-color: black; /* makes background black instead of white */
 }
 
-/*body.debug-hitboxes .hitbox {*/
-/*    background: rgba(0, 255, 0, 0.25);*/
-/*    outline: 2px solid lime;*/
-/*}*/
+body.debug-hitboxes .hitbox {
+    background: rgba(0, 255, 0, 0.25);
+    outline: 2px solid lime;
+}
 
 body:not(.debug-hitboxes) .hitbox {
     background: transparent;
@@ -3424,6 +3424,111 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* ----- MAIN HALL PAGES ---- */
+#mh-sl-right-endc-sl-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 9%;
+    width: 13%;
+    height: 95%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-bh-right-endc-bh-hitbox {
+    position: absolute;
+    top: 13%;
+    left: 72%;
+    width: 17%;
+    height: 67%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-bd-right-endc-bd-hitbox {
+    position: absolute;
+    top: 4%;
+    left: 13%;
+    width: 11%;
+    height: 90%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-li-right-endc-li-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 14%;
+    width: 14%;
+    height: 96%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-li-left-endc-li-hitbox {
+    position: absolute;
+    top: 9%;
+    left: 75%;
+    width: 14%;
+    height: 90%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-bd-left-endc-bd-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 77%;
+    width: 16%;
+    height: 94%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-bh-left-endc-bh-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 16%;
+    width: 13%;
+    height: 77%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#mh-sl-left-endc-sl-hitbox {
+    position: absolute;
+    top: 8%;
+    left: 77%;
+    width: 14%;
+    height: 87%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+
 #mh-tu-stairs-door-hitbox {
     position: absolute;
     top: 3%;
@@ -3477,6 +3582,346 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* ----- C-WING PAGES ---- */
+#cw-entrance-3-eh-hitbox {
+    position: absolute;
+    top: 7%;
+    left: 62%;
+    width: 30%;
+    height: 82%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-left-2-oh1-entrance-hitbox {
+    position: absolute;
+    top: 4%;
+    left: 13%;
+    width: 10%;
+    height: 89%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-left-bath-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 16%;
+    width: 12%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-bath-hitbox {
+    position: absolute;
+    top: 2%;
+    left: 78%;
+    width: 20%;
+    height: 97%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-bath-aw-hitbox {
+    position: absolute;
+    top: 12%;
+    left: 66%;
+    width: 8%;
+    height: 66%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-left-eh-hitbox {
+    position: absolute;
+    top: 3%;
+    left: 74%;
+    width: 21%;
+    height: 96%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-left-snh-wro-snh-hitbox {
+    position: absolute;
+    top: 2%;
+    left: 71%;
+    width: 24%;
+    height: 96%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-left-snh-wrc-snh-hitbox {
+    position: absolute;
+    top: 2%;
+    left: 71%;
+    width: 24%;
+    height: 96%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-snh-hitbox {
+    position: absolute;
+    top: 7%;
+    left: 62%;
+    width: 30%;
+    height: 82%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-aw-hitbox {
+    position: absolute;
+    top: 2%;
+    left: 70%;
+    width: 16%;
+    height: 95%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-aw-eh-hitbox {
+    position: absolute;
+    top: 10%;
+    left: 25%;
+    width: 7%;
+    height: 63%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-eh-hitbox {
+    position: absolute;
+    top: 1%;
+    left: 4%;
+    width: 24%;
+    height: 96%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-oh1-hitbox {
+    position: absolute;
+    top: 4%;
+    left: 69%;
+    width: 15%;
+    height: 91%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-print-oh1-hitbox {
+    position: absolute;
+    top: 2%;
+    left: 73%;
+    width: 14%;
+    height: 97%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-right-print-oh2-hitbox {
+    position: absolute;
+    top: 2%;
+    left: 6%;
+    width: 17%;
+    height: 68%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-stairs-entrance-hitbox {
+    position: absolute;
+    top: 16%;
+    left: 23%;
+    width: 8%;
+    height: 71%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-stairs-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 23%;
+    width: 58%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-oh2-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 30%;
+    width: 42%;
+    height: 95%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#cw-oh2-exit-oh1-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 30%;
+    width: 37%;
+    height: 95%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh1-exit-1-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 23%;
+    width: 58%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh1-exit-2-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 23%;
+    width: 58%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh1-right-2-exit-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 23%;
+    width: 58%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh1-right-2-exit-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 68%;
+    width: 14%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh1-right-3-exit-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 64%;
+    width: 15%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh1-left-2-exit-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 16%;
+    width: 12%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#oh2-exit-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 28%;
+    width: 41%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+
+
 #cw-aw-return-hitbox {
     position: absolute;
     top: 16%;

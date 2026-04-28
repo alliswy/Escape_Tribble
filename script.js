@@ -1019,25 +1019,35 @@ const roomLeads = {
     'pr-steps-po-page':                 { back: 'bd-back-door-open-page', forward: 'pr-main-po-page'},
 
     // Main Hall (Right Side)
-    'mh-sl-right-endc-page':    { forward: 'mh-hall-right-endc-page', left: 'mh-sld-page' },
+    'mh-sl-right-endc-page':    { forward: 'mh-hall-right-endc-page' },
     'mh-hall-right-endc-page':  { back: 'mh-sl-right-endc-page', forward: 'mh-bh-right-endc-page' },
-    'mh-bh-right-endc-page':    { back: 'mh-hall-right-endc-page', forward: 'mh-trash-right-endc-page', right: 'bh-entrance-page', left: 'mh-bh-exit-page' },
+    'mh-bh-right-endc-page':    { back: 'mh-hall-right-endc-page', forward: 'mh-trash-right-endc-page', left: 'mh-bh-exit-page' },
     'mh-trash-right-endc-page': { back: 'mh-bh-right-endc-page', forward: 'mh-bd-right-endc-page' },
-    'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page', left: 'mh-bd-main-page' },
-    'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'mh-li-door-closed-page', right: 'mh-tu-stairs-door-page' },
+    'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page' },
+    'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page'},
     'mh-cend-right-endc-kc-page': { back: 'mh-li-right-endc-page', right: 'mh-ki-door-closed-page' },
+
+    // 'mh-sl-right-endc-page':    { forward: 'mh-hall-right-endc-page', left: 'mh-sld-page' },
+    // 'mh-bh-right-endc-page':    { back: 'mh-hall-right-endc-page', forward: 'mh-trash-right-endc-page', right: 'bh-entrance-page', left: 'mh-bh-exit-page' },
+    // 'mh-bd-right-endc-page':    { back: 'mh-trash-right-endc-page', forward: 'mh-li-right-endc-page', left: 'mh-bd-main-page' },
+    // 'mh-li-right-endc-page':    { back: 'mh-bd-right-endc-page', forward: 'mh-cend-right-endc-kc-page', left: 'mh-li-door-closed-page', right: 'mh-tu-stairs-door-page' },
 
     'mh-tu-stairs-door-page':    {left: 'mh-li-right-endc-page', right: 'mh-li-left-endc-page'},
 
     // Main Hall (Left Side)
     'mh-cend-left-endc-page':   { forward: 'mh-li-left-endc-page', left: 'mh-ki-door-closed-page', back: 'stairs-aw-door-page', audio: {back: 'cwDoor'} },
-    'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'mh-li-door-closed-page', left: 'mh-tu-stairs-door-page' },
-    'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'mh-bd-main-page' },
-    'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page', right: 'mh-bh-exit-page'},
+    'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', left: 'mh-tu-stairs-door-page' },
+    'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page' },
+    'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', right: 'mh-bh-exit-page'},
     'mh-hall-left-endc-page':   { back: 'mh-bh-left-endc-page', forward: 'mh-sl-left-endc-page' },
-    'mh-sl-left-endc-page':     { back: 'mh-hall-left-endc-page', right: 'mh-sld-page', forward: 'mh-left-end-page' },
+    'mh-sl-left-endc-page':     { back: 'mh-hall-left-endc-page', forward: 'mh-left-end-page' },
     'mh-left-end-page':         {back: 'mh-sl-left-endc-page', right: 'mh-left-end-rd-page'},
     'mh-left-end-rd-page':      {right: 'mh-sl-right-endc-page', left: 'mh-left-end-page'},
+
+    // 'mh-li-left-endc-page':     { back: 'mh-cend-left-endc-page', forward: 'mh-bd-left-endc-page', right: 'mh-li-door-closed-page', left: 'mh-tu-stairs-door-page' },
+    // 'mh-bd-left-endc-page':     { back: 'mh-li-left-endc-page', forward: 'mh-bh-left-endc-page', right: 'mh-bd-main-page' },
+    // 'mh-bh-left-endc-page':     { back: 'mh-bd-left-endc-page', forward: 'mh-hall-left-endc-page', left: 'bh-entrance-page', right: 'mh-bh-exit-page'},
+    // 'mh-sl-left-endc-page':     { back: 'mh-hall-left-endc-page', right: 'mh-sld-page', forward: 'mh-left-end-page' },
 
     'mh-sld-page':            { left: 'mh-sl-left-endc-page', right: 'mh-sl-right-endc-page' },
 
@@ -1129,34 +1139,34 @@ const roomLeads = {
     'stairs-up-page': {back: 'cw-stairs-door-page', forward: 'stairs-aw-door-page', audio: {back: 'cwDoor'}},
     'stairs-aw-door-page': {back: 'stairs-up-page', left: 'stairs-rubble-page', audio: {back: 'steps'}},
     'stairs-rubble-page': {back: 'mh-cend-right-endc-kc-page', right: 'stairs-aw-door-page', audio: {back: 'cwDoor'}},
-    'stairs-page':        {back: 'stairs-rubble-page', forward: 'stairs-cw-door-page'},
+    'stairs-page':        {back: 'stairs-rubble-page'},
 
 
     //c-wing left-progression/entrance/snack hall
     'stairs-cw-door-page':          {back: 'stairs-page', audio: {back: 'steps'}},
     'stairs-cw-door-plate-page':    {back: 'stairs-cw-door-page'},
     'cw-stairs-door-page':       {back: 'cw-stairs-entrance-page'},
-    'cw-stairs-entrance-page':      {forward: 'cw-stairs-door-page', right: 'cw-left-bath-page', left: 'cw-right-aw-page'},
+    'cw-stairs-entrance-page':      {right: 'cw-left-bath-page', left: 'cw-right-aw-page'},
     'cw-entrance-page':         {back: 'stairs-cw-door-page', audio: {back: 'cwDoor'}, forward: 'cw-entrance-2-page'},
     'cw-entrance-2-page':       {back: 'cw-entrance-page', forward: 'cw-entrance-3-page'},
     'cw-entrance-3-page':       {back: 'cw-entrance-2-page', left: 'cw-left-bath-page', right: 'cw-right-eh-page'},
-    'cw-left-bath-page':    {back: 'cw-left-eh-page', left: 'cw-bath-door-page', forward: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page'},
-    'cw-left-snh-wrc-page':     {back:'cw-left-bath-page', forward: 'cw-wr-dc-page', right: 'snh-entrance-page'},
-    'cw-left-snh-wro-page':     {back: 'cw-left-bath-page', forward: 'cw-elevator-wr-do-page', right: 'snh-entrance-page'},
+    'cw-left-bath-page':    {back: 'cw-left-eh-page', forward: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page'},
+    'cw-left-snh-wrc-page':     {back:'cw-left-bath-page', forward: 'cw-wr-dc-page'},
+    'cw-left-snh-wro-page':     {back: 'cw-left-bath-page', forward: 'cw-elevator-wr-do-page'},
     'cw-elevator-wr-do-page':   {back: 'cw-left-snh-wro-page', left: 'cw-elevator-page'},
     'cw-wr-dc-page':            {back: 'cw-left-snh-wrc-page', left: 'cw-elevator-page'},
     'snh-entrance-page':     {left: () => state.wrUnlocked ? 'cw-left-snh-wro-page': 'cw-left-snh-wrc-page', right: 'cw-right-snh-page'},
-    'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page', right: 'cw-eh-entrance-page'},
+    'cw-left-eh-page':          {back: 'cw-left-2-page', forward: 'cw-left-bath-page'},
     'cw-left-1-page':           {forward: 'cw-left-2-page', right: 'cw-oh2-entrance-page', left: 'cw-oh2-exit-page'},
-    'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', left: 'cw-oh1-entrance-page', right: 'cw-oh1-exit-1-page'},
+    'cw-left-2-page':           {back: 'cw-left-1-page', forward: 'cw-left-eh-page', right: 'cw-oh1-exit-1-page'},
 
     //c-wing right progression/hallways
-    'cw-right-snh-page':        {forward: 'cw-right-bath-page', left: 'snh-entrance-page', right: 'cw-elevator-page'},
-    'cw-right-bath-page':       {back: 'cw-right-snh-page', right: 'cw-bath-door-page', forward: 'cw-right-aw-page'},
-    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page', right: 'cw-stairs-entrance-page'}, 
-    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page', left: 'cw-eh-entrance-page'},
-    'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', right: 'cw-oh1-entrance-page', left:'cw-oh1-exit-1-page'},
-    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page', left: 'cw-oh2-entrance-page', right: 'cw-oh2-exit-page'},
+    'cw-right-snh-page':        {forward: 'cw-right-bath-page', right: 'cw-elevator-page'},
+    'cw-right-bath-page':       {back: 'cw-right-snh-page', forward: 'cw-right-aw-page'},
+    'cw-right-aw-page':         {back: 'cw-right-bath-page', forward: 'cw-right-eh-page'},
+    'cw-right-eh-page':          {back: 'cw-right-aw-page', forward: 'cw-right-oh1-page'},
+    'cw-right-oh1-page':        {back: 'cw-right-eh-page', forward: 'cw-right-print-page', left:'cw-oh1-exit-1-page'},
+    'cw-right-print-page':      {back: 'cw-right-oh1-page', forward: () => state.isPrinterCalibrated ? 'print-main-paper-page' :'print-main-page'},
 
     //c-wing side halls
     'print-main-page':          {back: 'cw-right-print-page'},
@@ -1168,26 +1178,26 @@ const roomLeads = {
     'cw-eh-door-page':             {back: 'cw-eh-entrance-page'},
     'cw-eh-door-plate-page':       {back: 'cw-eh-door-page'},
     'cw-oh1-entrance-page':        {left: 'cw-right-oh1-page', right: 'cw-left-2-page'},
-    'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page', forward: 'oh1-left-3-page'},
+    'cw-oh2-exit-page':         {back: 'oh2-exit-page', left: 'cw-right-print-page', right: 'cw-left-1-page'},
     'oh1-left-1-page':          {left: 'oh1-exit-1-page', forward: 'oh1-left-2-page'},
-    'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page', left: 'oh1-exit-2-page'},
+    'oh1-left-2-page':          {back: 'oh1-left-1-page', forward: 'oh1-left-3-page'},
     'oh1-left-3-page':          {back: 'oh1-left-2-page', forward: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
     'oh1-left-4-page':          {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-left-4-key-page':      {back: 'oh1-left-3-page', right: 'oh1-right-1-page'},
     'oh1-right-1-page':         {forward: 'oh1-right-2-page', left: () => state.hasClrKey ? 'oh1-left-4-page': 'oh1-left-4-key-page'},
-    'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page', right: 'oh1-exit-2-page'},
-    'oh1-right-3-page':         {back: 'oh1-right-2-page', right: 'oh1-exit-1-page'},
-    'oh1-exit-1-page':          {forward: 'cw-oh1-exit-1-page', right: 'oh1-left-1-page'},
-    'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page', forward: 'cw-oh2-entrance-page'},
+    'oh1-right-2-page':         {back: 'oh1-right-1-page', forward: 'oh1-right-3-page'},
+    'oh1-right-3-page':         {back: 'oh1-right-2-page'},
+    'oh1-exit-1-page':          {right: 'oh1-left-1-page'},
+    'oh1-exit-2-page':          {right: 'oh1-left-2-page', left: 'oh1-right-2-page'},
     'oh1-books-page':           {back: 'oh1-left-4-page'},
     'oh1-books-key-page':       {back: 'oh1-left-4-key-page'},
     'cw-oh1-exit-1-page':       {back: 'oh1-exit-1-page', right: 'cw-right-oh1-page', left: 'cw-left-2-page'},
 
-    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', forward: 'oh2-entrance-page', right: 'cw-right-print-page', left: 'cw-left-1-page'},
+    'cw-oh2-entrance-page':     {back: 'oh1-exit-2-page', right: 'cw-right-print-page', left: 'cw-left-1-page'},
     'oh2-entrance-page':        {back: 'cw-oh2-entrance-page', right: 'oh2-oh3-entrance-page'},
     'oh2-oh3-entrance-page':    {forward: 'oh3-page', back: 'oh2-entrance-page', right: 'oh2-exit-page'},
     'oh3-page':                 {back: 'oh2-oh3-entrance-page'},
-    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page', forward: 'cw-oh2-exit-page'},
+    'oh2-exit-page':            {left: 'oh2-oh3-entrance-page'},
 
 
     //c-wing inspections/doors
@@ -3800,25 +3810,6 @@ function init() {
 
         if (typeof refreshInventorySlots === "function") refreshInventorySlots();
     }
-    infoButton.onclick = () => {
-        // 1. Show the info screen
-        const infoScreen = document.getElementById('info-screen');
-        infoScreen.classList.remove('hidden');
-
-        // 2. Optional: Reset to the "Credits" tab every time it opens
-        // This prevents the screen from opening on a random tab you left it on
-        const allTabs = document.querySelectorAll('.info-tab-content');
-        const allButtons = document.querySelectorAll('.tab-btn');
-
-        // Hide everything
-        allTabs.forEach(tab => tab.classList.add('hidden'));
-        allButtons.forEach(btn => btn.classList.remove('active'));
-
-        // Show the first one (Credits)
-        document.getElementById('credits').classList.remove('hidden');
-        document.querySelector('[data-target="credits"]').classList.add('active');
-    };
-
     // 1. Logic for switching between Info Tabs
     document.querySelectorAll('.tab-btn[data-target]').forEach(button => {
         button.addEventListener('click', () => {
@@ -3841,14 +3832,16 @@ function init() {
     };
 
 // 3. Opening the Info Screen (Triggered from your Main Menu)
-    infoButton.onclick = () => {
-        document.getElementById('info-screen').classList.remove('hidden');
-        startGlobalAudio('info-screen');
+    if (infoButton) {
+        infoButton.onclick = () => {
+            document.getElementById('info-screen').classList.remove('hidden');
+            startGlobalAudio('info-screen');
 
-        // Always start on the Credits tab for a clean look
-        const defaultTab = document.querySelector('.tab-btn[data-target="credits"]');
-        if (defaultTab) defaultTab.click();
-    };
+            // Always start on the Credits tab for a clean look
+            const defaultTab = document.querySelector('.tab-btn[data-target="credits"]');
+            if (defaultTab) defaultTab.click();
+        };
+    }
 
     //Settings button
     document.getElementById('settings-button').onclick = () => {
@@ -4189,6 +4182,15 @@ function init() {
 
 
     //main hall interaction end bw
+    document.getElementById('mh-sl-right-endc-sl-hitbox').onclick = () => showPage('mh-sld-page');
+    document.getElementById('mh-sl-left-endc-sl-hitbox').onclick = () => showPage('mh-sld-page');
+    document.getElementById('mh-bh-left-endc-bh-hitbox').onclick = () => showPage('bh-entrance-page');
+    document.getElementById('mh-bh-right-endc-bh-hitbox').onclick = () => showPage('bh-entrance-page');
+    document.getElementById('mh-bd-left-endc-bd-hitbox').onclick = () => showPage('mh-bd-main-page');
+    document.getElementById('mh-bd-right-endc-bd-hitbox').onclick = () => showPage('mh-bd-main-page');
+    document.getElementById('mh-li-left-endc-li-hitbox').onclick = () => showPage('mh-li-door-closed-page');
+    document.getElementById('mh-li-right-endc-li-hitbox').onclick = () => showPage('mh-li-door-closed-page');
+
     document.getElementById('mh-bw-door-hitbox').onclick = async() => {
         await spawnThemedBox("This door won't open", 'notification-top'); //fixme maybe make it look like it's buried too
     }
@@ -4690,6 +4692,33 @@ function init() {
 
 
     // ------- C-WING SECTION -----
+    document.getElementById('cw-entrance-3-eh-hitbox').onclick = () => showPage('cw-eh-entrance-page');
+    document.getElementById('cw-left-eh-hitbox').onclick = () => showPage('cw-eh-entrance-page');
+    document.getElementById('cw-right-aw-eh-hitbox').onclick = () => showPage('cw-eh-entrance-page');
+    document.getElementById('cw-right-eh-hitbox').onclick = () => showPage('cw-eh-entrance-page');
+    document.getElementById('cw-left-2-oh1-entrance-hitbox').onclick = () => showPage('cw-oh1-entrance-page');
+    document.getElementById('cw-right-oh1-hitbox').onclick = () => showPage('cw-oh1-entrance-page');
+    document.getElementById('cw-left-bath-hitbox').onclick = () => showPage('cw-bath-door-page');
+    document.getElementById('cw-right-bath-hitbox').onclick = () => showPage('cw-bath-door-page');
+    document.getElementById('cw-left-snh-wro-snh-hitbox').onclick = () => showPage('snh-entrance-page');
+    document.getElementById('cw-left-snh-wrc-snh-hitbox').onclick = () => showPage('snh-entrance-page');
+    document.getElementById('cw-right-snh-hitbox').onclick = () => showPage('snh-entrance-page');
+    document.getElementById('cw-right-aw-hitbox').onclick = () => showPage('cw-stairs-entrance-page');
+    document.getElementById('cw-right-bath-aw-hitbox').onclick = () => showPage('cw-stairs-entrance-page');
+    document.getElementById('cw-right-print-oh1-hitbox').onclick = () => showPage('cw-oh2-exit-page');
+    document.getElementById('cw-right-print-oh2-hitbox').onclick = () => showPage('cw-oh2-entrance-page');
+
+    document.getElementById('cw-oh2-exit-oh1-hitbox').onclick = () => showPage('oh1-left-3-page');
+    document.getElementById('cw-oh2-entrance-hitbox').onclick = () => showPage('oh2-entrance-page');
+    document.getElementById('cw-stairs-entrance-hitbox').onclick = () => showPage('cw-stairs-door-page');
+    document.getElementById('oh1-exit-1-hitbox').onclick = () => showPage('cw-oh1-exit-1-page');
+    document.getElementById('oh1-exit-2-hitbox').onclick = () => showPage('cw-oh2-entrance-page');
+    document.getElementById('oh1-right-2-exit-hitbox').onclick = () => showPage('oh1-exit-2-page');
+    document.getElementById('oh1-right-3-exit-hitbox').onclick = () => showPage('oh1-exit-1-page');
+    document.getElementById('oh1-left-2-exit-hitbox').onclick = () => showPage('oh1-exit-2-page');
+    document.getElementById('oh2-exit-hitbox').onclick = () => showPage('cw-oh2-exit-page');
+
+
     document.getElementById('cw-aw-return-hitbox').onclick = () => showPage('cw-stairs-entrance-page');
     document.getElementById('mh-cend-right-endc-cw-hitbox').onclick = () => {
         triggerSound('cwDoor');
