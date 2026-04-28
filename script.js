@@ -1786,10 +1786,14 @@ const hintRules = [
         condition: () => state.isTutorialActive && state.currTutorialStep === 'menu-open',
         text: "Click the button in the top right of the screen to open the benu"
     },
+    {
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'map-open',
+        text: "Open the menu and click the map button to view the map"
+    },
     // 8. Menu Close
     {
-        condition: () => state.isTutorialActive && state.currTutorialStep === 'menu-close',
-        text: "Click again to close the menu"
+        condition: () => state.isTutorialActive && state.currTutorialStep === 'map-close',
+        text: "Apologies, if you're viewing this hint, there was a bug, and you need to open the menu, view the map, and click to close the map in order to proceed with the tutorial."
     },
     // 9. View Handle (Shows the last notification of the two)
     {
@@ -3255,6 +3259,14 @@ async function advanceTutorial() {
             await delay(20);
             await spawnThemedBox("Click to open the menu -->", "notification-menu");
             break;
+        case 'map-open':
+            await delay(20);
+            await spawnThemedBox("Click to view the map -->", "notification-map");
+            break;
+        case 'map-close':
+            await delay(20);
+            await spawnThemedBox("Click to close the map -->", "notification-close-map");
+            break;
         case 'menu-close':
             await delay(20);
             await spawnThemedBox('Click again to close the menu', 'notification-menu');
@@ -3411,13 +3423,15 @@ async function tutorialHitboxInit() {
             advanceTutorial();
             return;
         } else if (state.currTutorialStep === 'menu-open' && clickedId === 'hamburger-icon') {
-            state.currTutorialStep = 'menu-close';
+            state.currTutorialStep = 'map-open';
             advanceTutorial();
             return;
-        } else if (state.currTutorialStep === 'menu-close' && clickedId === 'hamburger-icon') {
+        } else if (state.currTutorialStep ==='map-open' && clickedId ==='map-btn') {
+            state.currTutorialStep = 'map-close';
+            advanceTutorial();
+        } else if (state.currTutorialStep ==='map-close' && clickedId ==='map-close-btn') {
             state.currTutorialStep = 'view-handle';
             advanceTutorial();
-            return;
         } else if(state.currTutorialStep==='view-handle' && clickedId==='apt-fd-handle-hitbox') {
             showPage('apt-fd-handle-page');
             state.currTutorialStep='use-key';
@@ -3853,6 +3867,11 @@ function init() {
                 // Force the map to reflect discovered rooms
                 updateMap(saveData.currentPage);
                 drawMap();
+
+                // If tutorial was saved at the map-close step, reopen map on load.
+                if (state.currTutorialStep === 'map-close') {
+                    document.getElementById('map-screen')?.classList.remove('hidden');
+                }
 
                 // Resume tutorial logic/listeners when loading from apartment pages.
                 // Without this, tutorial notifications and step progression can soft-lock.
@@ -6278,6 +6297,8 @@ function loadGame() {
             'hint-close',
             'menu-open',
             'menu-close',
+            'map-open',
+            'map-close',
             'view-handle',
             'use-key'
         ]);

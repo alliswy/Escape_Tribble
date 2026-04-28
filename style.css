@@ -395,6 +395,16 @@ body.menu-mode .theme-burgundy-gold {
     right: 200px !important;
 }
 
+.notification-map {
+    top: 60px !important;
+    right: 230px !important;
+}
+
+.notification-close-map {
+    bottom: 25% !important;
+    left: 14% !important;
+}
+
 .notification-hint {
     bottom: 20px !important;
     right: 100px !important;
