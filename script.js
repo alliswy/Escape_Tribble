@@ -1556,7 +1556,11 @@ async function triggerNotification(pageId) {
             }
         }break;
         case 'lo-monitor-page': {
-            document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
+            resetTerminalUI();
+            updateLoMonitorHitboxes({ terminalOpen: !termPage.classList.contains('hidden') });
+        }break;
+        case 'lo-monitor-drive-page': {
+            updateLoMonitorHitboxes({ terminalOpen: !termPage.classList.contains('hidden') });
         }break;
         case 'bath-page': {
             await delay(20);
@@ -1686,32 +1690,46 @@ function triggerFlicker(elementId) {
 }
 
 let isMonitorFeedLocked = false;
+let isLoTerminalLocked = false;
 
-function lockMonitorFeedUI(lock) {
-    isMonitorFeedLocked = lock;
-
-    const driveMonitorHitbox = document.getElementById('lo-monitor-drive-monitor-hitbox');
-
-    if (lock) {
-        // While feed is open, no nav + no terminal re-open hitbox
+function applyLoMonitorNavLock() {
+    if (isMonitorFeedLocked || isLoTerminalLocked) {
         arrows.back?.classList.add('hidden');
         arrows.forward?.classList.add('hidden');
         arrows.left?.classList.add('hidden');
         arrows.right?.classList.add('hidden');
-        driveMonitorHitbox?.classList.add('hidden');
         return;
     }
 
-    // On unlock, restore arrows based on current page routes
     const currentPaths = roomLeads[state.currentPage] || {};
-
     arrows.back?.classList.toggle('hidden', !currentPaths.back);
     arrows.forward?.classList.toggle('hidden', !currentPaths.forward);
     arrows.left?.classList.toggle('hidden', !currentPaths.left);
     arrows.right?.classList.toggle('hidden', !currentPaths.right);
+}
 
-    // Re-enable the monitor hitbox after closing feed
-    driveMonitorHitbox?.classList.remove('hidden');
+function updateLoMonitorHitboxes({ terminalOpen = false } = {}) {
+    const monitorHitbox = document.getElementById('lo-monitor-hitbox');
+    const driveHitbox = document.getElementById('lo-monitor-drive-hitbox');
+    const driveMonitorHitbox = document.getElementById('lo-monitor-drive-monitor-hitbox');
+
+    // Before USB is used, monitor hitbox should be available whenever terminal is closed.
+    // This includes both pre- and post-4-digit stages so the player can reopen monitor prompts.
+    const showMonitorHitbox = !state.usedDrive && !terminalOpen;
+    const showDriveHitbox = !state.usedDrive && state.loMonitorUnlocked;
+    const showDriveMonitorHitbox = state.usedDrive && !terminalOpen && !isMonitorFeedLocked;
+
+    monitorHitbox?.classList.toggle('hidden', !showMonitorHitbox);
+    driveHitbox?.classList.toggle('hidden', !showDriveHitbox);
+    driveMonitorHitbox?.classList.toggle('hidden', !showDriveMonitorHitbox);
+}
+
+function lockMonitorFeedUI(lock) {
+    isMonitorFeedLocked = lock;
+    applyLoMonitorNavLock();
+
+    const terminalOpen = !document.getElementById('terminal-login-page')?.classList.contains('hidden');
+    updateLoMonitorHitboxes({ terminalOpen });
 }
 
 function closeMonitorHatchFeed() {
@@ -1724,6 +1742,8 @@ function showMonitorHatchFeedPersistent() {
     const feed = document.getElementById('monitor-hatch-feed');
     if (!feed) return;
 
+    // The terminal overlay is no longer active when the persistent feed is shown.
+    isLoTerminalLocked = false;
     lockMonitorFeedUI(true);
     feed.classList.remove('hidden');
     triggerFlicker('monitor-hatch-feed'); // flicker in once, then stays
@@ -2500,17 +2520,25 @@ const prompt = document.getElementById('pin-prompt');
 
 // Called when clicking the monitor hitbox
 async function openTerminal() {
+    const terminalWindow = document.getElementById('terminal-window');
     termPage.classList.remove('hidden');
+    isLoTerminalLocked = true;
+    applyLoMonitorNavLock();
+    updateLoMonitorHitboxes({ terminalOpen: true });
 
     if (state.usedDrive) {
+        termPage.style.pointerEvents = "auto";
+        if (terminalWindow) terminalWindow.style.pointerEvents = "auto";
+
         // If hatch event already happened, reopen the hatch camera feed instead of auth UI
         if (state.hatchOpen) {
             termPage.classList.add('hidden');
+            isLoTerminalLocked = false;
+            applyLoMonitorNavLock();
             showMonitorHatchFeedPersistent();
             return;
         }
 
-        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.add('hidden');
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
         termFeedback.style.display = "none";
@@ -2522,8 +2550,11 @@ async function openTerminal() {
         document.getElementById('final-auth-section').classList.remove('hidden');
         setTimeout(() => document.getElementById('final-terminal-input').focus(), 10);
     } else if (state.loMonitorUnlocked) {
-        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
-        document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+        // Let clicks pass through the full-screen overlay so the USB hitbox stays clickable.
+        // Keep the terminal panel itself interactive so the player can still press [X].
+        termPage.style.pointerEvents = "none";
+        if (terminalWindow) terminalWindow.style.pointerEvents = "auto";
+
         if (prompt) prompt.style.display = "none";
         termInput.style.display = "none";
         if (loginHeader) loginHeader.style.display = "none";
@@ -2533,7 +2564,9 @@ async function openTerminal() {
         termFeedback.style.color = "#00ff41";
         termFeedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
     } else {
-        document.getElementById('lo-monitor-hitbox').classList.add('hidden');
+        termPage.style.pointerEvents = "auto";
+        if (terminalWindow) terminalWindow.style.pointerEvents = "auto";
+
         //  Disable typing immediately
         termInput.disabled = true;
 
@@ -2560,18 +2593,10 @@ async function openTerminal() {
 function closeTerminal() {
     // 1. Hide the terminal
     termPage.classList.add('hidden');
-
-    // 2. Re-enable the monitor hitbox
-    if (state.usedDrive) {
-        document.getElementById('lo-monitor-drive-monitor-hitbox').classList.remove('hidden');
-    } else if (state.loMonitorUnlocked) {
-        // Keep the drive slot clickable after the 4-digit lock is solved.
-        document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
-        document.getElementById('lo-monitor-hitbox').classList.add('hidden');
-    } else {
-        document.getElementById('lo-monitor-hitbox').classList.remove('hidden');
-        document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
-    }
+    termPage.style.pointerEvents = "auto";
+    isLoTerminalLocked = false;
+    applyLoMonitorNavLock();
+    updateLoMonitorHitboxes({ terminalOpen: false });
 }
 
 // function fullyCloseTerminal() {
@@ -2586,21 +2611,27 @@ termInput.addEventListener('keyup', (e) => {
         const feedback = document.getElementById('terminal-feedback');
         const header = document.getElementById('auth-header');
         const prompt = document.getElementById('pin-prompt');
+        const terminalWindow = document.getElementById('terminal-window');
 
-        if (termInput.value === "8450") {
+        if (termInput.value === "8450" || termInput.value === "8451") {
             state.loMonitorUnlocked = true;
 
             // 1. Make the success text significantly larger
             feedback.style.fontSize = "1.8rem";
             feedback.style.color = "#00ff41";
             feedback.innerHTML = "ACCESS GRANTED.<br>INSERT FLASH DRIVE TO CONTINUE";
-            document.getElementById('lo-monitor-drive-hitbox').classList.remove('hidden');
+            updateLoMonitorHitboxes({ terminalOpen: true });
 
             // 2. Hide everything else
             termInput.style.display = "none";
             if (header) header.style.display = "none";
             if (prompt) prompt.style.display = "none";
             if (loginHeader) loginHeader.style.display = "none";
+
+            // Match reopened unlocked-monitor behavior immediately:
+            // allow clicks through overlay so only real page hitboxes (USB slot) are active.
+            termPage.style.pointerEvents = "none";
+            if (terminalWindow) terminalWindow.style.pointerEvents = "auto";
 
         } else {
             // Keep "Denied" text at a standard size
@@ -2615,12 +2646,6 @@ termInput.addEventListener('keyup', (e) => {
 // Ensure typing is always active while the overlay is up
 termPage.addEventListener('click', async (e) => {
     if (e.target.id !== 'terminal-close-btn') {
-        // If monitor is unlocked, allow drive interaction without closing terminal first.
-        if (!state.usedDrive && state.loMonitorUnlocked) {
-            await useDrive();
-            return;
-        }
-
         // If the drive is used, focus the 8-digit box. Otherwise, the 4-digit box.
         if (state.usedDrive) {
             document.getElementById('final-terminal-input').focus();
@@ -2632,6 +2657,7 @@ termPage.addEventListener('click', async (e) => {
 
 async function useDrive() {
     if (state.hasLs10drive) {
+        const terminalWindow = document.getElementById('terminal-window');
         state.usedDrive = true;
         triggerSound('driveNotif');
         const keySlot = document.getElementById('inv-ls-drive');
@@ -2640,6 +2666,13 @@ async function useDrive() {
             refreshInventorySlots();
         }
         showPage('lo-monitor-drive-page');
+
+        // Keep monitor terminal open and interactive for the 8-digit auth stage.
+        termPage.classList.remove('hidden');
+        termPage.style.pointerEvents = "auto";
+        if (terminalWindow) terminalWindow.style.pointerEvents = "auto";
+        isLoTerminalLocked = true;
+        applyLoMonitorNavLock();
 
         // 1. Hide EVERYTHING from the previous stage
         termFeedback.style.display = "none";
@@ -2650,7 +2683,7 @@ async function useDrive() {
         if (document.getElementById('auth-header')) document.getElementById('auth-header').style.display = "none";
         if (document.getElementById('pin-prompt')) document.getElementById('pin-prompt').style.display = "none";
 
-        document.getElementById('lo-monitor-drive-hitbox').classList.add('hidden');
+        updateLoMonitorHitboxes({ terminalOpen: true });
 
         // 2. Show the final 8-digit section
         const finalSection = document.getElementById('final-auth-section');
@@ -2716,17 +2749,14 @@ function resetTerminalUI() {
     closeMonitorHatchFeed();
     // Hide everything
     termPage.classList.add('hidden');
+    termPage.style.pointerEvents = "auto";
 
     document.getElementById('final-auth-section').classList.add('hidden');
     document.getElementById('final-auth-section').style.display = "none";
 
-    const monitorHitbox = document.getElementById('lo-monitor-hitbox');
-    const driveHitbox = document.getElementById('lo-monitor-drive-hitbox');
-    const driveMonitorHitbox = document.getElementById('lo-monitor-drive-monitor-hitbox');
-
-    if (monitorHitbox) monitorHitbox.classList.remove('hidden');
-    if (driveHitbox) driveHitbox.classList.add('hidden');
-    if (driveMonitorHitbox) driveMonitorHitbox.classList.add('hidden');
+    isLoTerminalLocked = false;
+    applyLoMonitorNavLock();
+    updateLoMonitorHitboxes({ terminalOpen: false });
 
     termInput.style.display = "block";
     termInput.value = "";
