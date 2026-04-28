@@ -4903,6 +4903,7 @@ function init() {
         showPage('oh1-books-page');
         await delay(20);
         await spawnThemedBox("Another key !", "notification-top");
+        if (!state.isPrinterCalibrated) {
         triggerSound('printClick');
         setTimeout(async () => {
             await spawnThemedBox("Is that a printer making noise ?", "notification-top");
@@ -4910,6 +4911,7 @@ function init() {
                 await spawnThemedBox("Maybe I should go check it out", "notification-top");
             }, 2000);
         }, 1500);
+        }
     }
     document.getElementById('printer-hitbox').onclick = () => showPage('print-page');
     document.getElementById('printer-paper-hitbox').onclick = async () => {
@@ -5621,6 +5623,7 @@ const mapRooms = {
     lo:   { x: 32, y: 6,  w: 5,  h: 5,  label: 'Library Office',    key: 'lo'   },
     ls:   { x: 11,  y: 7,  w: 20, h: 4, label: 'Library Storage',   key: 'ls'   },
     stairs:{ x: 41.5, y: 24, w: 3, h: 3,  label: 'Stairwell',        key: 'stairs'},
+    aw_stub: { x: 50, y: 25.5, w: 0.1, h: 0.1, label: '', key: 'aw_stub', hidden: true },
     ki:   { x: 36, y: 28, w: 4,  h: 6,  label: 'Kitchen',       key: 'ki'   },
     bh:   { x: 14, y: 28, w: 4,  h: 22, label: 'Back Hall',     key: 'bh'   },
     sh:   { x: 19, y: 44, w: 7,  h: 3,  label: 'Side Hall',     key: 'sh'   },
@@ -5642,6 +5645,7 @@ const mapRooms = {
             { x: 20, y: 25, w: 5, h: 4 }
         ]
     },
+    cw_left_stub: { x: 6, y: 25, w: 0.1, h: 0.1, label: '', key: 'cw_left_stub', hidden: true },
     wr:   { x: 13, y: 0,  w: 10, h: 10, label: 'Classroom',     key: 'wr'   }, // resized to 10x10
     bath: { x: 11, y: 19, w: 4,  h: 3,  label: 'Bathroom',      key: 'bath' }, // y moved 13->19
     snh:  { x: 21, y: 15, w: 10, h: 4,  label: 'Office Hall',   key: 'snh'  }, // y moved 9->15
@@ -5662,6 +5666,7 @@ const mapCorridors = [
     { rooms: ['lo', 'li'], dir: 'v', wing: 'a', door1: {x: 33, y: 11}, door2: {x: 33, y: 12} },
     { rooms: ['lo', 'ls'], dir: 'h', wing: 'a', door1: {x: 31, y: 9.5}, door2: {x: 32, y: 9.5} },
     { rooms: ['stairs','mh'], dir: 'h', wing: 'a', door1: {x: 41.5, y: 25.5}, door2: {x: 41, y: 25.5} },
+    { rooms: ['stairs', 'aw_stub'], dir: 'h', wing: 'a', door1: {x: 44.5, y: 25.5}, door2: {x: 46, y: 25.5}, outerW: 14, innerW: 9, fuzzyEnd: true, oneWayFrom: 'stairs' },
     { rooms: ['ki', 'mh'], dir: 'v', wing: 'a', door1: {x: 38, y: 28}, door2: {x: 38, y: 27} },
     { rooms: ['bh', 'mh'], dir: 'v', wing: 'a', door1: {x: 16, y: 28}, door2: {x: 16, y: 27} },
     { rooms: ['bh', 'sh'], dir: 'v', wing: 'a', door1: {x: 19, y: 45.5}, door2: {x: 18, y: 45.5} },
@@ -5674,6 +5679,7 @@ const mapCorridors = [
     { rooms: ['cw', 'wr'], dir: 'v', wing: 'c', door1: {x: 18, y: 11}, door2: {x: 18, y: 10} },
     { rooms: ['cw', 'bath'], dir: 'h', wing: 'c', door1: {x: 16, y: 20.5}, door2: {x: 15, y: 20.5} },
     { rooms: ['cw', 'snh'], dir: 'h', wing: 'c', door1: {x: 20, y: 17}, door2: {x: 21, y: 17} },
+    { rooms: ['cw', 'cw_left_stub'], dir: 'h', wing: 'c', door1: {x: 11, y: 25}, door2: {x: 9, y: 25}, outerW: 14, innerW: 9, fuzzyEnd: true, oneWayFrom: 'cw' },
     { rooms: ['cw', 'oh1'], dir: 'h', wing: 'c', door1: {x: 16, y: 39.5}, door2: {x: 15, y: 39.5} },
     { rooms: ['cw', 'oh2'], dir: 'h', wing: 'c', door1: {x: 20, y: 39.5}, door2: {x: 21, y: 39.5} },
     { rooms: ['oh2', 'oh3'], dir: 'v', wing: 'c', door1: {x: 22.5, y: 41}, door2: {x: 22.5, y: 42} },
@@ -5690,6 +5696,7 @@ const roomDiscovery = {
     li:    () => state.discoveredLi,
     lo:    () => state.discoveredLo,
     stairs:() => state.discoveredStairs,
+    aw_stub: () => state.discoveredStairs,
     ki:    () => state.discoveredKi,
     bh:    () => state.discoveredBh,
     sh:    () => state.discoveredSh,
@@ -5698,6 +5705,7 @@ const roomDiscovery = {
     clr:   () => state.discoveredClr,
     camr:  () => state.discoveredCamr,
     cw:    () => state.discoveredCw,
+    cw_left_stub: () => state.discoveredCw,
     wr:    () => state.discoveredWr,
     bath:  () => state.discoveredBath,
     snh:   () => state.discoveredSnh,
@@ -5782,12 +5790,12 @@ function drawMap() {
         const aRooms = {
             mh: mapRooms.mh, pr: mapRooms.pr, bd: mapRooms.bd, li: mapRooms.li,
             lo: mapRooms.lo, ls: mapRooms.ls, stairs: mapRooms.stairs, ki: mapRooms.ki,
-            bh: mapRooms.bh, sh: mapRooms.sh, clr: mapRooms.clr, cr: mapRooms.cr,
+            aw_stub: mapRooms.aw_stub, bh: mapRooms.bh, sh: mapRooms.sh, clr: mapRooms.clr, cr: mapRooms.cr,
             camr: mapRooms.camr, tu: mapRooms.tu,
         };
 
         const cRooms = {
-            cw: mapRooms.cw, wr: mapRooms.wr, bath: mapRooms.bath, snh: mapRooms.snh,
+            cw: mapRooms.cw, cw_left_stub: mapRooms.cw_left_stub, wr: mapRooms.wr, bath: mapRooms.bath, snh: mapRooms.snh,
             oh1: mapRooms.oh1, oh2: mapRooms.oh2, oh3: mapRooms.oh3, print: mapRooms.print,
         };
 
@@ -5798,6 +5806,7 @@ function drawMap() {
     // Calculate canvas size from room extents
     let maxX = 0, maxY = 0;
     Object.values(rooms).forEach(r => {
+        if (r.hidden) return;
         const parts = r.segments || [r];
         parts.forEach(part => {
             maxX = Math.max(maxX, part.x + part.w);
@@ -5834,36 +5843,53 @@ function drawMap() {
 
         const elbow = c.dir === 'v' ? { x: p1.x, y: p2.y } : { x: p2.x, y: p1.y };
 
-        const drawPath = (start, corner, end, isTargetDiscovered) => {
-            const grad = ctx.createLinearGradient(start.x, start.y, end.x, end.y);
+        const drawPath = (start, corner, end, isTargetDiscovered, fadeOutAtEnd = false) => {
+            const shouldFadeEnd = fadeOutAtEnd || !isTargetDiscovered;
+            const target = isTargetDiscovered
+                ? end
+                : {
+                    x: corner.x + (end.x - corner.x) * 0.6,
+                    y: corner.y + (end.y - corner.y) * 0.6
+                };
+
+            const grad = ctx.createLinearGradient(start.x, start.y, target.x, target.y);
             grad.addColorStop(0, '#c9a84c');
-            grad.addColorStop(isTargetDiscovered ? 1 : 0.4, isTargetDiscovered ? '#c9a84c' : 'rgba(201, 168, 76, 0)');
+            if (shouldFadeEnd) {
+                grad.addColorStop(0.72, '#c9a84c');
+                grad.addColorStop(1, 'rgba(201, 168, 76, 0)');
+            } else {
+                grad.addColorStop(1, '#c9a84c');
+            }
 
             ctx.lineJoin = "miter";
+            ctx.lineCap = "butt";
 
-            [ {w: 14, s: grad}, {w: 10, s: '#0a0500'} ].forEach(style => {
+            const outerW = c.outerW ?? (c.emphasis ? 18 : 14);
+            const innerW = c.innerW ?? (c.emphasis ? 13 : 10);
+            [ {w: outerW, s: grad}, {w: innerW, s: '#0a0500'} ].forEach(style => {
                 ctx.beginPath();
                 ctx.strokeStyle = style.s;
                 ctx.lineWidth = style.w;
                 ctx.moveTo(start.x, start.y);
                 ctx.lineTo(corner.x, corner.y);
-                if (isTargetDiscovered) {
-                    ctx.lineTo(end.x, end.y);
-                } else {
-                    const dx = corner.x + (end.x - corner.x) * 0.3;
-                    const dy = corner.y + (end.y - corner.y) * 0.3;
-                    ctx.lineTo(dx, dy);
-                }
+                ctx.lineTo(target.x, target.y);
                 ctx.stroke();
             });
         };
 
-        if (r1Disc) drawPath(p1, elbow, p2, r2Disc);
-        if (r2Disc) drawPath(p2, elbow, p1, r1Disc);
+        if (c.oneWayFrom === c.rooms[0]) {
+            if (r1Disc) drawPath(p1, elbow, p2, true, !!c.fuzzyEnd);
+        } else if (c.oneWayFrom === c.rooms[1]) {
+            if (r2Disc) drawPath(p2, elbow, p1, true, !!c.fuzzyEnd);
+        } else {
+            if (r1Disc) drawPath(p1, elbow, p2, r2Disc);
+            if (r2Disc) drawPath(p2, elbow, p1, r1Disc);
+        }
     });
 
     // --- DRAW ROOMS ---
     Object.values(rooms).forEach(room => {
+        if (room.hidden) return;
         if (!roomDiscovery[room.key]?.()) return;
 
         const isCurrent = room.key === currentMapRoom;
