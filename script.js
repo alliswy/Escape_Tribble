@@ -1078,7 +1078,7 @@ const roomLeads = {
     'cr-doors-2dc-page':    {back: 'cr-main-2dc-page'},
     'cr-doors-1dc-page':    {back: 'cr-main-1dc-page'},
     'cr-doors-1dc-cam-page': {back: 'cr-main-1dc-page'},
-    'cr-doors-1dc-ld-page':  {back: state.isLeftMonitorOn ? 'cr-doors-1dc-cam-page': 'cr-doors-1dc-page'},
+    'cr-doors-1dc-ld-page':  {back: () => state.isLeftMonitorOn ? 'cr-doors-1dc-cam-page': 'cr-doors-1dc-page'},
     'cr-doors-cam-page':     {back: 'cr-main-page'},
     'cr-doors-page':        {back: 'cr-main-page'},
     'cr-couches-key-page':  {back: () => state.camrDoorOpen ? state.crlDoorOpen ? 'cr-main-page' : 'cr-main-1dc-page': 'cr-main-2dc-page'},
@@ -1102,7 +1102,7 @@ const roomLeads = {
     'camr-mlo-we-page':         {back: 'camr-main-ml-on-page'},
     'camr-main-wp-page':        {back: 'cr-doors-1dc-page'},
     'camr-ml-off-page':         {back: () => state.foundWp ? 'camr-main-page':'camr-main-wp-page'},
-    'camr-ml-on-page':          {back: () => state.justTurnedOnMl ? 'camr-main-ml-on-person-page' :'camr-main-ml-on-page'},
+    'camr-ml-on-page':          {back: () => state.crlDoorOpen ? 'camr-main-ml-on-page':'camr-main-ml-on-person-page' },
     'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person-page'}, //fixme, finish all this stuff w the person in the camera
     //note for next line: if the left monitor is on, they already visited the left monitor, and thus already saw the window person !
     'camr-mr-off-page':         {
@@ -1541,7 +1541,6 @@ async function triggerNotification(pageId) {
         }break;
         case 'clr-main-id-page': {
             if (!state.notificationsSeen['clr-main-init']) {
-                await delay(20);
                 await spawnThemedBox("That person from the camera feed, they're not here", "notification-top");
                 await spawnThemedBox("Something's wrong with this place", "notification-top");
                 await spawnThemedBox("Also what the heck ! What's with that giant ID card ??", "notification-top");
@@ -3022,7 +3021,7 @@ function checkSecurityPass() {
             state.justTurnedOnMl = true;
             state.isLeftMonitorOn = true;
             showPage('camr-ml-on-page');
-        }, 3000);
+        }, 1500);
 
     }
     // THIS IS THE "FAILURE BLOCK" (The 'else' part)
@@ -4657,7 +4656,13 @@ function init() {
             showPage('cr-doors-1dc-page');
         }
     }
-    document.getElementById('cr-doors-1dc-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
+    document.getElementById('cr-doors-1dc-cam-rd-hitbox').onclick = () => {
+        if (state.crlDoorOpen) {
+            showPage('camr-main-ml-on-page');
+        } else {
+            showPage("camr-main-ml-on-person-page");
+        }
+    }
     document.getElementById('cr-doors-cam-rd-hitbox').onclick = () => showPage('camr-main-ml-on-page');
 
     document.getElementById('cr-doors-2dc-rd-hitbox').onclick = () => showPage('cr-camr-door-closed-page');
@@ -4744,8 +4749,18 @@ function init() {
         if (backArrow) backArrow.style.visibility = 'hidden';
         if (hitbox) hitbox.style.display = 'none';
     };
+    document.getElementById('camr-ml-on-hitbox').onclick = async () => {
+        if (!state.crlDoorOpen) {
+            await spawnThemedBox('Is this camera feed showing the room to the left of here ?', "notification-top");
+        } else {
+            await spawnThemedBox("The person from before, they disappeared. Did they find their own way out of the room, or was it a ghost...", "notification-top");
+        }
+    }
     document.getElementById('camr-main-mr-hitbox').onclick = () => {
         showPage('camr-mr-off-page');
+    }
+    document.getElementById('camr-main-mlo-ml-hitbox').onclick = () => {
+        showPage('camr-ml-on-page');
     }
     document.getElementById('camr-main-wp-window-hitbox').onclick = () => {
         showPage('camr-wp-page');
@@ -5239,7 +5254,7 @@ function init() {
         showPage('li-br-page');
         openOverlay("li-wr", "inv-images/wr.png");
         await (10);
-        await spawnThemedBox("This remote looks like it could turn on some LED lights");
+        await spawnThemedBox("This remote looks like it could turn on some LED lights", 'notification-top');
     }
     document.getElementById('li-2r-br-hitbox').onclick = () => {
         state.hasBr = true;
