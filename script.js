@@ -1846,8 +1846,6 @@ const hintRules = [
         condition: () => state.isTutorialActive && state.currTutorialStep === 'filled-bottle',
         text: "Find the bed and go to sleep"
     },
-
-
     {
         condition: () => !state.isTutorialActive && !state.bdUnlocked && !state.hasBdKey,
         text: "Try inspecting the book depository"
@@ -2302,7 +2300,7 @@ function startWordle(onWinCallback) {
     <div id="wordle-ui-wrapper" style="text-align:center;">
         <h2 style="color:#26e600; font-family:monospace; margin: 0;">SYSTEM OVERRIDE</h2>
         
-        <p style="color:#26e600; font-family:monospace; font-size:0.7rem; margin: 2px 0 8px 0; opacity:0.8;">
+        <p style="color:#26e600; font-family:monospace; font-size:1rem; margin: 2px 0 8px 0; opacity:0.8;">
             FIND THE 5-LETTER KEY. [ <span style="color:#538d4e">■</span>:Good <span style="color:#c9b458">■</span>:MOVE <span style="color:#3a3a3c">■</span>:Null ]
         </p>
 
@@ -2702,8 +2700,39 @@ async function useDrive() {
 const finalInput = document.getElementById('final-terminal-input');
 const finalError = document.getElementById('final-error-feedback');
 
-termInput.addEventListener('keydown', () => triggerSound('keyboard'));
-finalInput.addEventListener('keydown', () => triggerSound('keyboard'));
+function setupLoMonitorNumericInputFilter(inputEl) {
+    if (!inputEl) return;
+
+    // Block non-number keys before they render.
+    inputEl.addEventListener('keydown', (e) => {
+        const isDigit = /^[0-9]$/.test(e.key);
+        const isControlKey = [
+            'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+            'Tab', 'Enter', 'Home', 'End'
+        ].includes(e.key);
+        const isShortcut = e.ctrlKey || e.metaKey;
+
+        if (!isDigit && !isControlKey && !isShortcut) {
+            e.preventDefault();
+            return;
+        }
+
+        if (isDigit || e.key === 'Backspace' || e.key === 'Enter') {
+            triggerSound('keyboard');
+        }
+    });
+
+    // Safety net for paste/IME/mobile keyboards.
+    inputEl.addEventListener('input', (e) => {
+        const cleaned = e.target.value.replace(/[^0-9]/g, '');
+        if (cleaned !== e.target.value) {
+            e.target.value = cleaned;
+        }
+    });
+}
+
+setupLoMonitorNumericInputFilter(termInput);
+setupLoMonitorNumericInputFilter(finalInput);
 
 // 1. Only allow numbers to be typed
 finalInput.addEventListener('input', (e) => {
@@ -2930,15 +2959,40 @@ async function inputKey(num) {
 
 
 // --------- LEFT MONITOR PASSWORD PAGE ------
+function setupLeftMonitorInputFilter() {
+    const securityInput = document.getElementById('security-pass-input');
+    if (!securityInput) return;
+
+    // Block non-letter key presses before they render.
+    securityInput.addEventListener('keydown', (e) => {
+        const isLetter = /^[a-zA-Z]$/.test(e.key);
+        const isControlKey = [
+            'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown',
+            'Tab', 'Enter', 'Home', 'End'
+        ].includes(e.key);
+        const isShortcut = e.ctrlKey || e.metaKey;
+
+        if (!isLetter && !isControlKey && !isShortcut) {
+            e.preventDefault();
+        }
+    });
+
+    // Safety net for paste/IME/mobile keyboards.
+    securityInput.addEventListener('input', (e) => {
+        const cleaned = e.target.value.replace(/[^a-zA-Z]/g, '');
+        if (cleaned !== e.target.value) {
+            e.target.value = cleaned;
+        }
+        triggerSound('keyboard');
+    });
+}
+
+setupLeftMonitorInputFilter();
+
 function checkSecurityPass() {
     const input = document.getElementById('security-pass-input');
     const feedback = document.getElementById('security-feedback');
     const status = document.getElementById('status-text');
-    const securityInput = document.getElementById('security-pass-input');
-
-    securityInput.addEventListener('input', () => {
-        triggerSound('keyboard');
-    });
 
     const userAttempt = input.value.trim().toUpperCase();
     const correctKey = state.savedKey ? state.savedKey.toUpperCase() : "";
@@ -4349,6 +4403,12 @@ function init() {
     }
     document.getElementById('pr-pw-main-book-po-hitbox').onclick = () => showPage('pr-pw-book-projector-on-page');
     document.getElementById('pr-pw-main-noBook-po-hitbox').onclick = () => showPage('pr-pw-noBook-projector-on-page');
+    document.getElementById('pr-pw-book-projector-on-hitbox').onclick = async () => {
+        spawnThemedBox("This projector looks so old, I'm surprised it even works", "notification-top");
+    }
+    document.getElementById('pr-pw-noBook-projector-on-hitbox').onclick = async () => {
+        spawnThemedBox("This projector looks so old, I'm surprised it even works", "notification-top");
+    }
 
     document.getElementById('pr-pw-he-projector-hitbox').onclick = () => showPage('pr-pw-noBook-projector-off-page');
     document.getElementById('pr-pw-hb-projector-hitbox').onclick = () => showPage('pr-pw-book-projector-off-page');
@@ -4419,9 +4479,14 @@ function init() {
     };
 
     // Wire puzzle exit button
-    document.getElementById('wire-exit-btn').onclick = () => {
+    document.getElementById('wire-exit-btn').onclick = async () => {
         document.getElementById('wire-puzzle').classList.add('hidden');
         document.getElementById('wire-solved-popup').classList.add('hidden');
+
+        if (state.solvedWirePuzzle && !state.notificationsSeen['wire-puzzle-win-projector-hint']) {
+            state.notificationsSeen['wire-puzzle-win-projector-hint'] = true;
+            await spawnThemedBox("I wonder if I can get that projector to turn on now", "notification-top");
+        }
     };
 
     // Wire puzzle popup close button

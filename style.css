@@ -1881,7 +1881,33 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#pr-pw-book-projector-on-hitbox {
+    position: absolute;
+    top: 36%;
+    left: 19%;
+    width: 44%;
+    height: 59%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #pr-pw-noBook-projector-hitbox {
+    position: absolute;
+    top: 36%;
+    left: 19%;
+    width: 44%;
+    height: 59%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#pr-pw-noBook-projector-on-hitbox {
     position: absolute;
     top: 36%;
     left: 19%;
