@@ -5,10 +5,11 @@ html, body{
     background-color: black; /* makes background black instead of white */
 }
 
-body.debug-hitboxes .hitbox {
-    background: rgba(0, 255, 0, 0.25);
-    outline: 2px solid lime;
-}
+/* ----- TESTING HITBOX GREEN BOX OPTION -------*/
+/*body.debug-hitboxes .hitbox {*/
+/*    background: rgba(0, 255, 0, 0.25);*/
+/*    outline: 2px solid lime;*/
+/*}*/
 
 body:not(.debug-hitboxes) .hitbox {
     background: transparent;
@@ -3688,10 +3689,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 #cw-right-snh-hitbox {
     position: absolute;
-    top: 7%;
-    left: 62%;
-    width: 30%;
-    height: 82%;
+    top: 2%;
+    left: 13%;
+    width: 14%;
+    height: 69%;
 
     background-color: transparent;
     border: 2px solid transparent;
