@@ -2736,7 +2736,7 @@ finalInput.addEventListener('keyup', async (e) => {
                 showMonitorHatchFeedPersistent();
             }, 700);
 
-            await delay(4000);
+            await delay(2000);
             await spawnThemedBox("What the heck was that ???", "notification-top");
         } else {
             finalError.innerText = "> INCORRECT AUTHORIZATION KEY";
