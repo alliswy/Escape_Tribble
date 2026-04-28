@@ -2701,6 +2701,32 @@ input[type="range"]::-webkit-slider-thumb {
     z-index: 10;
 }
 
+#sh-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 25%;
+    width: 57%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
+#bh-entrance-hitbox {
+    position: absolute;
+    top: 0%;
+    left: 19%;
+    width: 64%;
+    height: 99%;
+
+    background-color: transparent;
+    border: 2px solid transparent;
+    cursor: pointer; /* makes 'hand' icon so players know to click */
+    z-index: 10;
+}
+
 #bh-sh-cr-dc-hitbox {
     position: absolute;
     top: 3%;

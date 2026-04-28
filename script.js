@@ -1052,11 +1052,11 @@ const roomLeads = {
     'mh-sld-page':            { left: 'mh-sl-left-endc-page', right: 'mh-sl-right-endc-page' },
 
     // back hall
-    'bh-entrance-page':       { forward: 'bh-2-page', left: 'mh-bh-right-endc-page', right: 'mh-bh-left-endc-page' },
+    'bh-entrance-page':       { left: 'mh-bh-right-endc-page', right: 'mh-bh-left-endc-page' },
     'bh-2-page':              { back: 'bh-entrance-page', forward: 'bh-3-page' },
     'bh-3-page':              { back: 'bh-2-page', forward: 'bh-4-page' },
     'bh-4-page':            { back: 'bh-3-page', forward: 'bh-end-page', left: 'sh-entrance-page'},
-    'sh-entrance-page':   {back: 'bh-4-page', forward: () => state.crDoorOpen ? 'sh-cr-do-page':'sh-cr-dc-page', left: 'bh-rev-1-page'},
+    'sh-entrance-page':   {back: 'bh-4-page', left: 'bh-rev-1-page'},
     'bh-rev-1-page':            {forward: 'bh-rev-2-page', right: 'sh-entrance-page'},
     'bh-rev-2-page':            {back: 'bh-rev-1-page', forward: 'bh-rev-3-page'},
     'bh-rev-3-page':            {back: 'bh-rev-2-page', forward: 'bh-rev-4-page'},
@@ -4276,7 +4276,7 @@ function init() {
     document.getElementById('mh-li-right-endc-li-hitbox').onclick = () => showPage('mh-li-door-closed-page');
 
     document.getElementById('mh-bw-door-hitbox').onclick = async() => {
-        await spawnThemedBox("This door won't open", 'notification-top'); //fixme maybe make it look like it's buried too
+        await spawnThemedBox("The door won't budge", 'notification-top'); //fixme maybe make it look like it's buried too
     }
 
     // --- Book Drop (BD) Interactions ---
@@ -4564,6 +4564,10 @@ function init() {
         await spawnThemedBox("Oh wow. It looks like this place has been buried underground", 'notification-top');
     }
 
+    document.getElementById('sh-entrance-hitbox').onclick = () => {
+        state.crDoorOpen ? showPage('sh-cr-do-page'):showPage('sh-cr-dc-page');
+    }
+    document.getElementById('bh-entrance-hitbox').onclick = () => showPage('bh-2-page');
     document.getElementById('bh-sh-cr-dc-hitbox').onclick = () => showPage('sh-cr-door-closed-page');
     document.getElementById('bh-sh-cr-do-hitbox').onclick = () => showPage('sh-cr-door-open-page');
 
