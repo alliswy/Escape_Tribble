@@ -4210,7 +4210,7 @@ function init() {
         // 4. THE CHECK
         // If they have completed it ever AND they are not currently doing the tutorial
         if (hasFinishedBefore && isCurrentlyInMainGame) {
-            wantToSkip = await showThemedConfirm("Tutorial skip available", "Would you like to skip the tutorial?");
+            wantToSkip = await showThemedConfirm("Would you like to skip the tutorial?");
         }
 
         // 5. Reset and Execute
