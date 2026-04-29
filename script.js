@@ -1301,11 +1301,11 @@ const roomLeads = {
     //library office pages
     'li-office-door-closed-page':   {back: 'li-2dc-page'}, 
     'li-office-door-open-page':     {back: 'li-office-door-closed-page', audio: {back: 'doorClose'}},
-    'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page', right: 'lo-desk-page'},
+    'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page'},
     'lo-main-left-page':            {right: 'lo-main-page'},
     'lo-storage-entrance-page':     {back: 'lo-main-left-page', forward: 'ls-in-1-page' },
     'lo-main-right-page':           {back: 'ls-lo-entrance-page' },
-    'lo-desk-page':                 {back: 'lo-main-page', forward: 'lo-desk-2-page'},
+    'lo-desk-page':                 {back: 'lo-main-page'},
     'lo-desk-2-page':               {back: 'lo-desk-page'},
     'lo-monitor-page':              {back: 'lo-desk-2-page'},
     'lo-monitor-drive-page':        {back: 'lo-desk-2-page'},
@@ -1363,8 +1363,8 @@ const roomLeads = {
     'apt-table-page':       {left: 'apt-ki-entr-page', right: 'apt-bed-page'},
     'apt-ki-entr-page':     {forward: 'apt-ki-1-page', right: () => state.hasWb ? 'apt-table-page' : 'apt-table-water-page'},
     'apt-ki-1-page':        {back: 'apt-ki-entr-page', forward: 'apt-ki-2-page'},
-    'apt-ki-2-page':        {back: 'apt-ki-1-page', forward: 'apt-ki-sink-page'},
-    'apt-ki-sink-page':        {back: 'apt-ki-1-page', left: 'apt-ki-3-page'},
+    'apt-ki-2-page':        {back: 'apt-ki-1-page'},
+    'apt-ki-sink-page':        {back: 'apt-ki-2-page', left: 'apt-ki-3-page'},
     'apt-sink-water-bottle-page': {back: 'apt-sink-page'},
     'apt-ki-3-page':        {forward: 'apt-ki-exit-page', right: 'apt-ki-sink-page'},
     'apt-ki-exit-page':     {back: 'apt-ki-3-page', forward: 'apt-bed-page'},
@@ -3322,10 +3322,12 @@ async function advanceTutorial() {
             break;
         case 'find-sink':
             await delay(20);
+            document.getElementById('apt-ki-sink-hitbox')?.classList.remove('hidden');
             await spawnThemedBox("Use the navigation arrows to move around and find the sink to refill the bottle.", "notification-mid");
             break;
         case 'found-sink':
             await delay(20);
+            document.getElementById('apt-ki-sink-hitbox')?.classList.remove('hidden');
             await spawnThemedBox('Click the sink to turn it on and use the bottle', "notification-mid");
             break;
         case 'filled-bottle':
@@ -3344,6 +3346,44 @@ async function advanceTutorial() {
             localStorage.setItem('tutorialCompleted', 'true');
             stopAllAudio();
             await showPage("mh-bd-main-page", true);
+            break;
+    }
+}
+
+async function showCurrentTutorialPromptNoTop() {
+    if (!state.isTutorialActive) return;
+
+    if (activePopup) {
+        activePopup.remove();
+        activePopup = null;
+    }
+
+    switch (state.currTutorialStep) {
+        case 'find-bottle':
+            await delay(20);
+            await spawnThemedBox("Click on the water bottle to collect it", "notification-mid");
+            break;
+        case 'open-bottle':
+            await delay(20);
+            await spawnThemedBox('Some inventory items are interactable. Click to open the bottle', "notification-mid");
+            break;
+        case 'opened-bottle':
+            await delay(20);
+            await spawnThemedBox("Close the inventory overlay", "notification-mid");
+            break;
+        case 'find-sink':
+            await delay(20);
+            await spawnThemedBox("Use the navigation arrows to move around and find the sink to refill the bottle.", "notification-mid");
+            break;
+        case 'found-sink':
+            await delay(20);
+            await spawnThemedBox('Click the sink to turn it on and use the bottle', "notification-mid");
+            break;
+        case 'filled-bottle':
+            await delay(20);
+            await spawnThemedBox('Find the bed and go to sleep', "notification-mid");
+            break;
+        default:
             break;
     }
 }
@@ -3381,6 +3421,8 @@ async function tutorialHitboxInit() {
         overlay.classList.add("hidden");
         currentOverlayItem = null;
     });
+
+    document.getElementById('apt-ki-2-sink-hitbox').onclick = () => showPage('apt-ki-sink-page');
 
     window.addEventListener('click', async (event) => {
         if (!state.isTutorialActive) return;
@@ -3499,6 +3541,10 @@ async function tutorialHitboxInit() {
                 state.currTutorialStep='filled-bottle';
                 advanceTutorial();
             }
+        } else if (clickedId === 'apt-bed-hitbox' && state.currTutorialStep !== 'filled-bottle' && state.currTutorialStep !== 'asleep') {
+            await spawnThemedBox("I need to fill up my water bottle first", "notification-top");
+            await delay(20);
+            await showCurrentTutorialPromptNoTop();
         } else if (state.currTutorialStep==='filled-bottle' && clickedId==='apt-bed-hitbox') {
             state.currTutorialStep='asleep';
             advanceTutorial();
@@ -5449,6 +5495,7 @@ function init() {
         }
     }
     document.getElementById('li-office-door-open-hitbox').onclick = () => showPage('lo-main-page');
+    document.getElementById('lo-main-desk-hitbox').onclick = () => showPage('lo-desk-page');
     document.getElementById('lo-main-left-ls-entrance-hitbox').onclick = () => showPage('lo-storage-entrance-page');
     document.getElementById('lo-storage-entrance-hitbox').onclick = () => showPage('ls-in-1-page');
     document.getElementById('lo-main-right-desk-hitbox').onclick = () => showPage('lo-desk-page');
