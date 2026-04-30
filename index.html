@@ -2385,30 +2385,53 @@
     text-shadow: 2px 2px 4px #000;
 ">
 
-        <h2 id="loading-text" style="
-        letter-spacing: 5px;
-        margin-bottom: 30px;
-        animation: pulse 2s infinite;
-        color: #d4af37;
-    ">INITIALIZING...</h2>
-
-        <div style="
+        <div id="loading-progress-wrap" style="
+        position: relative;
         width: 350px;
-        height: 12px;
-        border: 2px solid #4a0404; /* Deep Maroon Border */
-        background: #000;
-        border-radius: 2px;
-        overflow: hidden;
-        box-shadow: 0 0 15px rgba(74, 4, 4, 0.5);
+        height: 170px;
+        margin-bottom: 8px;
     ">
-            <div id="loading-bar" style="
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #800000 0%, #d4af37 100%); /* Maroon to Gold Gradient */
-            transition: width 0.3s ease-out;
-            box-shadow: 0 0 10px #d4af37;
-        "></div>
+            <img loading="eager" id="loading-mascot" src="inv-images/demon-decon-bike.png" alt="Demon Deacon mascot" style="
+            position: absolute;
+            top: 24px;
+            left: 0%;
+            width: min(216px, 38vw);
+            max-height: 123px;
+            object-fit: contain;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.65));
+            pointer-events: none;
+        ">
+
+            <div id="loading-track" style="
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 350px;
+            height: 12px;
+            border: 2px solid #4a0404; /* Deep Maroon Border */
+            background: #000;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(74, 4, 4, 0.5);
+        ">
+                <div id="loading-bar" style="
+                width: 0%;
+                height: 100%;
+                background: linear-gradient(90deg, #800000 0%, #d4af37 100%); /* Maroon to Gold Gradient */
+                transition: width 0.3s ease-out;
+                box-shadow: 0 0 10px #d4af37;
+            "></div>
+            </div>
         </div>
+
+        <p id="loading-text" style="
+        letter-spacing: 4px;
+        margin-top: 14px;
+        margin-bottom: 0;
+        color: #d4af37;
+        font-weight: bold;
+    ">LOADING... 0%</p>
 
         <p id="loading-subtext" style="
         margin-top: 15px;

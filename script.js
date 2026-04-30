@@ -3697,6 +3697,7 @@ async function loadEverything() {
     const loadingScreen = document.getElementById('loading-screen');
     const loadingBar = document.getElementById('loading-bar');
     const loadingText = document.getElementById('loading-text');
+    const loadingMascot = document.getElementById('loading-mascot');
 
     const imageElements = Array.from(document.querySelectorAll('img'));
 
@@ -3732,6 +3733,9 @@ async function loadEverything() {
         count++;
         const percent = Math.floor((count / total) * 100);
         loadingBar.style.width = percent + "%";
+        if (loadingMascot) {
+            loadingMascot.style.left = percent + "%";
+        }
         loadingText.textContent = `LOADING... ${percent}%`;
     };
 
@@ -3811,6 +3815,9 @@ async function loadEverything() {
 
     loadingText.textContent = "DONE!";
     loadingBar.style.width = "100%";
+    if (loadingMascot) {
+        loadingMascot.style.left = "100%";
+    }
 
     await new Promise(r => setTimeout(r, 400));
 
