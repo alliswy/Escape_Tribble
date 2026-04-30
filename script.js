@@ -3103,10 +3103,96 @@ function resetLeftMonitorUI() {
 
 const overlay = document.getElementById("item-overlay");
 const closeBtn = document.getElementById("item-close-btn");
+let currentOverlayItem = null;
+
+/** Overlays that show "Open reader" + side transcript panel */
+const NOTE_READER_ITEM_NAMES = new Set([
+    "wr-reddit",
+    "print-paper",
+    "ls-10-note",
+    "archives-note",
+    "wr-tu"
+]);
+
+function resetNoteReaderUI() {
+    const root = document.getElementById("item-overlay");
+    if (root) root.classList.remove("overlay-reader-active");
+    document.querySelectorAll(".note-reader-panel").forEach((p) => p.classList.add("hidden"));
+    document.querySelectorAll(".note-open-reader-btn").forEach((btn) => {
+        btn.classList.add("hidden");
+        btn.setAttribute("aria-expanded", "false");
+    });
+}
+
+function openNoteReaderForItem(itemKey) {
+    const root = document.getElementById("item-overlay");
+    if (root) root.classList.add("overlay-reader-active");
+    document.querySelectorAll(".note-reader-panel").forEach((p) => p.classList.add("hidden"));
+    const panel = document.getElementById(`note-reader-${itemKey}`);
+    const openBtn = document.getElementById(`${itemKey}-open-reader-btn`);
+    if (panel) panel.classList.remove("hidden");
+    if (openBtn) {
+        openBtn.classList.add("hidden");
+        openBtn.setAttribute("aria-expanded", "true");
+    }
+}
+
+function closeNoteReaderPanel() {
+    const root = document.getElementById("item-overlay");
+    if (root) root.classList.remove("overlay-reader-active");
+    document.querySelectorAll(".note-reader-panel").forEach((p) => p.classList.add("hidden"));
+    if (currentOverlayItem && NOTE_READER_ITEM_NAMES.has(currentOverlayItem)) {
+        const ob = document.getElementById(`${currentOverlayItem}-open-reader-btn`);
+        if (ob) {
+            ob.classList.remove("hidden");
+            ob.setAttribute("aria-expanded", "false");
+        }
+    }
+}
+
+document.querySelectorAll(".note-open-reader-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+        const m = btn.id.match(/^(.+)-open-reader-btn$/);
+        if (!m) return;
+        openNoteReaderForItem(m[1]);
+    });
+});
+
+document.querySelectorAll(".note-close-reader-btn").forEach((btn) => {
+    btn.addEventListener("click", () => closeNoteReaderPanel());
+});
+
+function openWrNoteReaderOverlay() {
+    const el = document.getElementById("wr-note-reader-overlay");
+    if (!el) return;
+    el.classList.remove("hidden");
+    el.setAttribute("aria-hidden", "false");
+}
+
+function closeWrNoteReaderOverlay() {
+    const el = document.getElementById("wr-note-reader-overlay");
+    if (!el) return;
+    el.classList.add("hidden");
+    el.setAttribute("aria-hidden", "true");
+}
+
+(function initWrNoteReaderOverlay() {
+    const backdrop = document.querySelector(".wr-note-reader-backdrop");
+    const closeBtn = document.getElementById("wr-note-reader-close-btn");
+    if (closeBtn) closeBtn.addEventListener("click", () => closeWrNoteReaderOverlay());
+    if (backdrop) backdrop.addEventListener("click", () => closeWrNoteReaderOverlay());
+    document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        const o = document.getElementById("wr-note-reader-overlay");
+        if (o && !o.classList.contains("hidden")) closeWrNoteReaderOverlay();
+    });
+})();
 
 // Close overlay
 closeBtn.addEventListener("click", () => {
     overlay.classList.add("hidden");
+    currentOverlayItem = null;
+    resetNoteReaderUI();
 });
 
 // Make ALL inventory items clickable
@@ -3124,16 +3210,19 @@ inventoryItems.forEach(item => {
     });
 });
 
-let currentOverlayItem = null;
-
 function openOverlay(itemName, imgSrc) {
     currentOverlayItem = itemName;
+    resetNoteReaderUI();
 
     const overlay = document.getElementById("item-overlay");
     const img = document.getElementById("item-overlay-img");
 
     img.src = imgSrc;
     overlay.classList.remove("hidden");
+
+    if (NOTE_READER_ITEM_NAMES.has(itemName)) {
+        document.getElementById(`${itemName}-open-reader-btn`)?.classList.remove("hidden");
+    }
 
     setupOverlayHitboxes(itemName, imgSrc);
 
@@ -3446,6 +3535,7 @@ async function tutorialHitboxInit() {
     document.querySelector('.overlay-backdrop').addEventListener("click", () => {
         overlay.classList.add("hidden");
         currentOverlayItem = null;
+        resetNoteReaderUI();
     });
 
     document.getElementById('apt-ki-2-sink-hitbox').onclick = () => showPage('apt-ki-sink-page');
@@ -4494,10 +4584,10 @@ function init() {
     document.getElementById('pr-pw-main-book-po-hitbox').onclick = () => showPage('pr-pw-book-projector-on-page');
     document.getElementById('pr-pw-main-noBook-po-hitbox').onclick = () => showPage('pr-pw-noBook-projector-on-page');
     document.getElementById('pr-pw-book-projector-on-hitbox').onclick = async () => {
-        spawnThemedBox("This projector looks so old, I'm surprised it even works", "notification-top");
+        await spawnThemedBox("This projector looks so old, I'm surprised it even works", "notification-top");
     }
     document.getElementById('pr-pw-noBook-projector-on-hitbox').onclick = async () => {
-        spawnThemedBox("This projector looks so old, I'm surprised it even works", "notification-top");
+        await spawnThemedBox("This projector looks so old, I'm surprised it even works", "notification-top");
     }
 
     document.getElementById('pr-pw-he-projector-hitbox').onclick = () => showPage('pr-pw-noBook-projector-off-page');
@@ -5094,28 +5184,34 @@ function init() {
     document.getElementById('wr-papers-tu-hitbox').onclick = async () => {
         triggerSound('stiffPaper');
         openOverlay('wr-tu', "wr-images/wr-tu.png");
-        await delay(20);
-        await spawnThemedBox("A cutout of a newspaper article about underground tunnels", "notification-top");
+        if (!state.notificationsSeen['tu-init']) {
+            await spawnThemedBox("A cutout of a newspaper article about underground tunnels", "notification-top");
+            state.notificationsSeen['tu-init']=true;
+        }
     }
     document.getElementById('wr-papers-ogb-hitbox').onclick = async () => {
         triggerSound('stiffPaper');
         openOverlay('wr-ogb', 'wr-images/wr-ogb.png');
-        await delay(20);
-        await spawnThemedBox("The old gold and black. That's the school newspaper", "notification-top");
+        if (!state.notificationsSeen['ogb-init']) {
+            await spawnThemedBox("The old gold and black. That's the school newspaper", "notification-top");
+            state.notificationsSeen['ogb-init']=true;
+        }
     }
     document.getElementById('wr-papers-reddit-hitbox').onclick = async () =>  {
         triggerSound('stiffPaper');
         openOverlay('wr-reddit', 'wr-images/wr-reddit.png');
-        await delay (20);
-        await spawnThemedBox("A printout of some random reddit post ?", "notification-top");
+        if (!state.notificationsSeen['reddit-init']) {
+            await spawnThemedBox("A printout of some random reddit post ?", "notification-top");
+            state.notificationsSeen['reddit-init']=true;
+        }
     }
     document.getElementById('wr-right-note-note-hitbox').onclick = async () => {
         state.foundWrNote = true;
         showPage('wr-note-page');
     }
     document.getElementById('wr-note-hitbox').onclick = () => {
-        //fixme allow them to read wr-note more easily,, do same thing w the tu, ogb, and reddit
-    }
+        openWrNoteReaderOverlay();
+    };
 
 
     // ------ LIBRARY SECTION ------
@@ -5560,6 +5656,9 @@ function init() {
     document.getElementById('ls-lo-entrance-hitbox').onclick = () => showPage('lo-main-right-page');
     document.getElementById('ls-archives-sk-hitbox').onclick = () => showPage('ls-archives-sk-2-page');
     document.getElementById('ls-archives-note-hitbox').onclick = () => showPage('ls-archives-note-page');
+    document.getElementById('ls-note-hitbox').onclick = async() => {
+        await spawnThemedBox('Black -> Harrell -> McDuffie -> Keser. Last 2 digits of publication year', "notification-top");
+    }
     document.getElementById('ls-archives-mcduffie-hitbox').onclick = () => showPage('ls-mcduffie-1993-page');
     document.getElementById('ls-mcduffie-1993-hitbox').onclick = async () => {
         await spawnThemedBox("McDuffie, '93", "notification-top");
@@ -5579,6 +5678,9 @@ function init() {
 
     document.getElementById('ls-in-10-sk-nd-sk-hitbox').onclick = () => showPage('ls-10-sk-nd-page');
     document.getElementById('ls-in-10-sk-page').onclick = () => showPage('ls-10-sk-page');
+    document.getElementById('ls-10-sk-hitbox').onclick = async () => {
+        await spawnThemedBox('Is this skeleton moving by itself or is something moving it ?', "notification-top");
+    }
     document.getElementById('ls-10-sk-nd-note-hitbox').onclick = () => {
         triggerSound('floppyPaper');
         state.hasLs10note = true;
@@ -5641,12 +5743,14 @@ function init() {
         overlay.classList.add("hidden");
 
         currentOverlayItem = null;
+        resetNoteReaderUI();
     });
 
     // Close when clicking the blurred backdrop (the background, not the image)
     document.querySelector('.overlay-backdrop').addEventListener("click", () => {
         overlay.classList.add("hidden");
         currentOverlayItem = null;
+        resetNoteReaderUI();
     });
 
     // ---------- TUNNELS SECTION ----------

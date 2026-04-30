@@ -2477,6 +2477,346 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
 }
 
+/* Wraps note image + optional reader side panel */
+#item-overlay-body {
+    position: relative;
+    z-index: 2;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
+#item-overlay-body .item-container,
+#item-overlay-body .note-open-reader-btn,
+#item-overlay-body .note-reader-panel {
+    pointer-events: auto;
+}
+
+/* Split view: note left, readable transcript right (wr-reddit etc.) */
+#item-overlay.overlay-reader-active .item-overlay-body {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+#item-overlay.overlay-reader-active .item-container {
+    flex: 0 0 50%;
+    max-width: 50%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    min-width: 0;
+}
+
+#item-overlay.overlay-reader-active #item-overlay-img {
+    max-width: 100%;
+    max-height: 95vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Yellow center → burgundy rim so “Open reader” reads clearly over overlays */
+.note-open-reader-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10003;
+    width: 200px;
+    height: 50px;
+    padding: 0;
+    font-size: 18px;
+    font-family: 'Special Elite', cursive;
+    letter-spacing: 2px;
+    font-weight: normal;
+    color: #2a0a0e;
+    text-shadow: 0 1px 0 rgba(255, 230, 140, 0.75);
+    background: radial-gradient(
+        ellipse 85% 130% at 50% 45%,
+        #ffcc00 0%,
+        #f0b020 32%,
+        #9c2838 68%,
+        #5c141c 88%,
+        #3a0c12 100%
+    );
+    border: 2px solid rgba(100, 25, 35, 0.95);
+    box-shadow:
+        0 2px 0 rgba(255, 220, 100, 0.35) inset,
+        0 4px 16px rgba(0, 0, 0, 0.55),
+        0 0 22px rgba(255, 200, 60, 0.25);
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.note-open-reader-btn:hover {
+    filter: brightness(1.08) saturate(1.05);
+    transform: translateX(-50%) scale(1.06);
+    box-shadow:
+        0 2px 0 rgba(255, 235, 160, 0.45) inset,
+        0 6px 22px rgba(0, 0, 0, 0.55),
+        0 0 28px rgba(255, 210, 80, 0.45);
+}
+
+.note-open-reader-btn:active {
+    filter: brightness(0.92);
+    transform: translateX(-50%) scale(0.97);
+}
+
+/* Same palette as #menu-screen / info flow — deep brown + gold radial, extra darken for reader */
+.note-reader-panel {
+    flex: 0 0 50%;
+    max-width: 50%;
+    width: 50%;
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    display: none;
+    flex-direction: column;
+    align-self: stretch;
+    margin: 10px 14px 10px 8px;
+    padding: 14px 18px 18px;
+    background-color: #1a0f00;
+    background-image:
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.42) 0%, rgba(0, 0, 0, 0.12) 48%, rgba(0, 0, 0, 0.5) 100%),
+        radial-gradient(ellipse at center, rgba(180, 120, 0, 0.35) 0%, transparent 70%);
+    border: 2px solid #c9a84c;
+    border-radius: 8px;
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.75),
+        inset 0 0 72px rgba(0, 0, 0, 0.5);
+}
+
+#item-overlay.overlay-reader-active .note-reader-panel:not(.hidden) {
+    display: flex !important;
+}
+
+.note-close-reader-btn {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    margin-bottom: 12px;
+    min-width: 180px;
+    height: 44px;
+    padding: 0 16px;
+    font-size: 16px;
+    font-family: 'Special Elite', cursive;
+    letter-spacing: 1px;
+    font-weight: normal;
+    color: #c9a84c;
+    background: rgba(100, 20, 30, 0.85);
+    border: 1px solid rgba(180, 140, 40, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    transition: background 0.2s, transform 0.1s;
+}
+
+.note-close-reader-btn:hover {
+    background: rgba(130, 30, 40, 0.95);
+    transform: scale(1.03);
+}
+
+.note-close-reader-btn:active {
+    transform: scale(0.97);
+}
+
+.note-reader-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 8px;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+/* Body copy: readable serif on burgundy; tint aligns with gold theme */
+.note-reader-scroll p {
+    color: #f0e4c8;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.45rem;
+    line-height: 1.5;
+    margin: 0 0 14px;
+}
+
+.note-reader-meta {
+    font-size: 1.1rem !important;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: #c9a84c !important;
+    margin-bottom: 18px !important;
+}
+
+.note-reader-doc-heading {
+    text-align: center;
+    margin-bottom: 20px !important;
+}
+
+.note-reader-headline {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #c9a84c;
+    margin: 0 0 6px !important;
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+.note-reader-subhead {
+    font-size: 1.25rem;
+    color: #dcc896;
+    margin: 0 0 16px !important;
+    font-family: Georgia, 'Times New Roman', serif;
+}
+
+.note-reader-handwriting {
+    font-style: italic;
+    color: #e8dcc8;
+    margin-top: 20px !important;
+    padding-top: 12px;
+    border-top: 1px solid rgba(201, 168, 76, 0.35);
+}
+
+/* Long article: slightly smaller body copy, still scrollable */
+.note-reader-panel--long .note-reader-scroll p:not(.note-reader-headline):not(.note-reader-subhead):not(.note-reader-meta) {
+    font-size: 1.2rem;
+    line-height: 1.48;
+}
+
+.note-reader-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+.note-reader-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.45);
+}
+.note-reader-scroll::-webkit-scrollbar-thumb {
+    background: rgba(201, 168, 76, 0.75);
+    border-radius: 10px;
+}
+.note-reader-scroll::-webkit-scrollbar-thumb:hover {
+    background: #c9a84c;
+}
+
+/* ---- WR whiteboard: fullscreen-style helper reader (info page–sized column) ---- */
+#wr-note-reader-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 450;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wr-note-reader-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(7px);
+}
+
+.wr-note-reader-close-btn {
+    position: fixed !important;
+    top: 28px !important;
+    right: 44px !important;
+    z-index: 3;
+    background: #fff !important;
+    border: none !important;
+    border-radius: 50% !important;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px 10px;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+}
+
+.wr-note-reader-shell {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: min(24px, 4vh) min(20px, 3vw);
+    pointer-events: none;
+}
+
+/* Match .info-tab-content width + max height; same menu brown as info flow */
+.wr-note-reader-panel {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    width: min(700px, 50vw);
+    max-width: 96vw;
+    max-height: 70vh;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #1a0f00;
+    background-image: radial-gradient(ellipse at center, rgba(180, 120, 0, 0.35) 0%, transparent 70%);
+    border: 1px solid rgba(255, 204, 0, 0.25);
+    box-shadow: 0 10px 36px rgba(0, 0, 0, 0.6);
+}
+
+.wr-note-reader-title {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 14px 24px 12px;
+    border-bottom: 3px solid #ffcc00;
+    color: #ffcc00;
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(1.25rem, 2.5vw, 1.85rem);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.wr-note-reader-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.wr-note-reader-scroll p {
+    color: #fff1aa;
+    font-size: 1.6rem;
+    line-height: 1.45;
+    margin: 0 0 15px;
+}
+
+.wr-note-reader-scroll p:last-child {
+    margin-bottom: 0;
+}
+
+.wr-note-reader-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+.wr-note-reader-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+.wr-note-reader-scroll::-webkit-scrollbar-thumb {
+    background: #ffcc00;
+    border-radius: 10px;
+}
+
 /* ---- Inventory Item Hitboxes ----*/
 
 #overlay-hitbox-layer {

@@ -2184,6 +2184,7 @@
         <div id="item-overlay" class="hidden">
             <div class="overlay-backdrop"></div>
             <button id="item-close-btn">✕</button>
+            <div id="item-overlay-body" class="item-overlay-body">
             <div class="item-container">
                 <img loading="lazy" id="item-overlay-img" src="" alt="Inventory Item">
                 <div id="overlay-hitbox-layer">
@@ -2198,6 +2199,119 @@
                     <div id="sherlock-book-open-animals-hitbox" class="hitbox hidden"></div>
                     <div id="wb-hitbox" class="hitbox hidden"></div>
 
+                </div>
+            </div>
+            <button type="button" id="wr-reddit-open-reader-btn" class="note-open-reader-btn hidden" aria-expanded="false">Open reader</button>
+            <aside id="note-reader-wr-reddit" class="note-reader-panel hidden" aria-label="Readable transcript of the note">
+                <button type="button" id="wr-reddit-close-reader-btn" class="note-close-reader-btn">Close reader</button>
+                <div class="note-reader-scroll">
+                    <p class="note-reader-meta">[deleted] · 12y ago</p>
+                    <p>I think there's an entrance in tribble - in a stairwell, looks like a laundry chute almost, but once you're in (and pull yourself up) it's easy to stand. I graduated a while ago though, so not sure if they've secured it more - but since it's not a regular door or something, may have gone unnoticed.</p>
+                    <p>Definitely be careful of the steam pipes - they'll get you a healthy burn.</p>
+                </div>
+            </aside>
+
+            <button type="button" id="print-paper-open-reader-btn" class="note-open-reader-btn hidden" aria-expanded="false">Open reader</button>
+            <aside id="note-reader-print-paper" class="note-reader-panel hidden" aria-label="Readable transcript of the document">
+                <button type="button" class="note-close-reader-btn">Close reader</button>
+                <div class="note-reader-scroll">
+                    <p class="note-reader-meta"><strong>[TOP SECRET – EYES ONLY]</strong></p>
+                    <p><strong>OFFICE OF NAVAL COMMUNICATIONS</strong> &nbsp; <strong>DATE:</strong> 14 AUGUST 1963</p>
+                    <p><strong>TO:</strong> THE WHITE HOUSE – OFFICE OF THE PRESIDENT<br>
+                    <strong>FROM:</strong> REAR ADMIRAL J. M. SULLIVAN (DNC)<br>
+                    <strong>REF:</strong> PROJECT “TRIBBLE” / WFU NODE 042</p>
+                    <p><strong>MESSAGE:</strong></p>
+                    <p><strong>1. STATUS UPDATE:</strong> Construction of the lowest-level basement in the Tribble Hall “C” Wing is now finalized. Per Executive Order regarding the decentralization of radio facilities, this site is fully operational.</p>
+                    <p><strong>2. DECEPTION PROTOCOLS:</strong> All public records and University blueprints for the 1963 completion omit this level entirely. For the student population and faculty, shelter assignments remain restricted to Reynolda Hall and the Library. While those civilian sites are stocked with standard short-term survival rations (hard candy/crackers), Node 042 is outfitted for continuity of command.</p>
+                    <p><strong>3. ACTIVE DEFENSE MEASURES:</strong> In accordance with “Final Stand” security protocols, the stairwell access point has been fitted with reinforced steel doors. These units feature integrated firing ports for small-arms defense.</p>
+                    <p><strong>STATUS:</strong> Ports are currently concealed by bolted metal squares to maintain the “mechanical room” facade.<br>
+                    <strong>ORDER:</strong> These plates are to be removed only upon a DEFCON 2 transition to allow for a pressurized defense of the facility entrance.</p>
+                    <p><strong>4. FACILITY SPECS:</strong><br>
+                    <strong>• REINFORCEMENT:</strong> Reinforced concrete shielding with dual steel blast doors.<br>
+                    <strong>• LIFE SUPPORT:</strong> Independent water supply and biochemical filtration scrubbers.<br>
+                    <strong>• MAINTENANCE:</strong> Site readiness is managed by a single civilian contractor to minimize military footprint on campus. No Navy personnel presence is authorized at this time.</p>
+                    <p><strong>5. EMERGENCY USE:</strong> In the event of a nuclear exchange, Node 042 will serve as a secure communications link for the Navy’s radio grid. The facility is effectively “invisible” to the local population.</p>
+                    <p class="note-reader-meta"><strong>[END OF MESSAGE]</strong></p>
+                </div>
+            </aside>
+
+            <button type="button" id="ls-10-note-open-reader-btn" class="note-open-reader-btn hidden" aria-expanded="false">Open reader</button>
+            <aside id="note-reader-ls-10-note" class="note-reader-panel hidden" aria-label="Readable transcript of the note">
+                <button type="button" class="note-close-reader-btn">Close reader</button>
+                <div class="note-reader-scroll">
+                    <p>The office system controls<br>access to the tunnels.<br>This drive can trigger it...<br>but you'll need authorization.<br>They don't use names. Just numbers.<br>Mine should still work... if they<br>haven't wiped it.<br>Check the archives. That's where they kept everything.</p>
+                </div>
+            </aside>
+
+            <button type="button" id="archives-note-open-reader-btn" class="note-open-reader-btn hidden" aria-expanded="false">Open reader</button>
+            <aside id="note-reader-archives-note" class="note-reader-panel hidden" aria-label="Readable transcript of the incident report">
+                <button type="button" class="note-close-reader-btn">Close reader</button>
+                <div class="note-reader-scroll">
+                    <p class="note-reader-doc-heading"><strong>WAKE FOREST UNIVERSITY</strong><br><strong>FACILITIES INCIDENT REPORT</strong></p>
+                    <p><strong>CASE TYPE:</strong> Missing Person<br>
+                    <strong>STATUS:</strong> Unresolved<br>
+                    <strong>DATE LOGGED:</strong> March 3, 2030</p>
+                    <p><strong>NAME:</strong> Dr. Eleanor V. Whitaker<br>
+                    <strong>DEPARTMENT:</strong> Philosophy<br>
+                    <strong>POSITION:</strong> Associate Professor</p>
+                    <p><strong>DATE LAST SEEN:</strong> November 17, 2029<br>
+                    <strong>TIME:</strong> Approx. 7:30 PM</p>
+                    <p><strong>SUMMARY:</strong> Dr. Whitaker was reported missing after failing to return home or respond to communication following normal working hours. Her home and office were found secure. No unusual activity was reported by faculty or campus security. No confirmed sightings after the above time. Initial search efforts produced no results.</p>
+                    <p><strong>NOTES:</strong><br>
+                    <strong>UNIVERSITY ID:</strong> [REDACTED]<br>
+                    <strong>ACCESS LEVEL:</strong> 3<br>
+                    Full authorization credentials are restricted.<br>
+                    Archive clearance (Level 3) required for retrieval.</p>
+                    <p><strong>CASE STATUS:</strong> Unresolved. Investigation suspended pending further information.</p>
+                    <p class="note-reader-handwriting">I was still in the basement when they tore it down. I don't think anyone realized I was inside. Afterward, I was forgotten. My University ID... I can't remember it. It's buried in these documents somewhere.</p>
+                </div>
+            </aside>
+
+            <button type="button" id="wr-tu-open-reader-btn" class="note-open-reader-btn hidden" aria-expanded="false">Open reader</button>
+            <aside id="note-reader-wr-tu" class="note-reader-panel note-reader-panel--long hidden" aria-label="Readable transcript of the article">
+                <button type="button" class="note-close-reader-btn">Close reader</button>
+                <div class="note-reader-scroll">
+                    <p class="note-reader-headline">Tunneling</p>
+                    <p class="note-reader-subhead"><em>OG&amp;B goes underground</em></p>
+                    <p class="note-reader-meta">Victor Hastings, Assistant Editor</p>
+                    <p>I knew it was illegal to go into the tunnels underneath Wake Forest, but I figured I could always plead journalistic immunity. Besides, it sounded like a better assignment than rats in the dorms.</p>
+                    <p>Ignoring the editor's instructions to provide “in-depth coverage,” I sneaked into one of the entrances, this one in the A-wing basement of Tribble Hall. After a short crawl, I found myself in a room large enough to stand in.</p>
+                    <p>On one wall was a message from “The American Mole” warning me to watch out for “Smokey the Bear” (WF security). But after I looked at the narrow main tunnel, I decided that if they could catch me, they could have me.</p>
+                    <p>The tunnel is fairly wide—about three feet—but only about four feet high, forcing me to lurch forward in a Neanderthal semi-crouch.</p>
+                    <p>The tunnels are hot, too—hardly surprising when you consider that they contain hot-water pipes. I was drenched in sweat after only 50 feet, so I went back to the first room and left my coat and T-shirt in a corner.</p>
+                    <p>Returning to the tunnel, I came to a three-way intersection and turned right. After a few minutes, the tunnel ended, and I jumped into a large room filled with steam boilers, pressure gauges and red lights. Finally I found a light switch and turned it on.</p>
+                    <p>I saw a door on the far side of the room. I opened it and was struck by a blast of cold air: I was outside New Dorm.</p>
+                    <p>My back was beginning to send distress signals to the rest of my body, so I decided to walk back to Tribble to reenter the tunnels. However, since security usually has the area under heavy surveillance, I tried to be as inconspicuous as possible, which is hard to do when you're covered with dust and carrying a flashlight.</p>
+                    <p>After reentering the tunnels, I wound up in the basement of the library. No fun.</p>
+                    <p>So I tried another path. This time I wound up in a larger tunnel, big enough to stand in.</p>
+                    <p>The tunnel walls were decorated with signs, maps and graffiti. One aspiring cartographer named the tunnels—“Bostwick Boulevard,” “Arvin Alley,” and so on.</p>
+                    <p>Someone taped a 1977 news clipping to the wall. It tells of a tunnel system under New York's Grand Central Station that has become a temporary residence for drifters.</p>
+                    <p>And on another wall is scrawled a heart with an arrow through it, and three names written on it. At least they had some privacy.</p>
+                    <p>I walked for what seemed like a mile, passing manhole covers and ventilation grates. When, at the end of the one tunnel, I found two round pipes about three feet in diameter, I decided to call it a night. I pushed a grate out of place and climbed out.</p>
+                    <p>This time I was across the street from the Scales Fine Arts Center.</p>
+                    <p>I went back to Tribble and, after eluding three maids and a security guard, scrambled back into the room and reclaimed my excess clothing.</p>
+                    <p>The tunnels extend to the rest of the girls' dorms. After I get a little more familiar with the tunnel layout, I might try exploring that end.</p>
+                    <p>I've heard the story about the guy who stuck his head out in the middle of the dorm and ended up with security chasing him. But like I said, if they can catch me, they can have me.</p>
+                    <p>Should you decide to become part of the WF Underground, be careful. Don't go alone, and don't touch any hot pipes.</p>
+                    <p>And don't get caught.</p>
+                </div>
+            </aside>
+            </div>
+        </div>
+
+        <!-- WR classroom whiteboard: helper reader (same footprint idea as info-tab-content) -->
+        <div id="wr-note-reader-overlay" class="hidden" aria-hidden="true">
+            <div class="wr-note-reader-backdrop"></div>
+            <button type="button" id="wr-note-reader-close-btn" class="wr-note-reader-close-btn" aria-label="Close">✕</button>
+            <div class="wr-note-reader-shell">
+                <div class="wr-note-reader-panel" role="dialog" aria-labelledby="wr-note-reader-title">
+                    <h2 id="wr-note-reader-title" class="wr-note-reader-title">Whiteboard</h2>
+                    <div class="wr-note-reader-scroll">
+                        <p>I was just down here grading some papers when the lights flickered and the air changed.</p>
+                        <p>Click. Click. The locks closed one by one. I called for help but no one came. For 80 years I've paced these halls — What sadistic architect built this place?</p>
+                        <p>I've watched the walls shift as I blink.</p>
+                        <p>Everyone's forgotten about this place — until you appeared. If you ever find your way out, tell of what's buried down here. I don't want to be the only one who remembers.</p>
+                    </div>
                 </div>
             </div>
         </div>
