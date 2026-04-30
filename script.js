@@ -2298,7 +2298,10 @@ const WORD_BANK = [
     "UNDER", "UNION", "UNITY", "UNTIL", "UPPER", "URBAN", "USUAL", "VALUE", "VIDEO", "VITAL",
     "VOICE", "WASTE", "WATCH", "WATER", "WAVES", "WEARY", "WEAVE", "WHEEL", "WHERE", "WHICH",
     "WHILE", "WHITE", "WHOLE", "WHOSE", "WOMAN", "WOMEN", "WORLD", "WORRY", "WORSE", "WORST",
-    "WORTH", "WOULD", "WRITE", "WRONG", "YOUNG", "YOUTH", "ZEBRA", "ZEROS"
+    "WORTH", "WOULD", "WRITE", "WRONG", "YOUNG", "YOUTH", "ZEBRA", "ZEROS", "TROUT", "BLAND",
+    "SHACK", "SNACK", "PLAYS", "PAWNS", "CHANT", "JOKES", "JOKER", "THORN", "TENTH", "THREW",
+    "TURNS", "TORCH", "WHEAT", "CATER", "ALTER", "GHOST", "OTTER", "LOVER", "ROCKS", "ADIEU",
+    "CLIPS", "CRACK",
 ];
 
 
@@ -2326,7 +2329,7 @@ function startWordle(onWinCallback) {
         <div class="wordle-grid" id="wordle-grid"></div>
         
         <input type="text" maxlength="5" id="wordle-input" placeholder="KEYWORD..." autocomplete="off">
-        
+        <p id="wordle-list-error" class="wordle-list-error hidden" role="status">input not in word list</p>
         <div style="margin-top:10px;">
             <button onclick="closeWordle()">ABORT</button>
         </div>
@@ -2354,6 +2357,8 @@ function startWordle(onWinCallback) {
 // Sound triggers here so it catches every single key press from the start
     input.addEventListener('input', () => {
         triggerSound('keyboard');
+        const listErr = document.getElementById('wordle-list-error');
+        if (listErr) listErr.classList.add('hidden');
     });
 
     input.addEventListener('keydown', (e) => {
@@ -2361,33 +2366,21 @@ function startWordle(onWinCallback) {
 
         if (e.key === "Enter") {
             const currentGuess = input.value.toUpperCase();
+            const listErr = document.getElementById('wordle-list-error');
 
-            // 1. Check if it's 5 letters
             if (currentGuess.length !== 5) {
+                if (listErr) listErr.classList.add('hidden');
                 triggerInputError(input);
                 return;
             }
 
-            // 2. THE WORD LIST CHECK:
-            input.addEventListener('keydown', (e) => {
-                if (isGameOver) return;
+            if (!WORD_BANK.includes(currentGuess)) {
+                if (listErr) listErr.classList.remove('hidden');
+                triggerInputError(input);
+                return;
+            }
 
-                if (e.key === "Enter") {
-                    const currentGuess = input.value.toUpperCase();
-
-                    // 1. Check if it's 5 letters
-                    if (currentGuess.length !== 5) {
-                        triggerInputError(input);
-                        return;
-                    }
-
-                    // 2. Process any 5-letter string, no word list check
-                    processGuess(currentGuess, onWinCallback);
-                    input.value = "";
-                }
-            });
-
-            // 3. If it passes both, process the guess
+            if (listErr) listErr.classList.add('hidden');
             processGuess(currentGuess, onWinCallback);
             input.value = "";
         }
