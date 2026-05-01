@@ -3841,7 +3841,7 @@ async function loadEverything() {
             };
 
             // fallback timeout (optional but safer)
-            const timeout = setTimeout(() => finish('timeout'), 90000);
+            const timeout = setTimeout(() => finish('timeout'), 150000);
 
             setupFn({
                 success: () => {
@@ -3893,9 +3893,19 @@ async function loadEverything() {
         }, audio.src || '[unknown audio]');
     });
 
-    await Promise.all([...imagePromises, ...audioPromises]);
+    const MAX_BLOCKING_LOADER_MS = 150000;
+    const allAssetPromises = [...imagePromises, ...audioPromises];
+    const allAssetsDonePromise = Promise.all(allAssetPromises);
+    const didHitGlobalTimeout = await Promise.race([
+        allAssetsDonePromise.then(() => false),
+        new Promise(resolve => setTimeout(() => resolve(true), MAX_BLOCKING_LOADER_MS))
+    ]);
 
-    loadingText.textContent = "DONE!";
+    if (didHitGlobalTimeout) {
+        console.warn("⏱️ Global loader timeout hit at 90s; continuing while remaining assets load.");
+    }
+
+    loadingText.textContent = didHitGlobalTimeout ? "CONTINUING..." : "DONE!";
     loadingBar.style.width = "100%";
     if (loadingMascot) {
         loadingMascot.style.left = "100%";
@@ -3905,6 +3915,11 @@ async function loadEverything() {
 
     if (didShowLoadingScreen) {
         loadingScreen.style.display = 'none';
+    }
+
+    // If the loader timed out, remaining assets continue to load in background.
+    if (didHitGlobalTimeout) {
+        allAssetsDonePromise.catch(() => {});
     }
 }
 
