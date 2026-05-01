@@ -3839,7 +3839,7 @@ async function loadEverything() {
             };
 
             // fallback timeout (optional but safer)
-            const timeout = setTimeout(() => finish('timeout'), 150000);
+            const timeout = setTimeout(() => finish('timeout'), 240000);
 
             setupFn({
                 success: () => {
@@ -3891,7 +3891,7 @@ async function loadEverything() {
         }, audio.src || '[unknown audio]');
     });
 
-    const MAX_BLOCKING_LOADER_MS = 150000;
+    const MAX_BLOCKING_LOADER_MS = 240000;
     const allAssetPromises = [...imagePromises, ...audioPromises];
     const allAssetsDonePromise = Promise.all(allAssetPromises);
     const didHitGlobalTimeout = await Promise.race([
