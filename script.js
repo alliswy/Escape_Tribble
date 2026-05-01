@@ -3377,7 +3377,7 @@ async function advanceTutorial() {
             break;
         case 'map-close':
             await delay(20);
-            await spawnThemedBox("Click to close the map -->", "notification-close-map");
+            await spawnThemedBox("Click the button to close the map", "notification-close-map");
             break;
         case 'menu-close':
             await delay(20);
