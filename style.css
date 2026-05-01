@@ -611,6 +611,39 @@ body.menu-mode .theme-burgundy-gold {
     z-index: 9999;
 }
 
+#tutorial-title-card {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a0f00;
+    background-image: radial-gradient(ellipse at center, rgba(180, 120, 0, 0.35) 0%, transparent 70%);
+    text-align: center;
+    color: #c9a84c;
+    text-shadow: 2px 2px 0 #000;
+}
+
+#tutorial-title-card h1 {
+    margin: 0 0 18px;
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(2.8rem, 8vw, 5.2rem);
+    letter-spacing: 4px;
+    color: #c9a84c;
+    text-shadow: 0 0 20px rgba(200, 160, 0, 0.6), 0 0 40px rgba(180, 120, 0, 0.3);
+}
+
+#tutorial-title-card p {
+    margin: 0;
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(1rem, 2.2vw, 1.55rem);
+    letter-spacing: 1px;
+    color: #c9a84c;
+    text-shadow: 0 0 10px rgba(200, 160, 0, 0.35);
+}
+
 /* ---- MENU SCREEN ---- */
 #menu-screen {
     display: flex;
@@ -872,6 +905,11 @@ body.menu-mode .theme-burgundy-gold {
     backdrop-filter: none;
 }
 
+/* Slightly wider credits panel so content fits with less scrolling */
+#credits.info-tab-content {
+    width: min(820px, 62vw);
+}
+
 
 .info-tab-content h3 {
     color: #ffcc00;
@@ -883,6 +921,30 @@ body.menu-mode .theme-burgundy-gold {
     color: #fff1aa;             /* Pale yellow for high visibility */
     font-size: 1.6rem;
     margin-bottom: 15px;
+}
+
+/* Match Contact sizing for tab readability consistency */
+#sources p,
+#sources li {
+    font-size: 1.5rem;
+    line-height: 1.45;
+}
+
+#credits p {
+    font-size: 1.35rem !important;
+    line-height: 1.45;
+}
+
+/* Facts page top-half background image (scrolls away with content) */
+#facts .facts-hero-image {
+    height: clamp(220px, 35vh, 420px);
+    margin: -24px -24px 20px;
+    border-radius: 10px 10px 0 0;
+    background-image: url('tribble-outside.jpeg');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    border-bottom: 1px solid rgba(255, 204, 0, 0.25);
 }
 
 /* This makes the scrollbar yellow to match your game */
@@ -954,14 +1016,21 @@ body.menu-mode .theme-burgundy-gold {
     padding: 18px 28px 24px;
 
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 14px;
+    overflow: hidden;
 }
 
 /* CONTENT BOX */
 #thanks-page .thanks-content {
     width: min(1100px, 96vw);
     max-width: 1100px;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
 
     background: rgba(18,8,0,.82);
     border-radius: 12px;
@@ -970,6 +1039,25 @@ body.menu-mode .theme-burgundy-gold {
 
     padding: 24px 34px;
     text-align: left;
+}
+
+#thanks-page .thanks-content::-webkit-scrollbar {
+    width: 8px;
+}
+#thanks-page .thanks-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.25);
+}
+#thanks-page .thanks-content::-webkit-scrollbar-thumb {
+    background: #f4bf1a;
+    border-radius: 10px;
+}
+
+#thanks-page .thanks-footer {
+    flex: 0 0 auto;
+    width: min(1100px, 96vw);
+    display: flex;
+    justify-content: center;
+    padding-top: 2px;
 }
 
 /* TEXT */
@@ -1011,13 +1099,13 @@ body.menu-mode .theme-burgundy-gold {
 #thanks-page .menu-btn {
     display: flex !important;
     opacity: 1 !important;   /* add this line */
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 
     position: relative !important;
     z-index: 10000 !important;
 
-    margin-top: 22px !important;
+    margin-top: 0 !important;
     padding: 14px 26px !important;
 
     width: auto !important;
@@ -1253,7 +1341,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* ---- PRINTER SYNC MINIGAME -----*/
 #printer-monitor-area {
     position: relative;
-    width: 92%;
+    width: 74%;
     height: 34%;
     background: #000; border: 4px solid #00ff00;
     margin: 10px auto;
@@ -1274,8 +1362,8 @@ input[type="range"]::-webkit-slider-thumb {
 #printer-sync-minigame {
     position: absolute;
     top: 31%;
-    left: 24%;
-    width: 60%;
+    left: 30%;
+    width: 48%;
     height: 38%;
     display: flex;
     flex-direction: column;

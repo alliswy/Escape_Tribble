@@ -236,6 +236,8 @@ const sfx = {
     //etc sounds
     driveNotif: {audio: new Audio('sounds/drive-notif.mp3'), baseVol: 0.5},
     paperTowel: {audio: new Audio('sounds/paper-towel.mp3'), baseVol: 0.5},
+    bottleOpen: {audio: new Audio('sounds/bottle-open.mp3'), baseVol: 0.5},
+    prBuzzing: {audio: new Audio('sounds/pr-buzzing.m4a'), baseVol: 0.5},
 
 }; //fixme add more sounds
 
@@ -416,6 +418,8 @@ const pageSounds = {
 
     'bath-page': createSoundClip(sfx.sinkWater, 0.04, true, 0.5, 1),
     'bath-sink-page': createSoundClip(sfx.sinkWater, 0.09, true, 0.5, 1),
+    'pr-pw-book-projector-on-page': createSoundClip(sfx.prBuzzing, 1.2, true, 0.5, 6),
+    'pr-pw-noBook-projector-on-page': createSoundClip(sfx.prBuzzing, 1.2, true, 0.5, 6),
 
     unlock: createSoundClip(sfx.unlock, 0.5, false, 0.4, 3.9),
     doorClose: createSoundClip(sfx.doorClose, 0.7, false, 1.03, 0),
@@ -445,6 +449,7 @@ const pageSounds = {
     openBathDoor: createSoundClip(sfx.doorOpenClose, 0.5, false,0, 2,),
     paperTowel: createSoundClip(sfx.paperTowel, 0.2, false, 0,13.9),
     cwDoor: createSoundClip(sfx.cwDoor, 0.2, false, 2.5, 0),
+    bottleOpen: createSoundClip(sfx.bottleOpen, 0.3, false, 1, 6),
 };
 
 let activeGlobalLoop = null;
@@ -996,7 +1001,7 @@ const roomLeads = {
     'bd-books-page':          { back: 'bd-cart-page' },
     'bd-fb-open-key-page':    { back: 'bd-books-page' },
     'bd-fb-open-page':        { back: 'bd-books-page' },
-    'bd-back-door-open-page': { back: 'bd-door-open-page' },
+    'bd-back-door-open-page': { back: 'bd-door-open-page', audio: {back: 'doorClose'} },
 
     // Projector Room (PR)
     'pr-steps-page':          { back: 'bd-back-door-open-page', forward: 'pr-main-page'},
@@ -1089,7 +1094,7 @@ const roomLeads = {
     'cr-couch-zoom-page':    {back: 'cr-couch-page'},
     'clr-main-page':        {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'},
     'clr-main-id-page':     {back: () => state.isLeftMonitorOn ? 'cr-doors-cam-page' : 'cr-doors-page'},
-    'clr-cloth-page':       {back: 'clr-main-page'},
+    'clr-cloth-page':       {back: () => state.hasWrId ? 'clr-main-page' : 'clr-main-id-page'},
     'clr-cloth-octagon-page': {back: 'clr-cloth-page'},
 
     //camera room
@@ -1634,6 +1639,12 @@ async function triggerNotification(pageId) {
         case 'stairs-aw-door-page': {
             if (state.prevPage === 'stairs-up-page') {
                 triggerSound('steps');
+            }
+        } break;
+        case 'li-main-lw-page': {
+            if (!state.notificationsSeen['li-main-lw-noSk'] && state.hasSkPaper) {
+                await spawnThemedBox("That skeleton is gone again...", "notification-top");
+                state.notificationsSeen['li-main-lw-noSk']=true;
             }
         } break;
 
@@ -3313,6 +3324,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
         if (imgSrc==='inv-images/wb.png') {
             document.getElementById('wb-hitbox').classList.remove('hidden');
             document.getElementById('wb-hitbox').onclick = () => {
+                triggerSound('bottleOpen');
                 openOverlay('inv-wb', 'inv-images/wb-open.png');
                 state.isWbOpen = true;
                 state.currTutorialStep='opened-bottle';
@@ -3449,11 +3461,8 @@ async function advanceTutorial() {
             await spawnThemedBox('Find the bed and go to sleep', "notification-mid");
             break;
         case 'asleep':
-            state.isTutorialActive = false;
-            // This is the "Key" that unlocks the skip option for the restart button
-            localStorage.setItem('tutorialCompleted', 'true');
-            stopAllAudio();
-            await showPage("mh-bd-main-page", true);
+            // End tutorial with title card transition before entering Tribble.
+            await playTutorialTitleCardTransition();
             break;
     }
 }
@@ -3689,6 +3698,85 @@ function fadeTransition(callback) {
 
         }, fadeTime);
     });
+}
+
+function fadeGlobalAudioOut(durationMs = 1000) {
+    const activeGlobal = currentGlobalId ? pageSounds[currentGlobalId] : null;
+    const clip = activeGlobal?.clip;
+
+    if (!clip || clip.paused) {
+        stopGlobalAudio();
+        return Promise.resolve();
+    }
+
+    return new Promise(resolve => {
+        const startVolume = clip.volume;
+        const steps = 24;
+        const interval = durationMs / steps;
+        let step = 0;
+
+        if (clip.activeFade) {
+            clearInterval(clip.activeFade);
+            clip.activeFade = null;
+        }
+
+        clip.activeFade = setInterval(() => {
+            step++;
+            clip.volume = Math.max(0, startVolume * (1 - step / steps));
+
+            if (step >= steps) {
+                clearInterval(clip.activeFade);
+                clip.activeFade = null;
+                stopGlobalAudio();
+                resolve();
+            }
+        }, interval);
+    });
+}
+
+async function playTutorialTitleCardTransition() {
+    const fade = document.getElementById('screen-fade');
+    const titleCard = document.getElementById('tutorial-title-card');
+    if (!fade || !titleCard) {
+        await showPage("mh-bd-main-page", true);
+        return;
+    }
+
+    state.isTutorialActive = false;
+    localStorage.setItem('tutorialCompleted', 'true');
+
+    // 1) Fade out from tutorial page into black while tutorial music fades out.
+    fade.style.pointerEvents = "all";
+    fade.style.transition = "opacity 1200ms ease";
+    fade.style.opacity = "1";
+    const audioFadePromise = fadeGlobalAudioOut(1200);
+    await delay(1200);
+    await audioFadePromise;
+
+    // 2) Reveal title card screen.
+    titleCard.classList.remove('hidden');
+    titleCard.setAttribute('aria-hidden', 'false');
+    fade.style.transition = "opacity 700ms ease";
+    fade.style.opacity = "0";
+    await delay(700);
+
+    // Hold title card in silence.
+    await delay(3500);
+
+    // 3) Fade to black again (no audio playing here).
+    fade.style.transition = "opacity 900ms ease";
+    fade.style.opacity = "1";
+    await delay(900);
+
+    // 4) Switch into Tribble page behind black, then fade in with gameplay global audio.
+    titleCard.classList.add('hidden');
+    titleCard.setAttribute('aria-hidden', 'true');
+    await showPage("mh-bd-main-page", false);
+
+    fade.style.transition = "opacity 1000ms ease";
+    fade.style.opacity = "0";
+    await delay(1000);
+    fade.style.pointerEvents = "none";
 }
 
 
@@ -4101,8 +4189,8 @@ function init() {
             document.getElementById('info-screen').classList.remove('hidden');
             startGlobalAudio('info-screen');
 
-            // Always start on the Credits tab for a clean look
-            const defaultTab = document.querySelector('.tab-btn[data-target="credits"]');
+            // Always start on Fun Facts to match the tab order
+            const defaultTab = document.querySelector('.tab-btn[data-target="facts"]');
             if (defaultTab) defaultTab.click();
         };
     }
@@ -4865,6 +4953,9 @@ function init() {
     document.getElementById('clr-main-cloth-hitbox').onclick = async () => {
         showPage('clr-cloth-page');
     }
+    document.getElementById('clr-main-id-cloth-hitbox').onclick = async () => {
+        showPage('clr-cloth-page');
+    }
     document.getElementById('clr-cloth-hitbox').onclick = () => {showPage('clr-cloth-octagon-page'); state.foundOctagon = true;}
     document.getElementById('clr-cloth-octagon-hitbox').onclick = async () => {
         await spawnThemedBox("Another shape...", "notification-top");
@@ -4878,7 +4969,7 @@ function init() {
         }
         showPage('clr-main-page');
         openOverlay('inv-wr-id', 'inv-images/wr-id.png');
-        await spawnThemedBox("The Demon Decon's ID card. It's huge !!", "notification-top");
+        await spawnThemedBox("The Demon Deacon's ID card. It's huge !!", "notification-top");
     }
 
     //----- CAMERA ROOM SECTION -----
@@ -4930,6 +5021,13 @@ function init() {
     }
     document.getElementById('camr-wp-hitbox').onclick = async () => {
         await spawnThemedBox('A person ?? How did they get in there ? What\'s going on ?', "notification-top");
+    }
+    document.getElementById('camr-we-hitbox').onclick = async () => {
+        if (!state.foundWp) {
+            await spawnThemedBox('This window leads to the room left of here, but I can\'t really see through it', "notification-top");
+        } else {
+            await spawnThemedBox("I don't see anything in this window", "notification-top");
+        }
     }
     document.getElementById('camr-main-ml-on-person-hitbox').onclick = async () => {
         showPage('camr-ml-on-person-page');
@@ -5261,6 +5359,7 @@ function init() {
         if (state.hasLorBook) {
             triggerSound('scanner');
             state.scannedBook = true;
+            state.isLiLaptopOn = true;
             const keySlot = document.getElementById('inv-lor-book')
             if (keySlot) {
                 keySlot.classList.add('hidden');
@@ -5299,6 +5398,9 @@ function init() {
         await delay(20);
         await spawnThemedBox('This ghost must be trying to tell me something. I should try to find a book that stands out', 'notification-top');
     }
+    document.getElementById('li-lt-sk-hitbox').onclick = async () => {
+        await spawnThemedBox("How did this skeleton even get here ?", "notification-top");
+    }
     document.getElementById('li-entrance-lw-hitbox').onclick = () => showPage('li-main-lw-page');
     document.getElementById('li-entrance-nb-lw-hitbox').onclick = () => showPage('li-main-lw-page');
     document.getElementById('li-entrance-tvo-lw-hitbox').onclick = () => showPage('li-main-lw-page');
@@ -5314,24 +5416,24 @@ function init() {
     document.getElementById('li-mw-nb-ruta-hitbox').onclick    = () => showPage('li-ruta-page');
     document.getElementById('li-mw-nb-russo-hitbox').onclick   = () => showPage('li-russo-page');
     document.getElementById('li-esme-hitbox').onclick = async () => {
-        if (state.hasSkPaper) {
-            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
-        } else {
+        if (state.foundScanner && !state.scannedBook) {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        } else {
+            await spawnThemedBox("There’s nothing unusual about this book.", "notification-top");
         }
     }
     document.getElementById('li-ruta-hitbox').onclick = async () => {
-        if (state.hasSkPaper) {
-            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
-        } else {
+        if (state.foundScanner && !state.scannedBook) {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        } else {
+            await spawnThemedBox("There’s nothing unusual about this book.", "notification-top");
         }
     }
     document.getElementById('li-russo-hitbox').onclick = async () => {
-        if (state.hasSkPaper) {
-            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
-        } else {
+        if (state.foundScanner && !state.scannedBook) {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        } else {
+            await spawnThemedBox("There’s nothing unusual about this book.", "notification-top");
         }
     }
     document.getElementById('li-tolkein-hitbox').onclick = async () => {
@@ -5421,10 +5523,9 @@ function init() {
         }
         showPage('li-br-page');
         openOverlay("li-wr", "inv-images/wr.png");
-        await (10);
         await spawnThemedBox("This remote looks like it could turn on some LED lights", 'notification-top');
     }
-    document.getElementById('li-2r-br-hitbox').onclick = () => {
+    document.getElementById('li-2r-br-hitbox').onclick = async () => {
         state.hasBr = true;
         const keySlot = document.getElementById('inv-br');
         if (keySlot) {
@@ -5433,6 +5534,7 @@ function init() {
         }
         showPage('li-wr-page');
         openOverlay("li-br", "inv-images/br.png");
+        await spawnThemedBox("A tv remote...", "notification-top");
     }
     document.getElementById('li-wr-hitbox').onclick = () => {
         state.hasWr = true;
@@ -5522,24 +5624,24 @@ function init() {
     document.getElementById('li-rw-barnes-hitbox').onclick  = () => showPage('li-barnes-page');
     document.getElementById('li-rw-boulley-hitbox').onclick = () => showPage('li-boulley-page');
     document.getElementById('li-alston-hitbox').onclick = async () => {
-        if (state.hasSkPaper) {
-            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
-        } else {
+        if (state.foundScanner && !state.scannedBook) {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        } else {
+            await spawnThemedBox("There’s nothing unusual about this book.", "notification-top");
         }
     }
     document.getElementById('li-barnes-hitbox').onclick = async () => {
-        if (state.hasSkPaper) {
-            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
-        } else {
+        if (state.foundScanner && !state.scannedBook) {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        } else {
+            await spawnThemedBox("There’s nothing unusual about this book.", "notification-top");
         }
     }
     document.getElementById('li-boulley-hitbox').onclick = async () => {
-        if (state.hasSkPaper) {
-            await spawnThemedBox("There’s nothing unusual about this book...", "notification-top");
-        } else {
+        if (state.foundScanner && !state.scannedBook) {
             await spawnThemedBox("This isn't the book I'm looking for", 'notification-top');
+        } else {
+            await spawnThemedBox("There’s nothing unusual about this book.", "notification-top");
         }
     }
     document.getElementById('li-rw-books-birb-hitbox').onclick = () => showPage('li-birb-book-page');
