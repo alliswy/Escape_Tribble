@@ -3213,15 +3213,18 @@ function openOverlay(itemName, imgSrc) {
 
     const overlay = document.getElementById("item-overlay");
     const img = document.getElementById("item-overlay-img");
+    const resolvedImgSrc = (itemName === 'inv-wb' && state.isWbOpen)
+        ? 'inv-images/wb-open.png'
+        : imgSrc;
 
-    img.src = imgSrc;
+    img.src = resolvedImgSrc;
     overlay.classList.remove("hidden");
 
     if (NOTE_READER_ITEM_NAMES.has(itemName)) {
         document.getElementById(`${itemName}-open-reader-btn`)?.classList.remove("hidden");
     }
 
-    setupOverlayHitboxes(itemName, imgSrc);
+    setupOverlayHitboxes(itemName, resolvedImgSrc);
 
     if (!document.getElementById('wordle-minigame').classList.contains('hidden')) {
         closeWordle();
@@ -5197,16 +5200,20 @@ function init() {
         showPage('print-paper-page');
     }
     document.getElementById('print-screen-hitbox').onclick = () => showPage('print-screen-page');
-    document.getElementById('print-screen-2-hitbox').onclick = () => {
-        const minigame = document.getElementById('printer-sync-minigame');
-        if (minigame) minigame.classList.remove('hidden');
+    document.getElementById('print-screen-2-hitbox').onclick = async () => {
+        if (!state.isPrinterCalibrated) {
+            const minigame = document.getElementById('printer-sync-minigame');
+            if (minigame) minigame.classList.remove('hidden');
 
-        // 3. Reset the state
-        currentLevel = 1;
-        isRunning = true;
+            // 3. Reset the state
+            currentLevel = 1;
+            isRunning = true;
 
-        generateRandomTarget();
-        update();
+            generateRandomTarget();
+            update();
+        } else {
+            await spawnThemedBox("I've already calibrated the printer", "notification-top");
+        }
     }
     document.getElementById('print-paper-hitbox').onclick = async () => {
         triggerSound('floppyPaper');
