@@ -576,9 +576,7 @@ function safePlay(audio, { suppressAutoplayWarning = true } = {}) {
     return true;
 }
 
-const SILENT_AUDIO_PAGES = new Set([
-    'disclaimer-page'
-]);
+const SILENT_AUDIO_PAGES = new Set([]);
 const SPOOKY_AUDIO_PAGES = new Set([
     'menu-screen',
     'info-screen',
@@ -1243,7 +1241,7 @@ const roomLeads = {
     'li-main-lw-page':           {back: () => state.hasLorBook ? state.isLiTvOn ? 'li-entrance-tvo-nb-page' : 'li-entrance-nb-page' : state.isLiTvOn ? 'li-entrance-tvo-page' : 'li-entrance-page', right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'},
 
     //library mid-wall pages
-    'li-mid-wall-page':     {back: 'li-main-2dc-page'}, 
+    'li-mid-wall-page':     {back: 'li-main-2dc-page'},
     'li-mid-wall-ro-page':  {back: 'li-main-2dc-ro-page'},
     'li-mid-wall-tvo-page': {back: 'li-main-2dc-tvo-page'},
     'li-mid-wall-ro-tvo-page': {back: 'li-main-2dc-ro-tvo-page'},
@@ -1281,7 +1279,7 @@ const roomLeads = {
     'li-left-lt-star-page': {back: 'li-main-lw-page'},
 
     //mw books pages
-    'li-mw-books-page':     {back: 'li-main-lw-page' }, 
+    'li-mw-books-page':     {back: 'li-main-lw-page' },
     'li-mw-books-nb-page':  {back: 'li-main-lw-page'},
     'li-tolkein-page':      {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
     'li-esme-page':         {back: () => state.hasLorBook ? 'li-mw-books-nb-page' :'li-mw-books-page'},
@@ -1304,7 +1302,7 @@ const roomLeads = {
     'li-birb-page':             {back: 'li-rw-books-birb-nb-page'},
 
     //library office pages
-    'li-office-door-closed-page':   {back: 'li-2dc-page'}, 
+    'li-office-door-closed-page':   {back: 'li-2dc-page'},
     'li-office-door-open-page':     {back: 'li-office-door-closed-page', audio: {back: 'doorClose'}},
     'lo-main-page':                 {back: 'li-office-door-open-page', left: 'lo-main-left-page'},
     'lo-main-left-page':            {right: 'lo-main-page'},
@@ -4045,6 +4043,7 @@ function init() {
 
         document.getElementById('confirm-start-btn').onclick = async () => {
             await loadEverything();
+            stopGlobalAudio();
             prepareGameUI();
 
             requestAnimationFrame(async () => {
