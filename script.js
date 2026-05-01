@@ -239,7 +239,7 @@ const sfx = {
     bottleOpen: {audio: new Audio('sounds/bottle-open.mp3'), baseVol: 0.5},
     prBuzzing: {audio: new Audio('sounds/pr-buzzing.m4a'), baseVol: 0.5},
 
-}; //fixme add more sounds
+};
 
 // Slightly slow down menu/end spooky track for mood.
 const SPOOKY_PLAYBACK_RATE = 0.9;
@@ -426,13 +426,13 @@ const pageSounds = {
     keycardSwipe: createSoundClip(sfx.keycardSwipe, 0.5, false, 1.4, 9.9),
     accessBeep: createSoundClip(sfx.accessBeep, 0.5, false, 0, 0.6),
     steps: createSoundClip(sfx.steps, 0.5, false, 0.5, 9),
-    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 53), //fixme check boundaries on this one, and add it to the desired page
+    markerWhiteboard: createSoundClip(sfx.markerWhiteboard, 0.3, false, 3, 53),
     lightFlicker: createSoundClip(sfx.lightFlicker, 0.5, false, 8, 11),
 
     //apartment sounds
     aptDoorOpen: createSoundClip(sfx.aptDoor, 0.5, false, 0.2, 3.8),
     aptDoorClose: createSoundClip(sfx.aptDoor, 0.5, false, 3, 1),
-    fillBottle: createSoundClip(sfx.fillBottle, 0.5, false, 1, 20.5), //fixme make it fade out nice
+    fillBottle: createSoundClip(sfx.fillBottle, 0.5, false, 1, 20.5),
 
     //bd and pr sounds
     bdBookOpen: createSoundClip(sfx.bdBook, 0.5, false, 0, 7.5),
@@ -1108,7 +1108,7 @@ const roomLeads = {
     'camr-main-wp-page':        {back: 'cr-doors-1dc-page'},
     'camr-ml-off-page':         {back: () => state.foundWp ? 'camr-main-page':'camr-main-wp-page'},
     'camr-ml-on-page':          {back: () => state.crlDoorOpen ? 'camr-main-ml-on-page':'camr-main-ml-on-person-page' },
-    'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person-page'}, //fixme, finish all this stuff w the person in the camera
+    'camr-ml-on-person-page':   {back: 'camr-main-ml-on-person-page'},
     //note for next line: if the left monitor is on, they already visited the left monitor, and thus already saw the window person !
     'camr-mr-off-page':         {
         back: () => {
@@ -1274,7 +1274,7 @@ const roomLeads = {
     'li-lt-page':           {back: 'li-left-lt-page'},
     'li-laptop-page':       {back: 'li-lt-page'},
     'li-laptop-star-page':  {back: 'li-lt-star-page'},
-    'li-lt-star-page':      {back: () => state.scannedBook ? !state.hasSkPaper ? 'li-lt-sk-paper-page': 'li-left-lt-star-page' : 'li-left-lt-page'}, //fixme add another check/page
+    'li-lt-star-page':      {back: () => state.scannedBook ? !state.hasSkPaper ? 'li-lt-sk-paper-page': 'li-left-lt-star-page' : 'li-left-lt-page'},
     'li-lt-sk-paper-page':  {}, //they're forced to take the paper
     'li-lt-sk-page':        {back: 'li-main-lw-sk-page'},
     'li-main-lw-sk-page':   {right: () => state.isLiTvOn ? state.isLiReadOn ? 'li-main-2dc-ro-tvo-page' : 'li-main-2dc-tvo-page' : state.isLiReadOn ? 'li-main-2dc-ro-page' : 'li-main-2dc-page'},
@@ -1416,7 +1416,7 @@ async function showPage(pageId, useFade = false) {
         if (!target) return;
 
         state.currentPage = pageId;
-        state.prevPage = previousPageId = lastPage ? lastPage.id : null;;
+        state.prevPage = previousPageId = lastPage ? lastPage.id : null;
 
         if (lastPage) {
             lastPage.classList.add('hidden');
@@ -1551,7 +1551,7 @@ async function triggerNotification(pageId) {
                 await spawnThemedBox("Also what the heck ! What's with that giant ID card ??", "notification-top");
                 state.notificationsSeen['clr-main-init'] = true;
             }
-        } break; //fixme issue with this page when picking up the id card too quickly,, have the hitboxes wait for the themed boxes or smthn
+        } break;
         case 'ls-in-10-sk-nd-page': {
             await delay(20);
             if (!state.notificationsSeen['ls-in-10-sk-init']) {
@@ -1596,7 +1596,7 @@ async function triggerNotification(pageId) {
         } break;
         case 'cw-bath-door-page': {
             if (state.prevPage ==='bath-page') {
-                triggerSound('doorClose'); //fixme test this area
+                triggerSound('doorClose');
             }
             if (!isPlaying('ambientNoise')) {
                 triggerSound('ambientNoise');
@@ -1632,7 +1632,7 @@ async function triggerNotification(pageId) {
         case 'print-paper-page': {
             if (!state.notificationsSeen['fax-init']) {
                 await delay(20);
-                await spawnThemedBox("what's this?", "notification-top"); //fixme test this
+                await spawnThemedBox("what's this?", "notification-top");
                 state.notificationsSeen['fax-init']=true;
             }
         } break;
@@ -1901,7 +1901,7 @@ const hintRules = [
         text: "Try looking around in the kitchen for a clue"
     },
     {
-        condition: () => state.foundPtCode && !state.crUnlocked, //fixme add check for if they found back hallway
+        condition: () => state.foundPtCode && !state.crUnlocked,
         text: "Try looking around the back hallway for a door you can unlock. The code from the kitchen may be useful there."
     },
     {
@@ -2601,13 +2601,8 @@ async function openTerminal() {
         //  Disable typing immediately
         termInput.disabled = true;
 
-        // if (!state.notificationsSeen['lo-monitor-4dig-hint']) {
-        //     state.notificationsSeen['lo-monitor-4dig-hint'] = true;
-        //
-        //     await spawnThemedBox("I need another code, 4 digits this time...", 'notification-top');
-        //     await spawnThemedBox("Wait--I've found 4 different shapes, and the read sign in the library has the same colors as those shapes", 'notification-top');
-        //     await spawnThemedBox("I wonder if the shapes, the colors, and this code are related...", 'notification-top');
-        // } fixme maybe include a hint here but the current hint is too much and annoying
+        await delay(20);
+        await spawnThemedBox("A 4 digit code... I have found 4 shapes, I wonder if that's related", "notification-top");
 
         // Re-enable typing AFTER messages finish
         termInput.disabled = false;
@@ -2860,7 +2855,6 @@ let currentTarget = { pos: 0, width: 22 };
 const monitor = document.getElementById('printer-monitor-area');
 const bar = document.getElementById('scanner-bar');
 
-//fixme bug if you click back on the screen again after completing it it restarts
 function generateRandomTarget() {
     document.getElementById('msg').innerText = "CALIBRATING OPTICS...";
     document.getElementById('msg2').innerText = "Click when the white is within the green zone to calibrate";
@@ -2930,7 +2924,7 @@ function checkSync() {
         triggerSound('errorBeep');
         reset();
     }
-} //fixme test the sounds here
+}
 
 function reset() {
     currentLevel = 1;
@@ -3082,7 +3076,6 @@ function closeSecurityTerminal() {
     }
 }
 
-//fixme check that the ui is being properly reset
 function resetLeftMonitorUI() {
     const container = document.getElementById('security-login-minigame');
     const input = document.getElementById('security-pass-input');
@@ -3299,7 +3292,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                         triggerSound('pwBook');
                         openOverlay("sherlock-book", "inv-images/sherlock-book-paper.png");
                     } else {
-                        console.log('Error with progression has occurred'); //fixme check that they have to get the paper before being able to access the book
+                        console.log('Error with progression has occurred');
                     }
                 };
             } break;
@@ -3317,7 +3310,6 @@ function setupOverlayHitboxes(itemName, imgSrc) {
                     await spawnThemedBox("animals", "notification-top");
                 }
                 state.foundLiClue = true;
-                //fixme make it so if they click one more time they'll see un-der-animals maybe ?
             } break;
         }
     } else if (itemName === 'inv-wb') {
@@ -3335,6 +3327,7 @@ function setupOverlayHitboxes(itemName, imgSrc) {
         }
     } //fixme make it so next time they click on wb it opens overlay for the open bottle (?)
 }
+
 
 
 async function advanceTutorial() {
@@ -3616,8 +3609,6 @@ async function tutorialHitboxInit() {
                 showPage('apt-fd-open-page');
                 state.currTutorialStep='enter-apartment';
                 advanceTutorial();
-            } else {
-                //fixme add feedback
             }
         } else if (state.currTutorialStep==='enter-apartment' && clickedId==='apt-fd-open-hitbox') {
             showPage("apt-main-water-page");
@@ -4230,12 +4221,6 @@ function init() {
 
     startGlobalAudio('menu-screen');
 
-
-    //Exit button fixme temporarily removed exit button. All it does is close the window, and no websites have this bc its unnecessary
-    /* document.getElementById('exit-button').onclick = () => {
-        window.close();
-    };*/
-
     function fadeClipOutForBackground(clip, durationMs = 280) {
         if (!clip || clip.paused) return;
 
@@ -4544,7 +4529,7 @@ function init() {
     document.getElementById('mh-li-right-endc-li-hitbox').onclick = () => showPage('mh-li-door-closed-page');
 
     document.getElementById('mh-bw-door-hitbox').onclick = async() => {
-        await spawnThemedBox("The door won't budge", 'notification-top'); //fixme maybe make it look like it's buried too
+        await spawnThemedBox("The door won't budge", 'notification-top');
     }
 
     // --- Book Drop (BD) Interactions ---
@@ -4901,7 +4886,7 @@ function init() {
 
     document.getElementById('cr-main-1dc-doors-hitbox').onclick = () => {
         if (state.isLeftMonitorOn) {
-            showPage('cr-doors-1dc-cam-page')//fixme -- I don't remember why I put this fixme here..., maybe to do with the ghost ?
+            showPage('cr-doors-1dc-cam-page')
         } else {
             showPage('cr-doors-1dc-page');
         }
@@ -5350,7 +5335,7 @@ function init() {
             showPage('li-left-lt-star-page');
         } else {
            showPage('li-left-lt-page');
-        } //fixme later add check for if they did what was needed for this page
+        }
     }
     document.getElementById('li-left-lt-hitbox').onclick = () => showPage('li-lt-page');
     document.getElementById('li-left-star-lt-hitbox').onclick = () => showPage('li-lt-star-page');
@@ -5655,7 +5640,6 @@ function init() {
         }
         showPage('li-birb-page');
         openOverlay('sherlock-book', 'inv-images/sherlock-book.png');
-        //fixme add feedback
     }
 
     document.getElementById('li-main-rw-rw-hitbox').onclick = async () => {
@@ -5697,9 +5681,6 @@ function init() {
     document.getElementById('li-animals-open-1-hitbox').onclick = () => {
         state.hasLoKey ? showPage('li-animals-open-2-page') : showPage('li-animals-open-key-page');
     }
-
-    //fixme so currently the animals hitbox opens when the user finds the sherlock book
-    //fixme potentially make it so taht instead, it only shows when they find the hint (after using the paper)
 
 
     // --------- LIBRARY OFFICE SECTION -----------//
@@ -5813,8 +5794,7 @@ function init() {
             refreshInventorySlots();
         }
         showPage('ls-10-sk-note-page');
-        openOverlay('ls-10-drive', 'inv-images/ls-10-drive.png'); //I want it to overlay immediately and the character to comment on it
-        //fixme maybe change feedback
+        openOverlay('ls-10-drive', 'inv-images/ls-10-drive.png');
         await spawnThemedBox("What is this ghost trying to tell me ?", "notification-top")
     }
     document.getElementById('ls-10-sk-drive-hitbox').onclick = async () => {
@@ -5917,11 +5897,6 @@ function init() {
     };
     // Intentionally disabled: do not auto-enter gameplay on refresh.
     // restoreFromSaveOnReload();
-
-
-
-
-
 
 
 }
