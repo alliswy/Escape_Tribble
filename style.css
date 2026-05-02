@@ -1255,6 +1255,118 @@ input[type="range"]::-webkit-slider-thumb {
     text-align: right;
 }
 
+/* ---- LANGUAGE DROPDOWN (floating menu under button — main + in-game settings) ---- */
+.language-control {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 200px;
+    max-width: 200px;
+    box-sizing: border-box;
+}
+
+.menu-btn.language-dropdown-trigger {
+    position: relative;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+    box-sizing: border-box;
+}
+
+.language-dropdown-label {
+    text-align: center;
+}
+
+.language-dropdown-chevron {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.9;
+    transform: translateY(-50%);
+    transition: transform 0.22s ease;
+}
+
+.language-control.language-dropdown-open .language-dropdown-chevron {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Menu floats below the button (does not push layout) — same flavor as hamburger dropdown */
+.language-dropdown-menu {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    max-width: 200px;
+    box-sizing: border-box;
+    top: calc(100% + 6px);
+    z-index: 600;
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    border-radius: 4px;
+    border: 1px solid rgba(180, 140, 40, 0.55);
+    background: rgba(100, 20, 30, 0.96);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+
+    transition:
+        max-height 0.35s ease,
+        opacity 0.22s ease,
+        visibility 0.22s ease;
+}
+
+.language-control.language-dropdown-open .language-dropdown-menu {
+    max-height: 200px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.language-dropdown-row {
+    padding: 12px 14px;
+    font-family: 'Special Elite', cursive;
+    font-size: 15px;
+    letter-spacing: 1px;
+    color: #c9a84c;
+    border-top: 1px solid rgba(180, 140, 40, 0.35);
+    cursor: pointer;
+    transition: background 0.18s ease;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.language-dropdown-row:first-child {
+    border-top: none;
+}
+
+.language-dropdown-row:not(.language-dropdown-row--disabled):hover {
+    background: rgba(130, 30, 40, 0.92);
+}
+
+.language-dropdown-row--active {
+    background: rgba(60, 28, 32, 0.85);
+    color: #fff2c8;
+}
+
+.language-dropdown-row--disabled {
+    cursor: default;
+    color: rgba(212, 184, 150, 0.55);
+    font-size: 14px;
+    text-align: center;
+}
+
+.language-dropdown-row--disabled:hover {
+    background: transparent;
+}
+
 
 /* ---- HAMBURGER MENU ---- */
 #hamburger-menu {

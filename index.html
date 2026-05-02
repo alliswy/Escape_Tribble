@@ -58,7 +58,17 @@
             <label for="fullscreen-toggle"> Fullscreen</label>
             <input type="checkbox" id="fullscreen-toggle">
         </div>
-<!--        <div class="menu-btn" id="language-button">Language</div>-->
+        <div class="language-control" id="settings-language-control">
+            <div class="menu-btn language-dropdown-trigger" id="settings-language-button" role="button" tabindex="0" aria-expanded="false" aria-controls="settings-language-menu" aria-haspopup="listbox">
+                <span class="language-dropdown-label">Language</span>
+                <span class="language-dropdown-chevron" aria-hidden="true">▾</span>
+            </div>
+            <div id="settings-language-menu" class="language-dropdown-menu" role="listbox" aria-labelledby="settings-language-button">
+                <div class="language-dropdown-row language-dropdown-row--active" role="option" aria-selected="true">English</div>
+                <div class="language-dropdown-row language-dropdown-row--disabled" role="option" aria-disabled="true">日本語 (coming soon)</div>
+                <div class="language-dropdown-row language-dropdown-row--disabled" role="option" aria-disabled="true">中文 (coming soon)</div>
+            </div>
+        </div>
         <div class="menu-btn" id="settings-back-button">Back</div>
     </div>
 
@@ -2198,6 +2208,17 @@
             <div class="setting-row">
                 <label for="ingame-fullscreen-toggle">Fullscreen</label>
                 <input type="checkbox" id="ingame-fullscreen-toggle">
+            </div>
+            <div class="language-control" id="ingame-language-control">
+                <div class="menu-btn language-dropdown-trigger" id="ingame-language-button" role="button" tabindex="0" aria-expanded="false" aria-controls="ingame-language-menu" aria-haspopup="listbox">
+                    <span class="language-dropdown-label">Language</span>
+                    <span class="language-dropdown-chevron" aria-hidden="true">▾</span>
+                </div>
+                <div id="ingame-language-menu" class="language-dropdown-menu" role="listbox" aria-labelledby="ingame-language-button">
+                    <div class="language-dropdown-row language-dropdown-row--active" role="option" aria-selected="true">English</div>
+                    <div class="language-dropdown-row language-dropdown-row--disabled" role="option" aria-disabled="true">日本語 (coming soon)</div>
+                    <div class="language-dropdown-row language-dropdown-row--disabled" role="option" aria-disabled="true">中文 (coming soon)</div>
+                </div>
             </div>
             <div class="menu-btn" id="ingame-settings-close-btn">Close</div>
         </div>

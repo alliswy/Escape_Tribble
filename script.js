@@ -4209,6 +4209,54 @@ function init() {
         };
     }
 
+    function closeAllLanguageDropdowns() {
+        document.querySelectorAll('.language-control').forEach((wrap) => {
+            wrap.classList.remove('language-dropdown-open');
+        });
+        ['settings-language-button', 'ingame-language-button'].forEach((id) => {
+            const b = document.getElementById(id);
+            if (b) b.setAttribute('aria-expanded', 'false');
+        });
+        document.querySelectorAll('.language-dropdown-menu').forEach((menu) => {
+            menu.setAttribute('aria-hidden', 'true');
+        });
+    }
+
+    function initLanguageDropdowns() {
+        document.querySelectorAll('.language-dropdown-menu').forEach((menu) => {
+            menu.setAttribute('aria-hidden', 'true');
+        });
+        ['settings-language-button', 'ingame-language-button'].forEach((id) => {
+            const b = document.getElementById(id);
+            if (!b) return;
+            const wrap = b.closest('.language-control');
+            const menu = wrap?.querySelector('.language-dropdown-menu');
+            if (!wrap || !menu) return;
+            b.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const opening = !wrap.classList.contains('language-dropdown-open');
+                closeAllLanguageDropdowns();
+                if (opening) {
+                    wrap.classList.add('language-dropdown-open');
+                    b.setAttribute('aria-expanded', 'true');
+                    menu.setAttribute('aria-hidden', 'false');
+                }
+            });
+            b.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    b.click();
+                }
+            });
+        });
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.language-control')) return;
+            closeAllLanguageDropdowns();
+        });
+    }
+
+    initLanguageDropdowns();
+
     //Settings button
     document.getElementById('settings-button').onclick = () => {
         menu.classList.add('hidden');
@@ -4218,6 +4266,7 @@ function init() {
 
     //Back button from Settings
     document.getElementById('settings-back-button').onclick = () => {
+        closeAllLanguageDropdowns();
         document.getElementById('settings-screen').classList.add('hidden');
         menu.classList.remove('hidden');
         startGlobalAudio('menu-screen');
@@ -4399,6 +4448,7 @@ function init() {
 
 // In-game settings close button
     document.getElementById('ingame-settings-close-btn').onclick = () => {
+        closeAllLanguageDropdowns();
         document.getElementById('ingame-settings').classList.add('hidden');
     };
 
