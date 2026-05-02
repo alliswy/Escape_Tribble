@@ -1393,9 +1393,8 @@ function normalizeFitPageScale(target) {
         const imgH = img.clientHeight;
         if (!imgW || !imgH) return;
 
-        // Scale the whole page (image + hitboxes) so relative hitbox placement is preserved.
-        const maxScale = Math.min(window.innerWidth / imgW, window.innerHeight / imgH, 1.35);
-        const scale = maxScale > 1.02 ? maxScale : 1;
+        // Keep every page fully visible: never upscale beyond 1, only shrink if needed.
+        const scale = Math.min(window.innerWidth / imgW, window.innerHeight / imgH, 1);
 
         target.style.transformOrigin = "center center";
         target.style.transform = `scale(${scale})`;
@@ -1474,6 +1473,9 @@ async function showPage(pageId, useFade = false) {
 window.addEventListener('resize', () => {
     if (lastPage) {
         normalizeFitPageScale(lastPage);
+    }
+    if (!document.getElementById('map-screen')?.classList.contains('hidden')) {
+        fitMapCanvasToViewport();
     }
 });
 
@@ -6321,6 +6323,29 @@ function drawMap() {
             ctx.fill();
         }
     });
+
+    fitMapCanvasToViewport();
+}
+
+function fitMapCanvasToViewport() {
+    const mapScreen = document.getElementById('map-screen');
+    const canvas = document.getElementById('map-canvas');
+    const title = document.getElementById('map-title');
+    const closeBtn = document.getElementById('map-close-btn');
+    if (!mapScreen || !canvas || !title || !closeBtn) return;
+
+    const screenStyles = getComputedStyle(mapScreen);
+    const padTop = parseFloat(screenStyles.paddingTop) || 0;
+    const padBottom = parseFloat(screenStyles.paddingBottom) || 0;
+    const availableH = Math.max(
+        120,
+        window.innerHeight - padTop - padBottom - title.offsetHeight - closeBtn.offsetHeight - 56
+    );
+    const availableW = Math.max(160, window.innerWidth - 24);
+
+    const scale = Math.min(availableW / canvas.width, availableH / canvas.height, 1);
+    canvas.style.width = `${Math.round(canvas.width * scale)}px`;
+    canvas.style.height = `${Math.round(canvas.height * scale)}px`;
 }
 
 // ---- WIRE PUZZLE SYSTEM ----
