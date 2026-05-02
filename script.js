@@ -2335,6 +2335,12 @@ function startWordle(onWinCallback) {
             FIND THE 5-LETTER KEY. [ <span style="color:#538d4e">■</span>:Good <span style="color:#c9b458">■</span>:MOVE <span style="color:#3a3a3c">■</span>:Null ]
         </p>
 
+        <div class="wordle-instructions" aria-label="How to play">
+            <p>You have <strong>6 guesses</strong> to find the key. Type a valid 5-letter word in the field below and press <strong>Enter</strong> to submit.</p>
+            <p>Each guess fills the next row. <strong>Good</strong> (green) means that letter is correct and in the right spot. <strong>MOVE</strong> (yellow) means the letter is in the key but belongs in a different position. <strong>Null</strong> (gray) means that letter is not in the key.</p>
+            <p>If you fail, choose <strong>REBOOT TERMINAL</strong> — the system draws a <strong>new</strong> key word for your next attempt.</p>
+        </div>
+
         <div class="wordle-grid" id="wordle-grid"></div>
         
         <input type="text" maxlength="5" id="wordle-input" placeholder="KEYWORD..." autocomplete="off">
